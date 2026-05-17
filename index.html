@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CASHFLOW GLOBAL - MASTER TERMINAL v17.4</title>
+    <title>CASHFLOW GLOBAL - MASTER TERMINAL v18.0</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -41,13 +41,41 @@
 </head>
 <body>
 
-    <div id="crashShieldSystem" class="hidden fixed inset-0 bg-red-950/95 z-[999999] flex flex-col justify-center align-center p-6 text-center">
-        <i class="fa-solid fa-triangle-exclamation text-red-500 text-6xl mb-4"></i>
-        <h2 class="text-2xl font-black text-white uppercase">Critical Script Blocked</h2>
-        <p id="crashShieldText" class="text-sm text-slate-300 mt-2 max-w-sm mx-auto font-medium">Checking systems...</p>
+    <div id="slide1" class="app-page active flex flex-col justify-between py-12 px-6">
+        <div class="my-auto space-y-4">
+            <div class="w-20 h-20 bg-blue-600/10 border border-blue-500/30 rounded-3xl flex items-center justify-center mx-auto text-3xl text-blue-500 shadow-lg">
+                <i class="fa-solid fa-bolt-lightning"></i>
+            </div>
+            <h1 class="text-3xl font-black italic tracking-tighter">FAST <span class="text-blue-500">CASHFLOW</span></h1>
+            <p class="text-slate-400 text-sm max-w-xs mx-auto">Welcome to the ultra-fast global cash flow node infrastructure network.</p>
+        </div>
+        <button onclick="nextSlide('slide1', 'slide2')" class="btn-action-master py-4 text-sm font-black">Next <i class="fa-solid fa-arrow-right ml-2"></i></button>
     </div>
 
-    <div id="pageRoleSelect" class="app-page active">
+    <div id="slide2" class="app-page flex flex-col justify-between py-12 px-6">
+        <div class="my-auto space-y-4">
+            <div class="w-20 h-20 bg-amber-500/10 border border-amber-500/30 rounded-3xl flex items-center justify-center mx-auto text-3xl text-amber-500 shadow-lg">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h1 class="text-3xl font-black italic tracking-tighter">SECURE <span class="text-amber-500">TRANSIT</span></h1>
+            <p class="text-slate-400 text-sm max-w-xs mx-auto">All physical and digital asset exchanges are fully secured via encrypted handshake tokens.</p>
+        </div>
+        <button onclick="nextSlide('slide2', 'slide3')" class="btn-action-master py-4 text-sm font-black" style="background: linear-gradient(135deg, #f59e0b, #d97706)">Next <i class="fa-solid fa-arrow-right ml-2"></i></button>
+    </div>
+
+    <div id="slide3" class="app-page flex flex-col justify-between py-12 px-6">
+        <div class="my-auto space-y-4">
+            <div class="w-20 h-20 bg-emerald-500/10 border border-emerald-500/30 rounded-3xl flex items-center justify-center mx-auto text-3xl text-emerald-500 shadow-lg">
+                <i class="fa-solid fa-satellite-dish"></i>
+            </div>
+            <h1 class="text-3xl font-black italic tracking-tighter">LIVE <span class="text-emerald-400">RADAR</span></h1>
+            <p class="text-slate-400 text-sm max-w-xs mx-auto">Connect directly with nearest verified field agents in real-time mapping airspace.</p>
+        </div>
+        <button onclick="finishOnboarding()" class="btn-action-master py-4 text-sm font-black" style="background: linear-gradient(135deg, #10b981, #059669)">Get Started <i class="fa-solid fa-check ml-2"></i></button>
+    </div>
+
+
+    <div id="pageRoleSelect" class="app-page">
         <h1 class="text-5xl font-black italic tracking-tighter text-slate-100 mb-2">CASH<span class="text-blue-500">FLOW.</span></h1>
         <p class="text-slate-500 text-[10px] font-black tracking-widest uppercase mb-10">Terminal Setup Layer</p>
         
@@ -78,7 +106,7 @@
         <div class="space-y-3 w-full">
             <input id="regUser" type="email" placeholder="Enter Email Address" class="input-field-core">
             <input id="regPass" type="password" placeholder="Set Password (Min 6 Chars)" class="input-field-core">
-            <input id="regPhone" type="tel" placeholder="Phone Number (e.g., 03001234567)" class="input-field-core">
+            <input id="regPhone" type="tel" placeholder="Phone Number" class="input-field-core">
             <input id="regCNIC" type="number" placeholder="13-Digit CNIC Number" class="input-field-core">
             
             <select id="regCity" class="input-field-core bg-[#15223e] text-slate-300 font-bold">
@@ -89,15 +117,14 @@
             </select>
 
             <div id="agentSelfieBox" class="hidden bg-slate-900 p-4 rounded-xl border border-slate-800 flex flex-col items-center gap-3">
-                <p class="text-[10px] font-black text-amber-500 uppercase tracking-wider"><i class="fa-solid fa-camera mr-1"></i> Live Verification Photo</p>
                 <video id="videoFeed" class="w-full max-h-[140px] bg-black rounded-lg hidden" autoplay playsinline></video>
                 <canvas id="canvasPhoto" class="w-full max-h-[140px] bg-black rounded-lg hidden"></canvas>
                 <img id="photoPreview" class="w-full max-h-[140px] rounded-lg hidden object-cover" src="">
                 <button id="btnTriggerCam" onclick="startCameraSync()" type="button" class="bg-slate-950 border border-slate-800 px-4 py-2 rounded-xl text-xs font-black text-slate-300">Open Camera Feed</button>
-                <button id="btnCaptureCam" onclick="captureSnapshot()" type="button" class="hidden bg-amber-600 px-4 py-2 rounded-xl text-xs font-black text-white">Capture Face Photo</button>
+                <button id="btnCaptureCam" onclick="captureSnapshot()" type="button" class="hidden bg-amber-600 px-4 py-2 rounded-xl text-xs font-black text-white">Capture Photo</button>
             </div>
 
-            <button onclick="executeStrictRegistration()" class="btn-action-master text-xs font-black mt-4">Verify & Securely Register</button>
+            <button onclick="executeStrictRegistration()" class="btn-action-master text-xs font-black mt-4">Verify & Register</button>
             <p onclick="showPage('pageRoleSelect')" class="text-xs text-slate-500 underline pt-2 cursor-pointer">Go Back</p>
         </div>
     </div>
@@ -113,7 +140,7 @@
         <div class="space-y-3 w-full">
             <input id="loginUser" type="email" placeholder="Enter Registered Email" class="input-field-core">
             <input id="loginPass" type="password" placeholder="Enter Password" class="input-field-core">
-            <button onclick="executeSecureLoginAuth()" class="btn-action-master text-white font-bold text-sm shadow-xl">Authorize Terminal Link</button>
+            <button onclick="executeSecureLoginAuth()" class="btn-action-master text-white font-bold text-sm shadow-xl">Authorize Link</button>
             
             <div class="flex items-center my-4 text-slate-600 text-xs font-black"><hr class="flex-1 border-slate-800/80 mr-2">OR<hr class="flex-1 border-slate-800/80 ml-2"></div>
             
@@ -121,8 +148,7 @@
                 <img class="w-5 h-5" src="https://cdnjs.cloudflare.com/ajax/libs/logos/1.0.0/google-icon.svg" alt="Google">
                 Continue with Google
             </button>
-
-            <p onclick="showPage('pageRoleSelect')" class="text-xs text-slate-400 underline pt-4 cursor-pointer">Create New Account / Register</p>
+            <p onclick="showPage('pageRoleSelect')" class="text-xs text-slate-400 underline pt-4 cursor-pointer">Create New Account</p>
         </div>
     </div>
 
@@ -137,7 +163,7 @@
                     </div>
                 </div>
                 <div class="space-y-3 text-xs font-bold text-slate-300">
-                    <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex items-center gap-3"><i class="fa-solid fa-building text-blue-500"></i> Active City: <span id="sideProfileCity" class="text-white uppercase ml-auto">Multan</span></div>
+                    <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex items-center gap-3"><i class="fa-solid fa-building text-blue-500"></i> City: <span id="sideProfileCity" class="text-white uppercase ml-auto">Multan</span></div>
                     <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex items-center gap-3"><i class="fa-solid fa-location-crosshairs text-emerald-400"></i> GPS: <span id="gpsStatusLog" class="text-emerald-400 ml-auto text-[10px]">LOCKING...</span></div>
                 </div>
             </div>
@@ -181,7 +207,7 @@
                             <button onclick="sendMsg()" class="bg-blue-600 text-white px-5 rounded-xl text-xs"><i class="fa-solid fa-paper-plane"></i></button>
                         </div>
                         <div id="otpBox" class="bg-blue-950/60 p-3 rounded-2xl border border-blue-800/60 text-center text-xs font-bold text-blue-400">Key Token: <span id="otpVal" class="font-black text-2xl block mt-1">----</span></div>
-                        <div id="agentOtpBox" class="hidden flex gap-2"><input id="agentOtpInput" placeholder="ENTER 4-DIGIT CODE" class="input-field-core !mb-0 text-center font-black"><button onclick="verifyKeySettle()" class="bg-blue-600 font-black px-5 rounded-xl text-xs text-white">SETTLE</button></div>
+                        <div id="agentOtpBox" class="hidden flex gap-2"><input id="agentOtpInput" placeholder="ENTER CODE" class="input-field-core !mb-0 text-center font-black"><button onclick="verifyKeySettle()" class="bg-blue-600 font-black px-5 rounded-xl text-xs text-white">SETTLE</button></div>
                     </div>
                 </div>
 
@@ -194,30 +220,36 @@
     </div>
 
     <script>
-        // CRITICAL CONFIG SHIELD CHECKER
+        // ONBOARDING ENGINE
+        function nextSlide(currentId, nextId) {
+            document.getElementById(currentId).classList.add('hidden');
+            document.getElementById(currentId).classList.remove('active');
+            document.getElementById(nextId).classList.remove('hidden');
+            document.getElementById(nextId).classList.add('active');
+        }
+
+        function finishOnboarding() {
+            document.getElementById('slide3').classList.add('hidden');
+            document.getElementById('slide3').classList.remove('active');
+            
+            // Check auth state to decide next page
+            if (typeof firebase !== 'undefined' && firebase.auth().currentUser) {
+                showPage('mainApplicationAppFrame');
+            } else {
+                showPage('pageRoleSelect');
+            }
+        }
+
+        // FIREBASE CONNECT
         const firebaseConfig = { databaseURL: "https://cashflow-fa937-default-rtdb.firebaseio.com/" };
         let rtdb = null;
 
-        function log(m) { document.getElementById('sysLog').innerText = m; }
-
-        function triggerSystemCrashAlert(msg) {
-            const shield = document.getElementById('crashShieldSystem');
-            const txt = document.getElementById('crashShieldText');
-            shield.classList.remove('hidden');
-            shield.classList.add('flex');
-            txt.innerText = msg;
-        }
-
-        // FIREBASE ENFORCED ATTACHMENT
         try {
-            if (typeof firebase === 'undefined') {
-                throw new Error("Firebase library blocked by network or browser extensions.");
+            if(typeof firebase !== 'undefined') {
+                firebase.initializeApp(firebaseConfig);
+                rtdb = firebase.database();
             }
-            firebase.initializeApp(firebaseConfig);
-            rtdb = firebase.database();
-        } catch(e) { 
-            triggerSystemCrashAlert("System halt: " + e.message + " Please turn off ad-blockers or check internet."); 
-        }
+        } catch(e) { console.error("Firebase issue:", e); }
         
         let myUID = null;
         let myMeta = JSON.parse(localStorage.getItem('cf_meta_v17_0')) || null; 
@@ -225,18 +257,16 @@
         let selectedRoleType = 'user'; let baseCapturedSelfieRaw = "";
         let globalMyMarker = null; let gpsWatchID = null;
 
-        // SECURE AUTO INITIALIZER
+        function log(m) { document.getElementById('sysLog').innerText = m; }
+
         window.onload = () => {
+            // Keep onboarding as active gate, handle Firebase session silently in background
             if (typeof firebase !== 'undefined' && firebase.auth) {
                 firebase.auth().onAuthStateChanged((user) => {
                     if (user) {
                         myUID = user.uid;
-                        if(myMeta) {
-                            showPage('mainApplicationAppFrame');
-                            selectCoreRole(myMeta.role);
-                        } else { fetchAndRestoreMeta(user.email); }
-                    } else { 
-                        showPage('pageRoleSelect'); 
+                        if(myMeta) { selectCoreRole(myMeta.role); } 
+                        else { fetchAndRestoreMeta(user.email); }
                     }
                 });
             }
@@ -354,7 +384,7 @@
                         }
                     }, null, { enableHighAccuracy: true });
                 }
-            } catch(e) { console.warn("Leaflet Map failed to load map assets.", e); }
+            } catch(e) { console.warn("Leaflet Map failed.", e); }
         }
 
         function selectCoreRole(role) {
