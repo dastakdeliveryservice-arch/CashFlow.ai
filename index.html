@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CASHFLOW GLOBAL - ULTIMATE MASTER ENGINE v16.0</title>
+    <title>CASHFLOW GLOBAL - ULTIMATE MASTER ENGINE v17.5</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -45,7 +45,11 @@
         <div class="my-auto">
             <h1 class="text-5xl font-black italic tracking-tighter text-slate-100 mb-2">CASH<span class="text-blue-500">FLOW.</span></h1>
             <p class="text-slate-400 text-sm mt-4 font-semibold">Instant Localized Physical Liquidity Router.</p>
-            <div class="mt-12 flex justify-center gap-1.5"><span class="w-6 h-1.5 bg-blue-500 rounded-full"></span><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span></div>
+            <div class="mt-12 flex justify-center gap-1.5">
+                <span class="w-6 h-1.5 bg-blue-500 rounded-full"></span>
+                <span class="w-2 h-1.5 bg-slate-800 rounded-full"></span>
+                <span class="w-2 h-1.5 bg-slate-800 rounded-full"></span>
+            </div>
         </div>
         <button onclick="showPage('slide2')" class="btn-action-master p-4 rounded-xl text-xs font-black w-full">PROCEED LINK <i class="fa-solid fa-arrow-right ml-1"></i></button>
     </div>
@@ -55,7 +59,11 @@
             <i class="fa-solid fa-shield-halved text-6xl text-blue-500 mb-6"></i>
             <h2 class="text-3xl font-black text-slate-100">STRICT SECURITY</h2>
             <p class="text-slate-400 text-xs mt-2 px-4">Every operator verified via CNIC & Live Facial Identity Validation Node.</p>
-            <div class="mt-12 flex justify-center gap-1.5"><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span><span class="w-6 h-1.5 bg-blue-500 rounded-full"></span><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span></div>
+            <div class="mt-12 flex justify-center gap-1.5">
+                <span class="w-2 h-1.5 bg-slate-800 rounded-full"></span>
+                <span class="w-6 h-1.5 bg-blue-500 rounded-full"></span>
+                <span class="w-2 h-1.5 bg-slate-800 rounded-full"></span>
+            </div>
         </div>
         <button onclick="showPage('slide3')" class="btn-action-master p-4 rounded-xl text-xs font-black w-full">PROCEED LINK <i class="fa-solid fa-arrow-right ml-1"></i></button>
     </div>
@@ -65,7 +73,11 @@
             <i class="fa-solid fa-satellite-dish text-6xl text-emerald-500 mb-6 animate-pulse"></i>
             <h2 class="text-3xl font-black text-slate-100">LASER AIRSPACE</h2>
             <p class="text-slate-400 text-xs mt-2 px-4">Realtime geospatial matrix connecting liquidity pools within radius instantly.</p>
-            <div class="mt-12 flex justify-center gap-1.5"><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span><span class="w-6 h-1.5 bg-blue-500 rounded-full"></span></div>
+            <div class="mt-12 flex justify-center gap-1.5">
+                <span class="w-2 h-1.5 bg-slate-800 rounded-full"></span>
+                <span class="w-2 h-1.5 bg-slate-800 rounded-full"></span>
+                <span class="w-6 h-1.5 bg-blue-500 rounded-full"></span>
+            </div>
         </div>
         <button onclick="endOnboarding()" class="btn-action-master p-4 rounded-xl text-xs font-black w-full">INITIALIZE TERMINAL</button>
     </div>
@@ -228,12 +240,12 @@
         firebase.initializeApp(firebaseConfig);
         const rtdb = firebase.database();
 
-        let myUID = localStorage.getItem('cf_uid_v16_0') || "NODE-" + Math.floor(100000 + Math.random() * 900000);
-        localStorage.setItem('cf_uid_v16_0', myUID);
+        let myUID = localStorage.getItem('cf_uid_v17_5') || "NODE-" + Math.floor(100000 + Math.random() * 900000);
+        localStorage.setItem('cf_uid_v17_5', myUID);
 
-        let myMeta = JSON.parse(localStorage.getItem('cf_meta_v16_0')) || null; 
+        let myMeta = JSON.parse(localStorage.getItem('cf_meta_v17_5')) || null; 
         let activeRole = 'user'; let activeMap = null; let myMarker = null;
-        let globalOrderID = localStorage.getItem('cf_tx_v16_0') || null;
+        let globalOrderID = localStorage.getItem('cf_tx_v17_5') || null;
         let selectedRoleType = 'user'; let baseCapturedSelfieRaw = "";
 
         function log(m) { document.getElementById('sysLog').innerText = m; }
@@ -281,9 +293,9 @@
 
         function captureSnapshot() {
             const video = document.getElementById('videoFeed'); const canvas = document.getElementById('canvasPhoto');
-            canvas.width = 240; canvas.height = 240; // Hard-scaled to keep size tiny
+            canvas.width = 240; canvas.height = 240;
             canvas.getContext('2d').drawImage(video, 0, 0, 240, 240);
-            baseCapturedSelfieRaw = canvas.toDataURL('image/jpeg', 0.4); // 40% compression ratio
+            baseCapturedSelfieRaw = canvas.toDataURL('image/jpeg', 0.4);
             document.getElementById('photoPreview').src = baseCapturedSelfieRaw;
             document.getElementById('photoPreview').classList.remove('hidden');
             video.classList.add('hidden'); document.getElementById('btnCaptureCam').classList.add('hidden');
@@ -301,13 +313,12 @@
 
             const user = rawUser.toLowerCase().replace(/[\.\#\$\[\]\@]/g, "-");
 
-            if(!user || !pass || !phone || !cnic || !city) { showRegErr("All fields are strictly required."); return; }
+            if(!user || !pass || !phone || !cnic || !city) { showRegErr("All fields are required."); return; }
             if(phone.length < 11) { showRegErr("Mobile number line must be 11 characters."); return; }
             if(cnic.length !== 13) { showRegErr("Identity CNIC must be 13 digits."); return; }
-            if(selectedRoleType === 'agent' && !baseCapturedSelfieRaw) { showRegErr("Agent profile requires facial snapshot capture."); return; }
+            if(selectedRoleType === 'agent' && !baseCapturedSelfieRaw) { showRegErr("Agent profile requires face snap."); return; }
 
-            btn.disabled = true; btn.innerText = "VERIFYING IDENTITY HANDSHAKE...";
-            log("Syncing packet metadata node...");
+            btn.disabled = true; btn.innerText = "VERIFYING IDENTITY...";
 
             rtdb.ref('system_identities/' + city + '/' + user).once('value', snap => {
                 if(snap.exists()) { 
@@ -319,15 +330,12 @@
                         btn.disabled = false; btn.innerText = "Verify & Register Account";
                         if(err) { showRegErr("Database Failure: " + err.message); } 
                         else { 
-                            alert("Registration Successful! Redirecting to secure login."); 
+                            alert("Registration Successful! Redirecting to login."); 
                             document.getElementById('regError').classList.add('hidden');
                             showPage('pageLogin'); 
                         }
                     });
                 }
-            }, (error) => {
-                btn.disabled = false; btn.innerText = "Verify & Register Account";
-                showRegErr("Database Security Denial: " + error.message);
             });
         }
 
@@ -343,10 +351,9 @@
 
             const user = rawUser.toLowerCase().replace(/[\.\#\$\[\]\@]/g, "-");
 
-            if(!user || !pass || !city) { lb.classList.remove('hidden'); lt.innerText = "All fields and city bounds are required."; return; }
+            if(!user || !pass || !city) { lb.classList.remove('hidden'); lt.innerText = "All fields are required."; return; }
 
-            btn.disabled = true; btn.innerText = "AUTHORIZING ACCESS KEY...";
-            log("Querying precise profile route...");
+            btn.disabled = true; btn.innerText = "AUTHORIZING ACCESS...";
 
             rtdb.ref('system_identities/' + city + '/' + user).once('value', snap => {
                 btn.disabled = false; btn.innerText = "Authorize Terminal Link";
@@ -354,15 +361,14 @@
                     const profile = snap.val();
                     if(profile.password === pass) {
                         lb.classList.add('hidden'); myMeta = profile;
-                        localStorage.setItem('cf_meta_v16_0', JSON.stringify(myMeta));
+                        localStorage.setItem('cf_meta_v17_5', JSON.stringify(myMeta));
                         showPage('mainApplicationAppFrame'); selectCoreRole(profile.role);
-                    } else { lb.classList.remove('hidden'); lt.innerText = "Security Alert: Invalid Password Key Mismatch."; }
-                } else { lb.classList.remove('hidden'); lt.innerText = "No profile matched inside the specified city hub."; }
+                    } else { lb.classList.remove('hidden'); lt.innerText = "Security Alert: Invalid Password Key."; }
+                } else { lb.classList.remove('hidden'); lt.innerText = "No profile matched inside this city."; }
             });
         }
 
         function executeGoogleOAuthLink() {
-            log("Configuring Google Handshake...");
             const provider = new firebase.auth.GoogleAuthProvider();
             firebase.auth().signInWithPopup(provider).then((result) => {
                 const user = result.user;
@@ -373,13 +379,13 @@
                         myMeta = { username: cleanGoogleUser, email: user.email, phone: "Google Sync", cnic: "Verified Node", city: "multan", role: "user", selfie: user.photoURL };
                         rtdb.ref('system_identities/multan/' + cleanGoogleUser).set(myMeta);
                     }
-                    localStorage.setItem('cf_meta_v16_0', JSON.stringify(myMeta));
+                    localStorage.setItem('cf_meta_v17_5', JSON.stringify(myMeta));
                     showPage('mainApplicationAppFrame'); selectCoreRole(myMeta.role);
                 });
-            }).catch((err) => { alert("Google Link Error: " + err.message); });
+            }).catch((err) => { alert("Google Auth Error: " + err.message); });
         }
 
-        // ================= DYNAMIC GEOSPATIAL MAP LAYER =================
+        // ================= MAP HUB =================
         function setupMap() {
             if(activeMap) return;
             let coordinates = [30.1575, 71.5249]; 
@@ -391,16 +397,15 @@
 
             let dotColor = myMeta.role === 'user' ? '#10b981' : '#f59e0b';
             myMarker = L.circleMarker(coordinates, { color: dotColor, fillColor: dotColor, fillOpacity: 0.9, radius: 10 }).addTo(activeMap)
-                .bindPopup(`<b>My Node: ${myMeta.username.toUpperCase()}</b>`).openPopup();
+                .bindPopup(`<b>Node: ${myMeta.username.toUpperCase()}</b>`).openPopup();
 
-            // Real Live Location Tracking Trigger
             if(navigator.geolocation) {
                 navigator.geolocation.watchPosition((pos) => {
                     let liveLat = pos.coords.latitude; let liveLng = pos.coords.longitude;
                     let newLoc = [liveLat, liveLng];
                     myMarker.setLatLng(newLoc);
                     activeMap.setView(newLoc, activeMap.getZoom());
-                }, () => { log("GPS Active tracking dropped. Fallback to city anchors."); }, { enableHighAccuracy: true });
+                }, () => {}, { enableHighAccuracy: true });
             }
         }
 
@@ -424,15 +429,15 @@
         document.getElementById('map').addEventListener('click', () => toggleSidebarMenu(false));
         function triggerUserForm(type) { document.getElementById('userHomeMenuLayout').classList.add('hidden'); document.getElementById('userRequestSetupInputs').classList.remove('hidden'); }
 
-        // ================= USER OPERATIONAL BROADCAST MATRIX =================
+        // ================= USER FLOW =================
         function broadcastSignalToNetwork() {
             const amt = document.getElementById('inputAmtValue').value; const tip = document.getElementById('inputTipValue').value;
             const btn = document.getElementById('btnLaunchBroadcast');
             if(!amt || !tip) { alert("Please complete input fields."); return; }
 
-            btn.disabled = true; btn.innerText = "STABILIZING RADAR FIELD...";
+            btn.disabled = true; btn.innerText = "STABILIZING RADAR...";
             globalOrderID = "TX-SIGNAL-" + Date.now();
-            localStorage.setItem('cf_tx_v16_0', globalOrderID);
+            localStorage.setItem('cf_tx_v17_5', globalOrderID);
             const otp = Math.floor(1000 + Math.random() * 8999);
             
             const payload = { id: globalOrderID, clientUID: myUID, clientName: myMeta.username, amount: amt, commission: tip, status: "pending", token: otp, city: myMeta.city, timestamp: Date.now() };
@@ -440,8 +445,7 @@
             
             rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).set(payload, (err) => {
                 btn.disabled = false; btn.innerText = "LAUNCH AIRSPACE BROADCAST";
-                if(err) { log("Data Pipeline Blocked."); } 
-                else { 
+                if(!err) { 
                     document.getElementById('userRequestSetupInputs').classList.add('hidden');
                     document.getElementById('userBiddingMonitorRadarRoom').classList.remove('hidden');
                     listenToSignalLifecycle();
@@ -457,14 +461,13 @@
                     if(data.offers) {
                         Object.keys(data.offers).forEach(k => {
                             const f = data.offers[k];
-                            // Escape text explicitly to prevent XSS script injections
                             let safeAgentName = document.createElement('div'); safeAgentName.innerText = f.agentName.toUpperCase();
                             box.innerHTML += `<div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
                                 <div><p class="text-xs font-black text-white">${safeAgentName.innerHTML}</p><p class="text-[11px] text-blue-400">Bid: PKR ${f.bid}</p></div>
                                 <button onclick="acceptAgentDeal('${f.agentUID}', '${f.bid}')" class="bg-blue-600 text-white text-[10px] px-3 py-1 rounded-lg font-bold">ACCEPT</button>
                             </div>`;
                         });
-                    } else { box.innerHTML = "<p class='text-center text-[10px] text-slate-500 py-4'>Scanning regional signals...</p>"; }
+                    } else { box.innerHTML = "<p class='text-center text-[10px] text-slate-500 py-4'>Scanning airspace...</p>"; }
                 }
                 if(data.status === 'locked') { launchSecureChatRoom(data); }
             });
@@ -476,10 +479,10 @@
         
         function killActiveSignal() { 
             if(globalOrderID) rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).remove(); 
-            localStorage.removeItem('cf_tx_v16_0'); location.reload(); 
+            localStorage.removeItem('cf_tx_v17_5'); location.reload(); 
         }
 
-        // ================= AGENT RADAR AIRSPACE CONTROL =================
+        // ================= AGENT FLOW =================
         function startAgentRadarStream() {
             const container = document.getElementById('agentRadarStreamContainer');
             rtdb.ref('orders/' + myMeta.city).on('value', snap => {
@@ -488,8 +491,7 @@
                 if(snap.exists()) {
                     snap.forEach(child => {
                         const sig = child.val();
-                        // Filter out orders older than 15 minutes (Clean Garbage Collection)
-                        if(sig && Date.now() - sig.timestamp > 900000) return;
+                        if(sig && Date.now() - sig.timestamp > 900000) return; // 15 mins GC expiry
 
                         if(sig && (sig.status === 'pending' || (sig.status === 'countered' && sig.offers && sig.offers[myUID]))) {
                             found = true;
@@ -503,13 +505,13 @@
                         }
                     });
                 }
-                if(!found) container.innerHTML = "<p class='text-center text-xs text-slate-600 py-4'>Waiting for target network broadcasts...</p>";
+                if(!found) container.innerHTML = "<p class='text-center text-xs text-slate-600 py-4'>Listening to matrix streams...</p>";
             });
 
             rtdb.ref('orders/' + myMeta.city).on('child_changed', snap => {
                 const updatedData = snap.val();
                 if(updatedData && updatedData.status === 'locked' && updatedData.chosenAgent === myUID) {
-                    globalOrderID = updatedData.id; localStorage.setItem('cf_tx_v16_0', globalOrderID); launchSecureChatRoom(updatedData);
+                    globalOrderID = updatedData.id; localStorage.setItem('cf_tx_v17_5', globalOrderID); launchSecureChatRoom(updatedData);
                 }
             });
         }
@@ -520,7 +522,7 @@
             rtdb.ref('orders/' + myMeta.city + '/' + targetID).update({ status: 'countered' });
         }
 
-        // ================= SECURE TUNNEL INTEGRATION & RECOVERY =================
+        // ================= SECURE TUNNEL & RECOVERY =================
         function launchSecureChatRoom(tx) {
             document.getElementById('laserRadarAnchor').classList.add('hidden');
             document.getElementById('panelUserDashboard').classList.add('hidden'); document.getElementById('panelAgentDashboard').classList.add('hidden');
@@ -539,7 +541,7 @@
                     snap.forEach(c => {
                         const m = c.val(); 
                         let textWrapper = document.createElement('div');
-                        textWrapper.innerText = atob(m.msg); // Safe decoding text allocation against injection leaks
+                        textWrapper.innerText = atob(m.msg);
                         box.innerHTML += `<div class="p-2 rounded-lg max-w-[80%] text-xs font-semibold ${m.sender === myUID ? 'bg-blue-600 text-white ml-auto' : 'bg-slate-900 text-slate-200'}">${textWrapper.innerHTML}</div>`;
                     });
                 }
@@ -558,8 +560,8 @@
             rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).once('value', snap => {
                 if(snap.val() && snap.val().token == key) {
                     rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).remove();
-                    localStorage.removeItem('cf_tx_v16_0'); location.reload();
-                } else { alert("Verification Mismatch: Code incorrect."); }
+                    localStorage.removeItem('cf_tx_v17_5'); location.reload();
+                } else { alert("Verification Mismatch: Token incorrect."); }
             });
         }
 
@@ -578,7 +580,7 @@
                         launchSecureChatRoom(data); 
                     }
                 } else { 
-                    localStorage.removeItem('cf_tx_v16_0'); globalOrderID = null; 
+                    localStorage.removeItem('cf_tx_v17_5'); globalOrderID = null; 
                     if(activeRole === 'agent') startAgentRadarStream(); 
                 }
             });
