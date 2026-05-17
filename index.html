@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CASHFLOW GLOBAL - ULTRA TERMINAL v10.0</title>
+    <title>CASHFLOW GLOBAL - ULTIMATE CORE v11.0</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -19,7 +19,7 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; color: #0f172a; overflow: hidden; margin: 0; }
         #map { width: 100%; height: 52vh; background: #cbd5e1; z-index: 10; }
         .app-bottom-sheet { background: #ffffff; border-top: 1px solid rgba(0,0,0,0.06); box-shadow: 0 -12px 35px rgba(0,0,0,0.12); border-radius: 32px 32px 0 0; height: 48vh; position: relative; z-index: 100; padding: 24px; overflow-y: auto; }
-        .input-field-core { width: 100%; padding: 14px 16px; border-radius: 14px; background: #f1f5f9; border: 1px solid transparent; color: #0f172a; font-weight: 600; outline: none; transition: 0.2s; }
+        .input-field-core { width: 100%; padding: 14px 16px; border-radius: 14px; background: #f1f5f9; border: 1px solid transparent; color: #0f172a; font-weight: 600; outline: none; transition: 0.2s; margin-bottom: 12px; }
         .input-field-core:focus { background: #ffffff; border-color: #10b981; box-shadow: 0 0 10px rgba(16,185,129,0.1); }
         .btn-action-master { background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s; box-shadow: 0 4px 14px rgba(16,185,129,0.25); }
         .btn-action-master:active { transform: scale(0.97); }
@@ -56,7 +56,7 @@
             <h1 class="text-5xl font-black italic tracking-tighter text-slate-900 mb-1">CASH<span class="text-emerald-500">FLOW.</span></h1>
             <p class="text-slate-400 text-[10px] font-black tracking-widest uppercase">Ecosystem Core Terminal</p>
         </div>
-        <div class="space-y-3">
+        <div class="space-y-1">
             <div id="authNameFieldBox" class="hidden"><input id="inputAuthName" placeholder="Enter Full Name" class="input-field-core"></div>
             <input id="inputAuthEmail" type="email" placeholder="Gmail Address" class="input-field-core">
             <input id="inputAuthPass" type="password" placeholder="Secure Password" class="input-field-core">
@@ -77,10 +77,10 @@
     <div id="verificationStagePanel" class="hidden fixed inset-0 bg-[#ffffff] z-[8500] flex flex-col justify-center px-8">
         <h2 id="verificationViewTitle" class="text-3xl font-black text-slate-900 mb-1">Identity Ledger</h2>
         <p class="text-slate-400 text-[10px] font-black uppercase tracking-wider mb-8">Verification check required to access airspace</p>
-        <div class="space-y-3">
+        <div class="space-y-1">
             <input id="verifyPhone" type="tel" placeholder="Active Phone Number" class="input-field-core">
             <input id="verifyCNIC" placeholder="CNIC Number (13 Digits)" class="input-field-core">
-            <div id="verifyAgentFieldsBlock" class="hidden space-y-3">
+            <div id="verifyAgentFieldsBlock" class="hidden space-y-1">
                 <input id="verifyLicense" placeholder="Driving License Identification #" class="input-field-core">
                 <input id="verifyVehicle" placeholder="Vehicle Registration Number" class="input-field-core">
             </div>
@@ -114,7 +114,7 @@
                         </div>
 
                         <div id="userRequestSetupInputs" class="hidden space-y-3">
-                            <div class="flex justify-between items-center"><span onclick="abortUserSetupForm()" class="text-[10px] font-black text-slate-400 cursor-pointer hover:text-slate-600">← ABORT</span><span id="badgeFormTitle" class="text-[9px] bg-emerald-50 text-emerald-600 border border-emerald-100 px-3 py-1 rounded-full font-black"></span></div>
+                            <div class="flex justify-between items-center mb-2"><span onclick="abortUserSetupForm()" class="text-[10px] font-black text-slate-400 cursor-pointer hover:text-slate-600">← ABORT</span><span id="badgeFormTitle" class="text-[9px] bg-emerald-50 text-emerald-600 border border-emerald-100 px-3 py-1 rounded-full font-black"></span></div>
                             <input id="inputAmtValue" type="number" placeholder="Enter Cash Required Amount (PKR)" class="input-field-core">
                             <input id="inputTipValue" type="number" placeholder="Proposed Delivery Reward Tip (PKR)" class="input-field-core">
                             <button onclick="injectRequestSignalToAirspace()" class="btn-action-master w-full p-4 rounded-2xl text-xs font-black">Broadcast Request Signal</button>
@@ -130,8 +130,12 @@
                                     <span>Live Offer: <strong id="userLiveOfferDisplay">PKR 0</strong></span>
                                     <span>Tip: <strong id="userLiveTipDisplay" class="text-emerald-500">PKR 0</strong></span>
                                 </div>
+                                <div class="bg-amber-100 p-2 rounded-lg border border-amber-200 text-center">
+                                    <p class="text-[8px] font-black text-amber-700 uppercase">Your Security OTP (Share with Agent at delivery)</p>
+                                    <h1 id="userScreenDirectOTPValue" class="text-2xl font-black text-amber-600 tracking-widest">----</h1>
+                                </div>
                                 <div class="flex gap-2">
-                                    <button onclick="increaseUserOfferTipSurge()" class="flex-1 bg-amber-500 text-white font-black text-[10px] p-2 rounded-xl shadow-sm uppercase tracking-wider"><i class="fa-solid fa-bolt mr-1"></i> Raise Reward (+50)</button>
+                                    <button onclick="increaseUserOfferTipSurge()" class="flex-1 bg-emerald-500 text-white font-black text-[10px] p-2 rounded-xl shadow-sm uppercase tracking-wider"><i class="fa-solid fa-bolt mr-1"></i> Raise Reward (+50)</button>
                                     <button onclick="cancelActiveUserRequestSignal()" class="flex-1 bg-red-600 text-white font-black text-[10px] p-2 rounded-xl shadow-sm uppercase tracking-wider"><i class="fa-solid fa-trash-can mr-1"></i> Cancel Req</button>
                                 </div>
                             </div>
@@ -150,6 +154,10 @@
                     </div>
 
                     <div id="secureTransitNodeEndpointTerminal" class="hidden h-full flex flex-col justify-between overflow-hidden">
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-2 mb-2">
+                            <span class="text-[10px] font-black text-emerald-600"><i class="fa-solid fa-shield-halved mr-1"></i> SECURE DECK ACTIVE</span>
+                            <button onclick="location.reload()" class="text-[9px] font-black text-red-500 uppercase">Disconnect</button>
+                        </div>
                         <div id="chatMessagesLoggerContainer" class="flex-1 overflow-y-auto bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-3 flex flex-col gap-2 text-xs"></div>
                         <div class="flex gap-2 mb-3">
                             <input id="inputTerminalChatMessageText" placeholder="Transmit text..." class="input-field-core !p-3.5 !text-xs !mb-0">
@@ -171,7 +179,7 @@
         const firebaseConfig = { databaseURL: "https://cashflow-fa937-default-rtdb.firebaseio.com/" };
         firebase.initializeApp(firebaseConfig); const runtimeDBRef = firebase.database();
         
-        let clientIdentityUIDToken = localStorage.getItem('cf_v10_uid') || "UID-" + Math.floor(1000 + Math.random() * 9000); localStorage.setItem('cf_v10_uid', clientIdentityUIDToken);
+        let clientIdentityUIDToken = localStorage.getItem('cf_v11_uid') || "UID-" + Math.floor(1000 + Math.random() * 9000); localStorage.setItem('cf_v11_uid', clientIdentityUIDToken);
         let activeOperationalRole = 'user'; let verifiedProfileMeta = null; let leafletMapEngineObj = null;
         let activeBroadcastOrderID = null; let isRadarListeningActive = false; let currentAuthModeState = 'login';
 
@@ -195,14 +203,14 @@
             if(!email || !pass || (currentAuthModeState === 'register' && !name)) { alert("Fields cannot be blank."); return; }
             
             verifiedProfileMeta = { name: currentAuthModeState === 'register' ? name : email.split('@')[0], email, role: 'user', pic: "https://api.dicebear.com/7.x/bottts/svg?seed=" + clientIdentityUIDToken, isVerifiedNode: false };
-            localStorage.setItem('cf_v10_auth_session', JSON.stringify(verifiedProfileMeta));
+            localStorage.setItem('cf_v11_auth_session', JSON.stringify(verifiedProfileMeta));
             document.getElementById('authStagePanel').classList.add('hidden');
             document.getElementById('roleSelectorStagePanel').classList.remove('hidden');
         }
 
         function selectProfileRoleNode(role) {
             activeOperationalRole = role; verifiedProfileMeta.role = role;
-            localStorage.setItem('cf_v10_runtime_role', role);
+            localStorage.setItem('cf_v11_runtime_role', role);
             document.getElementById('roleSelectorStagePanel').classList.add('hidden');
             document.getElementById('verificationStagePanel').classList.remove('hidden');
             if(role === 'agent') {
@@ -220,7 +228,7 @@
                 verifiedProfileMeta.license = document.getElementById('verifyLicense').value;
                 verifiedProfileMeta.vehicle = document.getElementById('verifyVehicle').value;
             }
-            localStorage.setItem('cf_v10_auth_session', JSON.stringify(verifiedProfileMeta));
+            localStorage.setItem('cf_v11_auth_session', JSON.stringify(verifiedProfileMeta));
             document.getElementById('verificationStagePanel').classList.add('hidden');
             initializeCoreApplicationWorkflowWindow();
         }
@@ -238,13 +246,13 @@
 
         function handleDynamicProfileSwitch() {
             if(activeOperationalRole === 'user') {
-                if(verifiedProfileMeta.vehicle) { activeOperationalRole = 'agent'; localStorage.setItem('cf_v10_runtime_role', 'agent'); initializeCoreApplicationWorkflowWindow(); } 
+                if(verifiedProfileMeta.vehicle) { activeOperationalRole = 'agent'; localStorage.setItem('cf_v11_runtime_role', 'agent'); initializeCoreApplicationWorkflowWindow(); } 
                 else { document.getElementById('mainApplicationAppFrame').classList.add('hidden'); document.getElementById('verificationViewTitle').innerText = "Agent Compliance Registry"; document.getElementById('verifyAgentFieldsBlock').classList.remove('hidden'); document.getElementById('verificationStagePanel').classList.remove('hidden'); }
-            } else { activeOperationalRole = 'user'; localStorage.setItem('cf_v10_runtime_role', 'user'); if(isRadarListeningActive) toggleAgentRadarScanningState(); initializeCoreApplicationWorkflowWindow(); }
+            } else { activeOperationalRole = 'user'; localStorage.setItem('cf_v11_runtime_role', 'user'); if(isRadarListeningActive) toggleAgentRadarScanningState(); initializeCoreApplicationWorkflowWindow(); }
         }
 
         function initializeCoreApplicationWorkflowWindow() {
-            activeOperationalRole = localStorage.getItem('cf_v10_runtime_role') || 'user';
+            activeOperationalRole = localStorage.getItem('cf_v11_runtime_role') || 'user';
             document.getElementById('mainApplicationAppFrame').classList.remove('hidden'); 
             setupStandardCleanLeafletMap();
             document.getElementById('panelUserDashboard').classList.toggle('hidden', activeOperationalRole !== 'user');
@@ -255,15 +263,18 @@
         function triggerRequestConfigForm(type) { document.getElementById('userHomeMenuLayout').classList.add('hidden'); document.getElementById('userRequestSetupInputs').classList.remove('hidden'); document.getElementById('badgeFormTitle').innerText = type; }
         function abortUserSetupForm() { document.getElementById('userRequestSetupInputs').classList.add('hidden'); document.getElementById('userHomeMenuLayout').classList.remove('hidden'); }
 
-        // EXPLICIT ROOT RE-PATH TRIGGER FOR FIREBASE
+        // EXPLICIT ROOT AUTO-PATH TRIGGER & INSTANT OTP SYSTEM
         function injectRequestSignalToAirspace() {
             const id = "TX-SIGNAL-" + Date.now(); activeBroadcastOrderID = id;
             const cityNode = verifiedProfileMeta.city || 'multan';
+            const generatedOTP = Math.floor(1000 + Math.random() * 8999);
             
-            const dataPayload = { id, uid: clientIdentityUIDToken, uName: verifiedProfileMeta.name, uPic: verifiedProfileMeta.pic, city: cityNode, amt: document.getElementById('inputAmtValue').value, comm: document.getElementById('inputTipValue').value, type: document.getElementById('badgeFormTitle').innerText, status: 'pending', views: 1, otp: Math.floor(1000 + Math.random() * 8999), timestamp: Date.now() };
+            const dataPayload = { id, uid: clientIdentityUIDToken, uName: verifiedProfileMeta.name, uPic: verifiedProfileMeta.pic, city: cityNode, amt: document.getElementById('inputAmtValue').value, comm: document.getElementById('inputTipValue').value, type: document.getElementById('badgeFormTitle').innerText, status: 'pending', views: 1, otp: generatedOTP, timestamp: Date.now() };
+            
+            document.getElementById('userScreenDirectOTPValue').innerText = generatedOTP;
             
             runtimeDBRef.ref('orders/' + cityNode + '/' + id).set(dataPayload, (error) => {
-                if(error) { alert("Firebase write blocked! Check your Rules tab."); }
+                if(error) { alert("Firebase write blocked! Check Rules tab."); }
             });
             
             document.getElementById('userRequestSetupInputs').classList.add('hidden');
@@ -327,7 +338,7 @@
             else { runtimeDBRef.ref('orders/' + cityNode + '/' + activeBroadcastOrderID + '/bids/' + agentUID).remove(); }
         }
 
-        // AGENT RADAR ENGINE FIXED
+        // AGENT RADAR SYSTEM
         function toggleAgentRadarScanningState(forceState = null) {
             isRadarListeningActive = (forceState !== null) ? forceState : !isRadarListeningActive;
             const btn = document.getElementById('agentRadarLifecycleBtn'); if(!btn) return;
@@ -388,7 +399,7 @@
 
         function launchSecureTransitNodeTerminalPanel(tx) {
             const cityNode = verifiedProfileMeta.city || 'multan';
-            document.getElementById('userBiddingMonitorRadarRoom').classList.add('hidden');
+            document.getElementById('panelUserDashboard').classList.add('hidden');
             document.getElementById('panelAgentDashboard').classList.add('hidden');
             document.getElementById('secureTransitNodeEndpointTerminal').classList.remove('hidden');
             
@@ -416,14 +427,14 @@
             const cityNode = verifiedProfileMeta.city || 'multan';
             runtimeDBRef.ref('orders/' + cityNode + '/' + activeBroadcastOrderID).once('value', s => {
                 if(s.val() && s.val().otp == ent) {
-                    alert("Settlement Pin Match! System branch closed successfully.");
+                    alert("Settlement Pin Match! Order closed successfully.");
                     runtimeDBRef.ref('orders/' + cityNode + '/' + activeBroadcastOrderID).remove();
                     location.reload();
-                } else { alert("Verification key hash mismatch error."); }
+                } else { alert("Verification key mismatch error."); }
             });
         }
 
-        window.onload = () => { const cache = localStorage.getItem('cf_v10_auth_session'); if(cache) { verifiedProfileMeta = JSON.parse(cache); activeOperationalRole = localStorage.getItem('cf_v10_runtime_role') || 'user'; document.getElementById('authStagePanel').classList.add('hidden'); initializeCoreApplicationWorkflowWindow(); } }
+        window.onload = () => { const cache = localStorage.getItem('cf_v11_auth_session'); if(cache) { verifiedProfileMeta = JSON.parse(cache); activeOperationalRole = localStorage.getItem('cf_v11_runtime_role') || 'user'; document.getElementById('authStagePanel').classList.add('hidden'); initializeCoreApplicationWorkflowWindow(); } }
     </script>
 </body>
 </html>
