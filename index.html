@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CASHFLOW GLOBAL - ULTRA MASTER ENGINE v17.0</title>
+    <title>CASHFLOW GLOBAL - ULTRA MASTER ENGINE v17.2</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -32,7 +32,7 @@
         .input-field-core { width: 100%; padding: 12px 16px; border-radius: 14px; background: #15223e; border: 1px solid #223863; color: #f8fafc; font-weight: 600; outline: none; margin-bottom: 10px; text-align: center; transition: 0.3s; }
         .input-field-core:focus { border-color: #3b82f6; background: #0a1120; }
         
-        .btn-action-master { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s; box-shadow: 0 4px 15px rgba(37,99,235,0.3); cursor: pointer; }
+        .btn-action-master { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s; box-shadow: 0 4px 15px rgba(37,99,235,0.3); cursor: pointer; padding: 14px; width: 100%; border-radius: 12px; }
         .btn-action-master:active { transform: scale(0.96); }
         
         /* Master Page Visibility Engine */
@@ -70,7 +70,7 @@
         <i class="fa-solid fa-satellite-dish text-6xl text-emerald-500 mb-6 animate-pulse"></i>
         <h2 class="text-3xl font-black text-slate-100">LASER AIRSPACE</h2>
         <p class="text-slate-400 text-xs mt-2 px-4">Realtime geospatial matrix connecting liquidity pools within radius instantly.</p>
-        <button onclick="endOnboarding()" class="btn-action-master mt-10 p-4 rounded-xl text-xs font-black w-full">INITIALIZE TERMINAL</button>
+        <button onclick="endOnboarding()" class="btn-action-master mt-10 text-xs font-black">INITIALIZE TERMINAL</button>
     </div>
 
     <div id="pageRoleSelect" class="app-page">
@@ -113,7 +113,7 @@
                 <button id="btnCaptureCam" onclick="captureSnapshot()" type="button" class="hidden bg-amber-600 px-4 py-2 rounded-xl text-xs font-black text-white cursor-pointer">Capture Face Photo</button>
             </div>
 
-            <button onclick="executeStrictRegistration()" class="btn-action-master w-full p-4 rounded-xl text-xs font-black mt-4">Verify & Securely Register</button>
+            <button onclick="executeStrictRegistration()" class="btn-action-master text-xs font-black mt-4">Verify & Securely Register</button>
             <p onclick="showPage('pageRoleSelect')" class="text-xs text-slate-500 underline pt-2 cursor-pointer">Go Back</p>
         </div>
     </div>
@@ -129,7 +129,7 @@
         <div class="space-y-3 w-full">
             <input id="loginUser" type="email" placeholder="Enter Registered Email" class="input-field-core">
             <input id="loginPass" type="password" placeholder="Enter Password" class="input-field-core">
-            <button onclick="executeSecureLoginAuth()" class="btn-action-master w-full p-4 rounded-xl text-white font-bold text-sm shadow-xl">Authorize Terminal Link</button>
+            <button onclick="executeSecureLoginAuth()" class="btn-action-master text-white font-bold text-sm shadow-xl">Authorize Terminal Link</button>
             
             <div class="flex items-center my-4 text-slate-600 text-xs font-black"><hr class="flex-1 border-slate-800/80 mr-2">OR CONNECT WITH<hr class="flex-1 border-slate-800/80 ml-2"></div>
             
@@ -179,7 +179,7 @@
                         <div id="userRequestSetupInputs" class="hidden space-y-2">
                             <input id="inputAmtValue" type="number" placeholder="Amount (PKR)" class="input-field-core">
                             <input id="inputTipValue" type="number" placeholder="Commission Reward (PKR)" class="input-field-core">
-                            <button onclick="broadcastSignalToNetwork()" class="btn-action-master w-full p-4 rounded-xl text-xs font-black">LAUNCH AIRSPACE BROADCAST</button>
+                            <button onclick="broadcastSignalToNetwork()" class="btn-action-master text-xs font-black">LAUNCH AIRSPACE BROADCAST</button>
                         </div>
 
                         <div id="userBiddingMonitorRadarRoom" class="hidden space-y-3 bg-slate-900 p-4 rounded-2xl border border-slate-800">
@@ -233,7 +233,7 @@
 
         function log(m) { document.getElementById('sysLog').innerText = m; }
 
-        // ================= POINT 2: REALTIME HARDWARE INTERNET CONNECTION LAYER =================
+        // ================= POINT 2: REALTIME INTERNET CONNECTION LAYER =================
         window.addEventListener('online', () => document.getElementById('offlineOverlayShield').style.display = 'none');
         window.addEventListener('offline', () => document.getElementById('offlineOverlayShield').style.display = 'flex');
 
@@ -341,7 +341,7 @@
             if(activeStreamRef) activeStreamRef.getTracks().forEach(t => t.stop());
         }
 
-        // SECURE SIGNUP
+        // SECURE SIGNUP WITH ENFORCED DIAGNOSTIC CATCH
         function executeStrictRegistration() {
             const email = document.getElementById('regUser').value.trim(); const pass = document.getElementById('regPass').value.trim();
             const phone = document.getElementById('regPhone').value.trim(); const cnic = document.getElementById('regCNIC').value.trim();
@@ -351,13 +351,15 @@
             if(pass.length < 6) { showRegErr("Password must be at least 6 characters."); return; }
             if(selectedRoleType === 'agent' && !baseCapturedSelfieRaw) { showRegErr("Biometric Snapshot Missing."); return; }
 
-            log("Enrolling unique crypto layer profile...");
+            log("Enrolling unique profile node...");
             firebase.auth().createUserWithEmailAndPassword(email, pass).then((credential) => {
                 myUID = credential.user.uid; let pathEmailNode = email.replace(/[\.\#\$\[\]\@]/g, "-");
                 myMeta = { username: email.split('@')[0], email: email, phone: phone, cnic: cnic, city: city, role: selectedRoleType, selfie: baseCapturedSelfieRaw || "none" };
                 rtdb.ref('system_identities/' + city + '/' + pathEmailNode).set(myMeta).then(() => {
                     localStorage.setItem('cf_meta_v17_0', JSON.stringify(myMeta));
-                    alert("Account setup completed!"); showPage('mainApplicationAppFrame'); selectCoreRole(selectedRoleType);
+                    alert("Account setup completed successfully!"); 
+                    showPage('mainApplicationAppFrame'); 
+                    selectCoreRole(selectedRoleType);
                 });
             }).catch(err => { showRegErr(err.message); });
         }
@@ -384,7 +386,7 @@
                 if(myMeta) {
                     localStorage.setItem('cf_meta_v17_0', JSON.stringify(myMeta));
                     showPage('mainApplicationAppFrame'); selectCoreRole(myMeta.role);
-                } else { showLoginErr("Identity error. Re-register."); }
+                } else { showLoginErr("Identity node not found. Re-register."); }
             });
         }
 
@@ -445,7 +447,7 @@
         document.getElementById('map').addEventListener('click', () => toggleSidebarMenu(false));
         function triggerUserForm(type) { document.getElementById('userHomeMenuLayout').classList.add('hidden'); document.getElementById('userRequestSetupInputs').classList.remove('hidden'); }
 
-        // ================= POINT 5: BROADCAST SIGNAL + 10 MIN TIMEOUT TIMEOUT LAYER =================
+        // BROADCAST SIGNAL WITH 10 MIN SECURE EXPIRY TIMEOUT ENGINE
         function broadcastSignalToNetwork() {
             const amt = document.getElementById('inputAmtValue').value; const tip = document.getElementById('inputTipValue').value;
             if(!amt || !tip) { alert("Please complete input fields."); return; }
@@ -472,10 +474,10 @@
             rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).on('value', snap => {
                 const data = snap.val(); if(!data) return;
 
-                // POINT 5: 10 Minute Request Signal Expiry Rule Check (600,000 milliseconds)
+                // 10 Minute Request Signal Expiry Rule Check
                 if(data.status === 'pending' && (Date.now() - data.timestamp > 600000)) {
                     log("Signal Expired due to Timeout.");
-                    triggerLocalDeviceAlert("Signal Terminal Expired", "No response found within 10 minutes airspace sweep.");
+                    triggerLocalDeviceAlert("Signal Terminal Expired", "No response found within airspace network scan window.");
                     killActiveSignal();
                     return;
                 }
@@ -520,8 +522,7 @@
                         const sig = child.val();
                         if(sig && (sig.status === 'pending' || (sig.status === 'countered' && sig.offers && sig.offers[myUID]))) {
                             found = true;
-                            // POINT 1: Local Device Vibrate Alert trigger on detection
-                            triggerLocalDeviceAlert("New Airspace Request Detected", `PKR ${sig.amount} needed in your operational boundary.`);
+                            triggerLocalDeviceAlert("New Airspace Request", `PKR ${sig.amount} needed in your operational boundary.`);
                             container.innerHTML = `
                                 <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-3">
                                     <div class="flex justify-between items-center text-[10px] font-bold text-slate-400"><span>CLIENT: ${sig.clientName.toUpperCase()}</span></div>
@@ -549,7 +550,7 @@
             rtdb.ref('orders/' + myMeta.city + '/' + targetID).update({ status: 'countered' });
         }
 
-        // ================= POINT 4: CRYPTOGRAPHIC CIPHER ROOM (END-TO-END BASE64 LAYERING) =================
+        // CRYPTOGRAPHIC CIPHER ROOM (END-TO-END BASE64 LAYERING)
         function launchSecureChatRoom(tx) {
             document.getElementById('laserRadarAnchor').classList.add('hidden');
             document.getElementById('panelUserDashboard').classList.add('hidden'); document.getElementById('panelAgentDashboard').classList.add('hidden');
@@ -563,11 +564,8 @@
                 if(snap.exists()) {
                     snap.forEach(c => {
                         const m = c.val(); const isMe = m.sender === myUID;
-                        
-                        // POINT 4: Decrypting the cipher string data securely on runtime interface view
                         let decryptedStringMessage = "Decryption Fault.";
                         try { decryptedStringMessage = atob(m.msg); } catch(e) { decryptedStringMessage = m.msg; }
-
                         box.innerHTML += `<div class="p-2.5 rounded-xl max-w-[80%] ${isMe ? 'bg-blue-600 text-white ml-auto' : 'bg-slate-900 border border-slate-800 text-slate-200'}">${decryptedStringMessage}</div>`;
                     });
                 }
@@ -586,10 +584,7 @@
 
         function sendMsg() {
             const val = document.getElementById('chatInput').value; if(!val) return;
-            
-            // POINT 4: Encrypting string via Base64 Crypto Cipher before pushing packets to cloud database
             let encryptedStringMessage = btoa(val);
-
             rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID + '/chats').push({ sender: myUID, msg: encryptedStringMessage });
             document.getElementById('chatInput').value = "";
         }
@@ -600,7 +595,7 @@
                 if(snap.val() && snap.val().token == key) {
                     rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).remove();
                     if(window.partnerMarker) activeMap.removeLayer(window.partnerMarker);
-                    localStorage.removeItem('cf_tx_v16_0'); localStorage.removeItem('cf_tx_v17_0');
+                    localStorage.removeItem('cf_tx_v17_0');
                     setTimeout(() => { location.reload(); }, 1000);
                 } else { alert("Verification Key Mismatch."); }
             });
