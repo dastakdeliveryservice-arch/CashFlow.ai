@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CASHFLOW GLOBAL - ULTIMATE MASTER ENGINE v15.3</title>
+    <title>CASHFLOW GLOBAL - ULTIMATE MASTER ENGINE v15.5</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -16,7 +16,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-auth-compat.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;600;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #070b12; color: #f8fafc; overflow: hidden; margin: 0; }
         
         /* Laser Wave Pulse Animation */
@@ -35,7 +35,7 @@
         .btn-action-master { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s; box-shadow: 0 4px 15px rgba(37,99,235,0.3); }
         .btn-action-master:active { transform: scale(0.96); }
         
-        /* Fixed Page Display Structure */
+        /* Master Page Visibility Engine */
         .app-page { display: none; position: fixed; inset: 0; background: #070b12; z-index: 9000; flex-direction: column; justify-content: center; padding: 32px; text-align: center; }
         .app-page.active { display: flex !important; }
     </style>
@@ -59,7 +59,7 @@
         <i class="fa-solid fa-satellite-dish text-6xl text-emerald-500 mb-6 animate-pulse"></i>
         <h2 class="text-3xl font-black text-slate-100">LASER AIRSPACE</h2>
         <p class="text-slate-400 text-xs mt-2 px-4">Realtime geospatial matrix connecting liquidity pools within radius instantly.</p>
-        <button onclick="endOnboarding()" class="btn-action-master mt-10 p-4 rounded-xl text-xs font-black w-full">INITIALIZE TERMINAL</button>
+        <button onclick="endOnboarding()" class="btn-action-master mt-10 p-4 rounded-xl text-xs font-black w-full cursor-pointer">INITIALIZE TERMINAL</button>
     </div>
 
     <div id="pageRoleSelect" class="app-page">
@@ -214,29 +214,53 @@
         firebase.initializeApp(firebaseConfig);
         const rtdb = firebase.database();
 
-        let myUID = localStorage.getItem('cf_uid_v15_3') || "NODE-" + Math.floor(100000 + Math.random() * 900000);
-        localStorage.setItem('cf_uid_v15_3', myUID);
+        let myUID = localStorage.getItem('cf_uid_v15_5') || "NODE-" + Math.floor(100000 + Math.random() * 900000);
+        localStorage.setItem('cf_uid_v15_5', myUID);
 
-        let myMeta = JSON.parse(localStorage.getItem('cf_meta_v15_3')) || null; 
-        let activeRole = 'user'; let activeMap = null; let globalOrderID = localStorage.getItem('cf_tx_v15_3') || null;
+        let myMeta = JSON.parse(localStorage.getItem('cf_meta_v15_5')) || null; 
+        let activeRole = 'user'; let activeMap = null; let globalOrderID = localStorage.getItem('cf_tx_v15_5') || null;
         let selectedRoleType = 'user'; let baseCapturedSelfieRaw = "";
 
         function log(m) { document.getElementById('sysLog').innerText = m; }
 
-        // FAST ONBOARDING CYCLE TIMERS
+        // AUTOMATIC SLIDE ROTATION HANDLER
         window.onload = () => {
             if(myMeta) {
                 showPage('mainApplicationAppFrame');
                 selectCoreRole(myMeta.role);
             } else {
-                setTimeout(() => { document.getElementById('slide1').classList.remove('active'); document.getElementById('slide2').classList.add('active'); }, 1200);
-                setTimeout(() => { document.getElementById('slide2').classList.remove('active'); document.getElementById('slide3').classList.add('active'); }, 2400);
+                setTimeout(() => { 
+                    if(!myMeta && document.getElementById('slide1').classList.contains('active')) {
+                        document.getElementById('slide1').classList.remove('active'); 
+                        document.getElementById('slide1').classList.add('hidden');
+                        document.getElementById('slide2').classList.remove('hidden');
+                        document.getElementById('slide2').classList.add('active'); 
+                    }
+                }, 1200);
+                setTimeout(() => { 
+                    if(!myMeta && document.getElementById('slide2').classList.contains('active')) {
+                        document.getElementById('slide2').classList.remove('active'); 
+                        document.getElementById('slide2').classList.add('hidden');
+                        document.getElementById('slide3').classList.remove('hidden');
+                        document.getElementById('slide3').classList.add('active'); 
+                    }
+                }, 2400);
             }
         }
 
-        function endOnboarding() { showPage('pageRoleSelect'); }
+        // ABSOLUTE CLEARANCE OF ALL ONBOARDING ELEMENTS
+        function endOnboarding() { 
+            document.getElementById('slide1').classList.remove('active');
+            document.getElementById('slide1').classList.add('hidden');
+            document.getElementById('slide2').classList.remove('active');
+            document.getElementById('slide2').classList.add('hidden');
+            document.getElementById('slide3').classList.remove('active');
+            document.getElementById('slide3').classList.add('hidden');
+            
+            showPage('pageRoleSelect'); 
+        }
         
-        // PURE PAGE TOGGLE FUNCTION WITH FORCED CLASS MANAGEMENT
+        // GLOBAL DISPLAY SWITCH MANAGER
         function showPage(id) {
             document.querySelectorAll('.app-page, #mainApplicationAppFrame').forEach(p => {
                 p.classList.add('hidden');
@@ -270,19 +294,16 @@
                 const user = result.user;
                 log(`Authorized email user: ${user.email}`);
                 
-                // Extracting valid clean key name for DB
                 let cleanGoogleUser = user.email.split('@')[0].replace(/[^a-zA-Z0-9]/g, "");
 
-                // Check or Create Entry inside Firebase
                 rtdb.ref('system_identities/multan/' + cleanGoogleUser).once('value', snap => {
                     if(snap.exists()) {
                         myMeta = snap.val();
                     } else {
-                        // Default profile injection loop
                         myMeta = { username: cleanGoogleUser, email: user.email, phone: "Google Sync ID", cnic: "Verified Node", city: "multan", role: "user", selfie: user.photoURL };
                         rtdb.ref('system_identities/multan/' + cleanGoogleUser).set(myMeta);
                     }
-                    localStorage.setItem('cf_meta_v15_3', JSON.stringify(myMeta));
+                    localStorage.setItem('cf_meta_v15_5', JSON.stringify(myMeta));
                     document.getElementById('loginError').classList.add('hidden');
                     showPage('mainApplicationAppFrame');
                     selectCoreRole(myMeta.role);
@@ -345,7 +366,7 @@
 
         function showRegErr(m) { const eb = document.getElementById('regError'); eb.classList.remove('hidden'); document.getElementById('regErrorText').innerText = m; }
 
-        // ================= SECURE MANUAL LOGIN AUTH (RED ERROR ENFORCED) =================
+        // ================= SECURE MANUAL LOGIN AUTH =================
         function executeSecureLoginAuth() {
             const user = document.getElementById('loginUser').value.trim().toLowerCase();
             const pass = document.getElementById('loginPass').value.trim();
@@ -366,10 +387,9 @@
 
                 if(verifiedProfile) {
                     lb.classList.add('hidden'); myMeta = verifiedProfile;
-                    localStorage.setItem('cf_meta_v15_3', JSON.stringify(myMeta));
+                    localStorage.setItem('cf_meta_v15_5', JSON.stringify(myMeta));
                     showPage('mainApplicationAppFrame'); selectCoreRole(verifiedProfile.role);
                 } else {
-                    // FLASH LIVE RED ERROR ALERT WINDOW
                     lb.classList.remove('hidden'); lt.innerText = "❌ Security Alert: Invalid Username or Password Key Hash Mismatch.";
                 }
             });
@@ -378,7 +398,7 @@
         // ================= GEOSPATIAL MAP DRAW ENGINE =================
         function setupMap() {
             if(activeMap) return;
-            let coordinates = [30.1575, 71.5249]; // Default Multan Location Coordinates
+            let coordinates = [30.1575, 71.5249]; 
             if(myMeta && myMeta.city === 'lahore') coordinates = [31.5204, 74.3587];
             if(myMeta && myMeta.city === 'karachi') coordinates = [24.8607, 67.0011];
 
@@ -411,19 +431,18 @@
         document.getElementById('map').addEventListener('click', () => toggleSidebarMenu(false));
         function triggerUserForm(type) { document.getElementById('userHomeMenuLayout').classList.add('hidden'); document.getElementById('userRequestSetupInputs').classList.remove('hidden'); }
 
-        // ================= SYSTEM BROADCST INTERACTION LAYER =================
+        // ================= SYSTEM BROADCAST INTERACTION LAYER =================
         function broadcastSignalToNetwork() {
             const amt = document.getElementById('inputAmtValue').value; const tip = document.getElementById('inputTipValue').value;
             if(!amt || !tip) { alert("Please complete input fields."); return; }
 
             globalOrderID = "TX-SIGNAL-" + Date.now();
-            localStorage.setItem('cf_tx_v15_3', globalOrderID);
+            localStorage.setItem('cf_tx_v15_5', globalOrderID);
             const otp = Math.floor(1000 + Math.random() * 8999);
             
-            // EXACT DATA STRUCTURE MATCH WITH SCREENSHOT (orders -> city -> token)
             const payload = { id: globalOrderID, clientUID: myUID, clientName: myMeta.username, amount: amt, commission: tip, status: "pending", token: otp, city: myMeta.city };
 
-            document.getElementById('laserRadarAnchor').classList.remove('hidden'); // Turn on live laser element
+            document.getElementById('laserRadarAnchor').classList.remove('hidden'); 
             
             rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).set(payload, (err) => {
                 if(err) { log("Data Pipeline Blocked."); } 
@@ -443,7 +462,6 @@
                     if(data.offers) {
                         Object.keys(data.offers).forEach(k => {
                             const f = data.offers[k];
-                            // AGENT IDENTITY CARD FEATURING LIVE PHOTO CAPTURED AT VERIFICATION GATE
                             box.innerHTML += `
                                 <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center shadow-md">
                                     <div class="flex items-center gap-2">
@@ -460,7 +478,7 @@
         }
 
         function acceptAgentDeal(auid, finalBid) { rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).update({ status: 'locked', chosenAgent: auid, commission: finalBid }); }
-        function killActiveSignal() { if(globalOrderID) rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).remove(); document.getElementById('laserRadarAnchor').classList.add('hidden'); localStorage.removeItem('cf_tx_v15_3'); location.reload(); }
+        function killActiveSignal() { if(globalOrderID) rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).remove(); document.getElementById('laserRadarAnchor').classList.add('hidden'); localStorage.removeItem('cf_tx_v15_5'); location.reload(); }
 
         // ================= AGENT RADAR LISTENER NODE =================
         function startAgentRadarStream() {
@@ -489,7 +507,7 @@
             rtdb.ref('orders/' + myMeta.city).on('child_changed', snap => {
                 const updatedData = snap.val();
                 if(updatedData && updatedData.status === 'locked' && updatedData.chosenAgent === myUID) {
-                    globalOrderID = updatedData.id; localStorage.setItem('cf_tx_v15_3', globalOrderID); launchSecureChatRoom(updatedData);
+                    globalOrderID = updatedData.id; localStorage.setItem('cf_tx_v15_5', globalOrderID); launchSecureChatRoom(updatedData);
                 }
             });
         }
@@ -532,7 +550,7 @@
             rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).once('value', snap => {
                 if(snap.val() && snap.val().token == key) {
                     rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).remove();
-                    localStorage.removeItem('cf_tx_v15_3'); setTimeout(() => { location.reload(); }, 1000);
+                    localStorage.removeItem('cf_tx_v15_5'); setTimeout(() => { location.reload(); }, 1000);
                 } else { alert("Verification Token Security Mismatch."); }
             });
         }
@@ -546,7 +564,7 @@
                         document.getElementById('userBiddingMonitorRadarRoom').classList.remove('hidden');
                         listenToSignalLifecycle();
                     } else if(activeRole === 'agent' && data.chosenAgent === myUID) { launchSecureChatRoom(data); }
-                } else { localStorage.removeItem('cf_tx_v15_3'); globalOrderID = null; if(activeRole === 'agent') startAgentRadarStream(); }
+                } else { localStorage.removeItem('cf_tx_v15_5'); globalOrderID = null; if(activeRole === 'agent') startAgentRadarStream(); }
             });
         }
     </script>
