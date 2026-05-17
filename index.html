@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CASHFLOW GLOBAL - ULTIMATE MASTER ENGINE v15.7</title>
+    <title>CASHFLOW GLOBAL - ULTIMATE MASTER ENGINE v15.8</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -19,7 +19,6 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;600;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #070b12; color: #f8fafc; overflow: hidden; margin: 0; }
         
-        /* Laser Wave Pulse Animation */
         .laser-ripple { position: absolute; border: 3px solid #3b82f6; border-radius: 50%; animation: ripple 2s infinite linear; opacity: 0; pointer-events: none; }
         @keyframes ripple {
             0% { width: 0px; height: 0px; opacity: 0.9; transform: translate(-50%, -50%); }
@@ -35,7 +34,6 @@
         .btn-action-master { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s; box-shadow: 0 4px 15px rgba(37,99,235,0.3); cursor: pointer; }
         .btn-action-master:active { transform: scale(0.96); }
         
-        /* Master Page Visibility Engine */
         .app-page { display: none; position: fixed; inset: 0; background: #070b12; z-index: 9000; flex-direction: column; justify-content: center; padding: 32px; text-align: center; }
         .app-page.active { display: flex !important; }
     </style>
@@ -46,7 +44,7 @@
         <div class="my-auto">
             <h1 class="text-5xl font-black italic tracking-tighter text-slate-100 mb-2">CASH<span class="text-blue-500">FLOW.</span></h1>
             <p class="text-slate-400 text-sm mt-4 font-semibold">Instant Localized Physical Liquidity Router.</p>
-            <div class="mt-12 flex justify-center gap-1.5"><span class="w-6 h-1.5 bg-blue-500 rounded-full"></span><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span></div>
+            <div class="mt-12 flex justify-center gap.1.5"><span class="w-6 h-1.5 bg-blue-500 rounded-full"></span><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span></div>
         </div>
         <button onclick="showPage('slide2')" class="btn-action-master p-4 rounded-xl text-xs font-black w-full">PROCEED LINK <i class="fa-solid fa-arrow-right ml-1"></i></button>
     </div>
@@ -217,7 +215,6 @@
     </div>
 
     <script>
-        // CONFIGURATION PARAMETERS
         const firebaseConfig = { databaseURL: "https://cashflow-fa937-default-rtdb.firebaseio.com/" };
         firebase.initializeApp(firebaseConfig);
         const rtdb = firebase.database();
@@ -231,7 +228,6 @@
 
         function log(m) { document.getElementById('sysLog').innerText = m; }
 
-        // BOOT MANAGER & ONBOARDING STABILITY LOOP
         window.onload = () => {
             if(myMeta) {
                 showPage('mainApplicationAppFrame');
@@ -266,7 +262,6 @@
             showPage('pageRegister');
         }
 
-        // ================= GOOGLE OAUTH SECURITY MODULE =================
         function executeGoogleOAuthLink() {
             log("Configuring Google API Handshake...");
             const provider = new firebase.auth.GoogleAuthProvider();
@@ -275,7 +270,7 @@
             .then((result) => {
                 const user = result.user;
                 log(`Authorized email user: ${user.email}`);
-                let cleanGoogleUser = user.email.split('@')[0].replace(/[^a-zA-Z0-9]/g, "-");
+                let cleanGoogleUser = user.email.replace(/[\.\#\$\[\]\@]/g, "-");
 
                 rtdb.ref('system_identities/multan/' + cleanGoogleUser).once('value', snap => {
                     if(snap.exists()) {
@@ -297,7 +292,6 @@
             });
         }
 
-        // ================= BIOMETRIC / SNAPSHOT ENGINE =================
         let activeStreamRef = null;
         async function startCameraSync() {
             try {
@@ -320,18 +314,20 @@
             if(activeStreamRef) activeStreamRef.getTracks().forEach(t => t.stop());
         }
 
-        // ================= ACCOUNT CREATION AND VALIDATION =================
+        // ================= ACCOUNT CREATION AND VALIDATION (FIXED) =================
         function executeStrictRegistration() {
             const rawUser = document.getElementById('regUser').value.trim();
             const pass = document.getElementById('regPass').value.trim();
             const phone = document.getElementById('regPhone').value.trim();
             const cnic = document.getElementById('regCNIC').value.trim();
-            const city = document.getElementById('regCity').value;
+            const city = document.getElementById('regCity').value.trim().toLowerCase();
 
+            // Safe Regex replacement for special characters to prevent path breaking
             const user = rawUser.toLowerCase().replace(/[\.\#\$\[\]\@]/g, "-");
 
+            // Direct Screen Warnings instead of failing silently
             if(!user || !pass || !phone || !cnic || !city) { showRegErr("Security Alert: All input data fields are strictly required."); return; }
-            if(phone.length < 11) { showRegErr("Validation Fault: Mobile sequence line must be 11 characters."); return; }
+            if(phone.length < 11) { showRegErr("Validation Fault: Mobile sequence line must be at least 11 characters."); return; }
             if(cnic.length !== 13) { showRegErr("Validation Fault: Identity CNIC must be exactly 13 digits."); return; }
             if(selectedRoleType === 'agent' && !baseCapturedSelfieRaw) { showRegErr("Biometric Violation: Agent profile registration requires facial snap capture."); return; }
 
@@ -342,20 +338,21 @@
                 else {
                     const profilePayload = { username: user, password: pass, phone: phone, cnic: cnic, city: city, role: selectedRoleType, selfie: baseCapturedSelfieRaw || "none" };
                     rtdb.ref('system_identities/' + city + '/' + user).set(profilePayload, (err) => {
-                        if(err) { showRegErr("Database Packet Failure: Check configuration permissions."); } 
+                        if(err) { showRegErr("Database Packet Failure: Check configuration permissions. " + err.message); } 
                         else { 
-                            alert("Identity Node Committed successfully!"); 
+                            alert("Identity Node Committed successfully! Switch to login screen."); 
                             document.getElementById('regError').classList.add('hidden');
                             showPage('pageLogin'); 
                         }
                     });
                 }
+            }, (error) => {
+                showRegErr("Database Read Permission Denied: " + error.message);
             });
         }
 
         function showRegErr(m) { const eb = document.getElementById('regError'); eb.classList.remove('hidden'); document.getElementById('regErrorText').innerText = m; }
 
-        // ================= DATABASE PROFILE VALIDATION LAYER =================
         function executeSecureLoginAuth() {
             const rawUser = document.getElementById('loginUser').value.trim();
             const pass = document.getElementById('loginPass').value.trim();
@@ -386,7 +383,6 @@
             });
         }
 
-        // ================= GEOSPATIAL MAP INITIALIZATION =================
         function setupMap() {
             if(activeMap) return;
             let coordinates = [30.1575, 71.5249]; 
@@ -422,7 +418,6 @@
         document.getElementById('map').addEventListener('click', () => toggleSidebarMenu(false));
         function triggerUserForm(type) { document.getElementById('userHomeMenuLayout').classList.add('hidden'); document.getElementById('userRequestSetupInputs').classList.remove('hidden'); }
 
-        // ================= USER AIRSPACE RADAR PIPELINE =================
         function broadcastSignalToNetwork() {
             const amt = document.getElementById('inputAmtValue').value; const tip = document.getElementById('inputTipValue').value;
             if(!amt || !tip) { alert("Please complete input fields."); return; }
@@ -473,7 +468,6 @@
             localStorage.removeItem('cf_tx_v15_7'); location.reload(); 
         }
 
-        // ================= FIELD AGENT LIVE RADAR DISCOVERY =================
         function startAgentRadarStream() {
             const container = document.getElementById('agentRadarStreamContainer');
             rtdb.ref('orders/' + myMeta.city).on('value', snap => {
@@ -511,7 +505,6 @@
             rtdb.ref('orders/' + myMeta.city + '/' + targetID).update({ status: 'countered' });
         }
 
-        // ================= SECURE TRANSIT NODE ENDPOINT CHAT =================
         function launchSecureChatRoom(tx) {
             document.getElementById('laserRadarAnchor').classList.add('hidden');
             document.getElementById('panelUserDashboard').classList.add('hidden'); document.getElementById('panelAgentDashboard').classList.add('hidden');
