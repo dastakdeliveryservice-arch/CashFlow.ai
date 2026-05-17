@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CASHFLOW GLOBAL - MULTAN MATRIX v14.0</title>
+    <title>CASHFLOW GLOBAL - MULTAN MATRIX v14.1</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -31,7 +31,6 @@
         #navSlideDrawer.active { left: 0; }
         .nav-overlay-blur { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); z-index: 9998; }
         
-        /* Laser Pulse Animation for scanning */
         @keyframes laserScan {
             0% { transform: scale(0.9); opacity: 0.2; }
             50% { opacity: 0.8; }
@@ -49,8 +48,8 @@
             <div class="flex items-center gap-4 mb-8 pb-4 border-b border-slate-800">
                 <img id="menuNodePic" src="https://api.dicebear.com/7.x/bottts/svg?seed=user" class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800">
                 <div>
-                    <h4 id="menuNodeName" class="font-black text-slate-100 text-sm">CASHFLOW ACTIVE NODE</h4>
-                    <p id="menuNodeBadge" class="text-[9px] font-black tracking-widest text-blue-500 uppercase mt-0.5">SECURE MATRIX</p>
+                    <h4 id="menuNodeName" class="font-black text-slate-100 text-sm">CASHFLOW NODE</h4>
+                    <p id="menuNodeBadge" class="text-[9px] font-black tracking-widest text-blue-500 uppercase mt-0.5">SECURE SYSTEM</p>
                     <p id="menuNodeCity" class="text-[9px] text-slate-400 font-bold tracking-wider uppercase">Region: Multan</p>
                 </div>
             </div>
@@ -59,7 +58,7 @@
                 <button onclick="localStorage.clear(); location.reload();" class="w-full text-left p-4 rounded-xl bg-red-950/40 text-red-400 border border-red-900/50 hover:bg-red-900/30 transition-all font-bold text-xs"><i class="fa-solid fa-power-off mr-3"></i> Clear & Wipe Cache</button>
             </nav>
         </div>
-        <div class="text-[9px] font-black text-slate-700 text-center tracking-widest">GLOBAL OPERATIONAL NETWORK v14.0</div>
+        <div class="text-[9px] font-black text-slate-700 text-center tracking-widest">GLOBAL OPERATIONAL NETWORK v14.1</div>
     </div>
 
     <div id="authStagePanel" class="fixed inset-0 bg-[#070b12] z-[9500] flex flex-col justify-center px-8">
@@ -186,8 +185,8 @@
     </div>
 
     <script>
-        // Core Connection Database Setup
-        const firebaseConfig = { databaseURL: "https://cashflow-fa937-default-rtdb.firebaseio.com/" };
+        // CORRECTED ORIGINAL FIREBASE CONNECTION LINK BACK ASYNC
+        const firebaseConfig = { databaseURL: "https://cashflow-81971-default-rtdb.firebaseio.com/" };
         firebase.initializeApp(firebaseConfig); const runtimeDBRef = firebase.database();
         
         let clientIdentityUIDToken = localStorage.getItem('cf_v14_matrix_uid') || "NODE-" + Math.floor(1000 + Math.random() * 9000); localStorage.setItem('cf_v14_matrix_uid', clientIdentityUIDToken);
@@ -195,7 +194,6 @@
         let activeBroadcastOrderID = null; let isRadarListeningActive = false; let currentAuthModeState = 'login';
         let userMarker = null; let agentMarker = null;
 
-        // Auto ID Generator to completely avoid "Core operational failure"
         function preGenerateActiveOrderID() {
             activeBroadcastOrderID = "TX-SIGNAL-" + Date.now();
         }
@@ -270,7 +268,7 @@
             activeOperationalRole = localStorage.getItem('cf_v14_operation_node') || 'user';
             document.getElementById('mainApplicationAppFrame').classList.remove('hidden'); 
             setupStandardCleanLeafletMap();
-            preGenerateActiveOrderID(); // Fresh ID ready!
+            preGenerateActiveOrderID();
             document.getElementById('panelUserDashboard').classList.toggle('hidden', activeOperationalRole !== 'user');
             document.getElementById('panelAgentDashboard').classList.toggle('hidden', activeOperationalRole !== 'agent');
             if(activeOperationalRole === 'agent') { toggleAgentRadarScanningState(true); }
@@ -279,25 +277,22 @@
         function triggerRequestConfigForm(type) { document.getElementById('userHomeMenuLayout').classList.add('hidden'); document.getElementById('userRequestSetupInputs').classList.remove('hidden'); document.getElementById('badgeFormTitle').innerText = type; }
         function abortUserSetupForm() { document.getElementById('userRequestSetupInputs').classList.add('hidden'); document.getElementById('userHomeMenuLayout').classList.remove('hidden'); }
 
-        // CORE SYSTEM USER INJECTION
         function injectRequestSignalToAirspace() {
             const cityNode = verifiedProfileMeta.city || 'multan';
             const generatedOTP = Math.floor(1000 + Math.random() * 8999);
             
             const dataPayload = { id: activeBroadcastOrderID, uid: clientIdentityUIDToken, uName: verifiedProfileMeta.name, uPic: verifiedProfileMeta.pic, city: cityNode, amt: document.getElementById('inputAmtValue').value, comm: document.getElementById('inputTipValue').value, type: document.getElementById('badgeFormTitle').innerText, status: 'pending', views: 1, otp: generatedOTP, timestamp: Date.now() };
             
-            // Render User Pin on Map (Green Dot)
             if(leafletMapEngineObj) {
                 if(userMarker) leafletMapEngineObj.removeLayer(userMarker);
                 userMarker = L.circleMarker([30.1585, 71.5255], { color: '#10b981', radius: 10, fillColor: '#10b981', fillOpacity: 0.8 }).addTo(leafletMapEngineObj).bindPopup("<b>User Location</b>").openPopup();
                 leafletMapEngineObj.setView([30.1585, 71.5255], 15);
             }
 
-            // Laser effect active
             document.getElementById('laserRadarSignalEffect').classList.remove('hidden');
 
             runtimeDBRef.ref('orders/' + cityNode + '/' + activeBroadcastOrderID).set(dataPayload, (err) => {
-                if(err) { alert("Database write blocked. Validate Rules terminal."); }
+                if(err) { alert("Database write blocked."); }
             });
             
             document.getElementById('userRequestSetupInputs').classList.add('hidden');
@@ -319,7 +314,7 @@
                     if(tx.bids) {
                         Object.keys(tx.bids).forEach(key => {
                             const b = tx.bids[key]; block.innerHTML += `
-                                <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex items-center justify-between shadow-md animate-slide-in">
+                                <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex items-center justify-between shadow-md">
                                     <div class="flex items-center gap-3"><img src="${b.aPic}" class="w-10 h-10 rounded-xl bg-slate-950 border border-slate-800"><div class="text-left"><p class="font-black text-xs text-slate-100">${b.aName}</p><p class="text-[10px] text-blue-400 font-bold">Counter Offer: PKR ${b.proposedBid}</p></div></div>
                                     <div class="flex gap-1"><button onclick="executeUserDecisionMatrix('accept', '${b.aUID}', '${b.proposedBid}')" class="bg-blue-600 hover:bg-blue-700 text-white font-black text-[10px] px-3 py-2 rounded-xl uppercase transition-all">Accept Deal</button><button onclick="executeUserDecisionMatrix('reject', '${b.aUID}', '0')" class="bg-slate-950 text-slate-600 text-[10px] px-2 py-2 rounded-lg"><i class="fa-solid fa-xmark"></i></button></div>
                                 </div>`;
@@ -364,7 +359,6 @@
             else { runtimeDBRef.ref('orders/' + cityNode + '/' + activeBroadcastOrderID + '/bids/' + agentUID).remove(); }
         }
 
-        // AGENT OPERATIONS TRACKING
         function toggleAgentRadarScanningState(forceState = null) {
             isRadarListeningActive = (forceState !== null) ? forceState : !isRadarListeningActive;
             const btn = document.getElementById('agentRadarLifecycleBtn'); if(!btn) return;
@@ -429,12 +423,9 @@
             document.getElementById('laserRadarSignalEffect').classList.add('hidden');
             document.getElementById('secureTransitNodeEndpointTerminal').classList.remove('hidden');
             
-            // Map Double Dots Triggering (User Green, Agent Red)
             if(leafletMapEngineObj) {
                 if(!userMarker) userMarker = L.circleMarker([30.1585, 71.5255], { color: '#10b981', radius: 10, fillColor: '#10b981', fillOpacity: 0.9 }).addTo(leafletMapEngineObj).bindPopup("<b>User Base</b>");
                 agentMarker = L.circleMarker([30.1532, 71.5212], { color: '#ef4444', radius: 10, fillColor: '#ef4444', fillOpacity: 0.9 }).addTo(leafletMapEngineObj).bindPopup("<b>Agent En Route</b>").openPopup();
-                
-                // Adjust view to fit both dots nicely
                 const group = new L.featureGroup([userMarker, agentMarker]);
                 leafletMapEngineObj.fitBounds(group.getBounds().pad(0.3));
             }
