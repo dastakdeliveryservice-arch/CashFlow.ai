@@ -42,24 +42,33 @@
 </head>
 <body>
 
-    <div id="slide1" class="app-page active">
-        <h1 class="text-5xl font-black italic tracking-tighter text-slate-100 mb-2">CASH<span class="text-blue-500">FLOW.</span></h1>
-        <p class="text-slate-400 text-sm mt-4 font-semibold">Instant Localized Physical Liquidity Router.</p>
-        <div class="mt-12 flex justify-center gap-1.5"><span class="w-6 h-1.5 bg-blue-500 rounded-full"></span><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span></div>
+    <div id="slide1" class="app-page active flex flex-col justify-between py-12">
+        <div class="my-auto">
+            <h1 class="text-5xl font-black italic tracking-tighter text-slate-100 mb-2">CASH<span class="text-blue-500">FLOW.</span></h1>
+            <p class="text-slate-400 text-sm mt-4 font-semibold">Instant Localized Physical Liquidity Router.</p>
+            <div class="mt-12 flex justify-center gap-1.5"><span class="w-6 h-1.5 bg-blue-500 rounded-full"></span><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span></div>
+        </div>
+        <button onclick="showPage('slide2')" class="btn-action-master p-4 rounded-xl text-xs font-black w-full">PROCEED LINK <i class="fa-solid fa-arrow-right ml-1"></i></button>
     </div>
 
-    <div id="slide2" class="app-page">
-        <i class="fa-solid fa-shield-halved text-6xl text-blue-500 mb-6"></i>
-        <h2 class="text-3xl font-black text-slate-100">STRICT SECURITY</h2>
-        <p class="text-slate-400 text-xs mt-2 px-4">Every operator verified via CNIC & Live Facial Identity Validation Node.</p>
-        <div class="mt-12 flex justify-center gap-1.5"><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span><span class="w-6 h-1.5 bg-blue-500 rounded-full"></span><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span></div>
+    <div id="slide2" class="app-page flex flex-col justify-between py-12">
+        <div class="my-auto">
+            <i class="fa-solid fa-shield-halved text-6xl text-blue-500 mb-6"></i>
+            <h2 class="text-3xl font-black text-slate-100">STRICT SECURITY</h2>
+            <p class="text-slate-400 text-xs mt-2 px-4">Every operator verified via CNIC & Live Facial Identity Validation Node.</p>
+            <div class="mt-12 flex justify-center gap-1.5"><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span><span class="w-6 h-1.5 bg-blue-500 rounded-full"></span><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span></div>
+        </div>
+        <button onclick="showPage('slide3')" class="btn-action-master p-4 rounded-xl text-xs font-black w-full">PROCEED LINK <i class="fa-solid fa-arrow-right ml-1"></i></button>
     </div>
 
-    <div id="slide3" class="app-page">
-        <i class="fa-solid fa-satellite-dish text-6xl text-emerald-500 mb-6 animate-pulse"></i>
-        <h2 class="text-3xl font-black text-slate-100">LASER AIRSPACE</h2>
-        <p class="text-slate-400 text-xs mt-2 px-4">Realtime geospatial matrix connecting liquidity pools within radius instantly.</p>
-        <button onclick="endOnboarding()" class="btn-action-master mt-10 p-4 rounded-xl text-xs font-black w-full">INITIALIZE TERMINAL</button>
+    <div id="slide3" class="app-page flex flex-col justify-between py-12">
+        <div class="my-auto">
+            <i class="fa-solid fa-satellite-dish text-6xl text-emerald-500 mb-6 animate-pulse"></i>
+            <h2 class="text-3xl font-black text-slate-100">LASER AIRSPACE</h2>
+            <p class="text-slate-400 text-xs mt-2 px-4">Realtime geospatial matrix connecting liquidity pools within radius instantly.</p>
+            <div class="mt-12 flex justify-center gap-1.5"><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span><span class="w-6 h-1.5 bg-blue-500 rounded-full"></span></div>
+        </div>
+        <button onclick="endOnboarding()" class="btn-action-master p-4 rounded-xl text-xs font-black w-full">INITIALIZE TERMINAL</button>
     </div>
 
     <div id="pageRoleSelect" class="app-page">
@@ -132,7 +141,6 @@
     </div>
 
     <div id="mainApplicationAppFrame" class="hidden h-screen flex flex-col">
-        
         <div id="sidebarMenu" class="fixed top-0 bottom-0 left-0 w-[270px] bg-[#0d1527] border-r-2 border-blue-500 z-[9999] p-6 flex flex-col justify-between transform -translate-x-full transition-transform duration-300 shadow-2xl">
             <div class="space-y-6">
                 <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
@@ -209,7 +217,7 @@
     </div>
 
     <script>
-        // TARGET REALTIME DATABASE CONNECTOR
+        // CONFIGURATION PARAMETERS
         const firebaseConfig = { databaseURL: "https://cashflow-fa937-default-rtdb.firebaseio.com/" };
         firebase.initializeApp(firebaseConfig);
         const rtdb = firebase.database();
@@ -223,44 +231,18 @@
 
         function log(m) { document.getElementById('sysLog').innerText = m; }
 
-        // AUTOMATIC SLIDE ROTATION HANDLER
+        // BOOT MANAGER & ONBOARDING STABILITY LOOP
         window.onload = () => {
             if(myMeta) {
                 showPage('mainApplicationAppFrame');
                 selectCoreRole(myMeta.role);
-            } else {
-                setTimeout(() => { 
-                    if(!myMeta && document.getElementById('slide1').classList.contains('active')) {
-                        document.getElementById('slide1').classList.remove('active'); 
-                        document.getElementById('slide1').classList.add('hidden');
-                        document.getElementById('slide2').classList.remove('hidden');
-                        document.getElementById('slide2').classList.add('active'); 
-                    }
-                }, 1200);
-                setTimeout(() => { 
-                    if(!myMeta && document.getElementById('slide2').classList.contains('active')) {
-                        document.getElementById('slide2').classList.remove('active'); 
-                        document.getElementById('slide2').classList.add('hidden');
-                        document.getElementById('slide3').classList.remove('hidden');
-                        document.getElementById('slide3').classList.add('active'); 
-                    }
-                }, 2400);
             }
         }
 
-        // ABSOLUTE CLEARANCE OF ALL ONBOARDING ELEMENTS
         function endOnboarding() { 
-            document.getElementById('slide1').classList.remove('active');
-            document.getElementById('slide1').classList.add('hidden');
-            document.getElementById('slide2').classList.remove('active');
-            document.getElementById('slide2').classList.add('hidden');
-            document.getElementById('slide3').classList.remove('active');
-            document.getElementById('slide3').classList.add('hidden');
-            
             showPage('pageRoleSelect'); 
         }
         
-        // GLOBAL DISPLAY SWITCH MANAGER
         function showPage(id) {
             document.querySelectorAll('.app-page, #mainApplicationAppFrame').forEach(p => {
                 p.classList.add('hidden');
@@ -284,7 +266,7 @@
             showPage('pageRegister');
         }
 
-        // ================= GOOGLE AUTHENTICATION SYSTEM LAYER =================
+        // ================= GOOGLE OAUTH SECURITY MODULE =================
         function executeGoogleOAuthLink() {
             log("Configuring Google API Handshake...");
             const provider = new firebase.auth.GoogleAuthProvider();
@@ -293,7 +275,6 @@
             .then((result) => {
                 const user = result.user;
                 log(`Authorized email user: ${user.email}`);
-                
                 let cleanGoogleUser = user.email.split('@')[0].replace(/[^a-zA-Z0-9]/g, "-");
 
                 rtdb.ref('system_identities/multan/' + cleanGoogleUser).once('value', snap => {
@@ -316,7 +297,7 @@
             });
         }
 
-        // ================= CAMERA SYSTEM MEDIA PIPELINE =================
+        // ================= BIOMETRIC / SNAPSHOT ENGINE =================
         let activeStreamRef = null;
         async function startCameraSync() {
             try {
@@ -339,7 +320,7 @@
             if(activeStreamRef) activeStreamRef.getTracks().forEach(t => t.stop());
         }
 
-        // ================= STRICT ACCOUNT REGISTRATION VALIDATION =================
+        // ================= ACCOUNT CREATION AND VALIDATION =================
         function executeStrictRegistration() {
             const rawUser = document.getElementById('regUser').value.trim();
             const pass = document.getElementById('regPass').value.trim();
@@ -347,7 +328,6 @@
             const cnic = document.getElementById('regCNIC').value.trim();
             const city = document.getElementById('regCity').value;
 
-            // Replacing all illegal Firebase path string characters safely
             const user = rawUser.toLowerCase().replace(/[\.\#\$\[\]\@]/g, "-");
 
             if(!user || !pass || !phone || !cnic || !city) { showRegErr("Security Alert: All input data fields are strictly required."); return; }
@@ -375,7 +355,7 @@
 
         function showRegErr(m) { const eb = document.getElementById('regError'); eb.classList.remove('hidden'); document.getElementById('regErrorText').innerText = m; }
 
-        // ================= SECURE MANUAL LOGIN AUTH =================
+        // ================= DATABASE PROFILE VALIDATION LAYER =================
         function executeSecureLoginAuth() {
             const rawUser = document.getElementById('loginUser').value.trim();
             const pass = document.getElementById('loginPass').value.trim();
@@ -406,7 +386,7 @@
             });
         }
 
-        // ================= GEOSPATIAL MAP DRAW ENGINE =================
+        // ================= GEOSPATIAL MAP INITIALIZATION =================
         function setupMap() {
             if(activeMap) return;
             let coordinates = [30.1575, 71.5249]; 
@@ -442,7 +422,7 @@
         document.getElementById('map').addEventListener('click', () => toggleSidebarMenu(false));
         function triggerUserForm(type) { document.getElementById('userHomeMenuLayout').classList.add('hidden'); document.getElementById('userRequestSetupInputs').classList.remove('hidden'); }
 
-        // ================= SYSTEM BROADCAST INTERACTION LAYER =================
+        // ================= USER AIRSPACE RADAR PIPELINE =================
         function broadcastSignalToNetwork() {
             const amt = document.getElementById('inputAmtValue').value; const tip = document.getElementById('inputTipValue').value;
             if(!amt || !tip) { alert("Please complete input fields."); return; }
@@ -473,25 +453,27 @@
                     if(data.offers) {
                         Object.keys(data.offers).forEach(k => {
                             const f = data.offers[k];
-                            box.innerHTML += `
-                                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center shadow-md">
-                                    <div class="flex items-center gap-2">
-                                        <img class="w-9 h-9 rounded-full object-cover border border-amber-500 bg-slate-900" src="${f.agentSelfie || 'https://api.dicebear.com/7.x/bottts/svg'}">
-                                        <div><p class="text-xs font-black text-slate-100">${f.agentName.toUpperCase()}</p><p class="text-[11px] text-blue-400 font-bold">Bid: PKR ${f.bid}</p></div>
-                                    </div>
-                                    <button onclick="acceptAgentDeal('${f.agentUID}', '${f.bid}')" class="bg-blue-600 text-white font-black text-[10px] px-3 py-1.5 rounded-lg cursor-pointer">ACCEPT</button>
-                                </div>`;
+                            box.innerHTML += `<div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+                                <div><p class="text-xs font-black text-white">${f.agentName.toUpperCase()}</p><p class="text-[11px] text-blue-400">Bid: PKR ${f.bid}</p></div>
+                                <button onclick="acceptAgentDeal('${f.agentUID}', '${f.bid}')" class="bg-blue-600 text-white text-[10px] px-3 py-1 rounded-lg font-bold">ACCEPT</button>
+                            </div>`;
                         });
-                    } else { box.innerHTML = "<p class='text-center text-[10px] text-slate-500 font-bold py-4 animate-pulse'>Laser Airspace Scanner Sweep Active...</p>"; }
+                    } else { box.innerHTML = "<p class='text-center text-[10px] text-slate-500 py-4'>Scanning regional signals...</p>"; }
                 }
                 if(data.status === 'locked') { launchSecureChatRoom(data); }
             });
         }
 
-        function acceptAgentDeal(auid, finalBid) { rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).update({ status: 'locked', chosenAgent: auid, commission: finalBid }); }
-        function killActiveSignal() { if(globalOrderID) rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).remove(); document.getElementById('laserRadarAnchor').classList.add('hidden'); localStorage.removeItem('cf_tx_v15_7'); location.reload(); }
+        function acceptAgentDeal(auid, finalBid) {
+            rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).update({ status: 'locked', chosenAgent: auid, commission: finalBid });
+        }
+        
+        function killActiveSignal() { 
+            if(globalOrderID) rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).remove(); 
+            localStorage.removeItem('cf_tx_v15_7'); location.reload(); 
+        }
 
-        // ================= AGENT RADAR LISTENER NODE =================
+        // ================= FIELD AGENT LIVE RADAR DISCOVERY =================
         function startAgentRadarStream() {
             const container = document.getElementById('agentRadarStreamContainer');
             rtdb.ref('orders/' + myMeta.city).on('value', snap => {
@@ -502,17 +484,17 @@
                         const sig = child.val();
                         if(sig && (sig.status === 'pending' || (sig.status === 'countered' && sig.offers && sig.offers[myUID]))) {
                             found = true;
-                            container.innerHTML = `
-                                <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-3">
-                                    <div class="flex justify-between items-center text-[10px] font-bold text-slate-400"><span>CLIENT NODE: ${sig.clientName.toUpperCase()}</span></div>
-                                    <h2 class="text-2xl font-black text-slate-100">PKR ${sig.amount}</h2>
-                                    <p class="text-xs text-slate-400">Commission Offered: <span class="text-blue-500 font-black">PKR ${sig.commission}</span></p>
-                                    <div class="flex gap-2"><input id="counterInputPrice" type="number" value="${sig.commission}" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-center font-black text-slate-100 outline-none"><button onclick="sendAgentCounterOffer('${sig.id}')" class="bg-blue-600 font-black text-xs text-white px-4 rounded-lg cursor-pointer">BID</button></div>
-                                </div>`;
+                            container.innerHTML += `<div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+                                <div class="flex justify-between text-xs font-black text-white"><span>Volume: PKR ${sig.amount}</span><span class="text-blue-400">Base Tip: ${sig.commission}</span></div>
+                                <div class="flex gap-2">
+                                    <input id="counterInputPrice-${sig.id}" type="number" value="${sig.commission}" class="w-full bg-slate-950 rounded p-1.5 text-center text-xs font-bold text-white outline-none border border-slate-800">
+                                    <button onclick="sendAgentCounterOffer('${sig.id}')" class="bg-blue-600 text-xs text-white px-4 rounded font-bold">BID</button>
+                                </div>
+                            </div>`;
                         }
                     });
                 }
-                if(!found) container.innerHTML = "<p class='text-center text-xs text-slate-600 font-bold py-4'>Listening for active channel streams...</p>";
+                if(!found) container.innerHTML = "<p class='text-center text-xs text-slate-600 py-4'>Waiting for target network broadcasts...</p>";
             });
 
             rtdb.ref('orders/' + myMeta.city).on('child_changed', snap => {
@@ -524,26 +506,30 @@
         }
 
         function sendAgentCounterOffer(targetID) {
-            const price = document.getElementById('counterInputPrice').value; if(!price) return;
-            rtdb.ref('orders/' + myMeta.city + '/' + targetID + '/offers/' + myUID).set({ agentUID: myUID, agentName: myMeta.username, bid: price, agentSelfie: myMeta.selfie });
+            const price = document.getElementById(`counterInputPrice-${targetID}`).value; if(!price) return;
+            rtdb.ref('orders/' + myMeta.city + '/' + targetID + '/offers/' + myUID).set({ agentUID: myUID, agentName: myMeta.username, bid: price });
             rtdb.ref('orders/' + myMeta.city + '/' + targetID).update({ status: 'countered' });
         }
 
-        // ================= SECURE TUNNEL CHAT OPERATIONS =================
+        // ================= SECURE TRANSIT NODE ENDPOINT CHAT =================
         function launchSecureChatRoom(tx) {
             document.getElementById('laserRadarAnchor').classList.add('hidden');
             document.getElementById('panelUserDashboard').classList.add('hidden'); document.getElementById('panelAgentDashboard').classList.add('hidden');
             document.getElementById('secureTransitNodeEndpointTerminal').classList.remove('hidden');
             
-            if(activeRole === 'user') { document.getElementById('otpVal').innerText = tx.token; } 
-            else { document.getElementById('otpBox').classList.add('hidden'); document.getElementById('agentOtpBox').classList.remove('hidden'); }
+            if(activeRole === 'user') { 
+                document.getElementById('otpVal').innerText = tx.token; 
+            } else { 
+                document.getElementById('otpBox').classList.add('hidden'); 
+                document.getElementById('agentOtpBox').classList.remove('hidden'); 
+            }
 
             rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID + '/chats').on('value', snap => {
                 const box = document.getElementById('chatLogger'); box.innerHTML = "";
                 if(snap.exists()) {
                     snap.forEach(c => {
-                        const m = c.val(); const isMe = m.sender === myUID;
-                        box.innerHTML += `<div class="p-2.5 rounded-xl max-w-[80%] ${isMe ? 'bg-blue-600 text-white ml-auto' : 'bg-slate-900 border border-slate-800 text-slate-200'}">${m.msg}</div>`;
+                        const m = c.val(); 
+                        box.innerHTML += `<div class="p-2 rounded-lg max-w-[80%] text-xs font-semibold ${m.sender === myUID ? 'bg-blue-600 text-white ml-auto' : 'bg-slate-900 text-slate-200'}">${atob(m.msg)}</div>`;
                     });
                 }
                 box.scrollTop = box.scrollHeight;
@@ -551,18 +537,18 @@
         }
 
         function sendMsg() {
-            const val = document.getElementById('chatInput').value; if(!val) return;
-            rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID + '/chats').push({ sender: myUID, msg: val });
+            const val = document.getElementById('chatInput').value.trim(); if(!val) return;
+            rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID + '/chats').push({ sender: myUID, msg: btoa(val) });
             document.getElementById('chatInput').value = "";
         }
 
         function verifyKeySettle() {
-            const key = document.getElementById('agentOtpInput').value;
+            const key = document.getElementById('agentOtpInput').value.trim();
             rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).once('value', snap => {
                 if(snap.val() && snap.val().token == key) {
                     rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).remove();
-                    localStorage.removeItem('cf_tx_v15_7'); setTimeout(() => { location.reload(); }, 1000);
-                } else { alert("Verification Token Security Mismatch."); }
+                    localStorage.removeItem('cf_tx_v15_7'); location.reload();
+                } else { alert("Verification Mismatch: Code incorrect."); }
             });
         }
 
@@ -574,8 +560,13 @@
                         document.getElementById('userHomeMenuLayout').classList.add('hidden');
                         document.getElementById('userBiddingMonitorRadarRoom').classList.remove('hidden');
                         listenToSignalLifecycle();
-                    } else if(activeRole === 'agent' && data.chosenAgent === myUID) { launchSecureChatRoom(data); }
-                } else { localStorage.removeItem('cf_tx_v15_7'); globalOrderID = null; if(activeRole === 'agent') startAgentRadarStream(); }
+                    } else if(activeRole === 'agent' && data.chosenAgent === myUID) { 
+                        launchSecureChatRoom(data); 
+                    }
+                } else { 
+                    localStorage.removeItem('cf_tx_v15_7'); globalOrderID = null; 
+                    if(activeRole === 'agent') startAgentRadarStream(); 
+                }
             });
         }
     </script>
