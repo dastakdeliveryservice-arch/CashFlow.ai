@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CASHFLOW GLOBAL - MULTAN MATRIX v13.0</title>
+    <title>CASHFLOW GLOBAL - MULTAN MATRIX v14.0</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -16,70 +16,78 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0c111c; color: #f8fafc; overflow: hidden; margin: 0; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #070b12; color: #f8fafc; overflow: hidden; margin: 0; }
         
-        #map { width: 100%; height: 50vh; background: #1e293b; z-index: 10; opacity: 0.8; }
+        #map { width: 100%; height: 48vh; background: #0f172a; z-index: 10; border-bottom: 2px solid #1e293b; }
         
-        .app-bottom-sheet { background: #111827; border-top: 1px solid rgba(255,255,255,0.06); box-shadow: 0 -10px 40px rgba(0,0,0,0.4); border-radius: 30px 30px 0 0; height: 50vh; position: relative; z-index: 100; padding: 20px; overflow-y: auto; }
-        .input-field-core { width: 100%; padding: 12px 14px; border-radius: 12px; background: #1e293b; border: 1px solid transparent; color: #f8fafc; font-weight: 600; outline: none; transition: 0.2s; margin-bottom: 10px; }
-        .input-field-core:focus { background: #0f172a; border-color: #3b82f6; box-shadow: 0 0 10px rgba(59,130,246,0.1); }
+        .app-bottom-sheet { background: #0d1527; border-top: 2px solid #3b82f6; box-shadow: 0 -15px 50px rgba(0,0,0,0.6); border-radius: 36px 36px 0 0; height: 52vh; position: relative; z-index: 100; padding: 22px; overflow-y: auto; }
+        .input-field-core { width: 100%; padding: 14px 16px; border-radius: 14px; background: #15223e; border: 1px solid #223863; color: #f8fafc; font-weight: 600; outline: none; transition: 0.3s; margin-bottom: 12px; }
+        .input-field-core:focus { background: #0a1120; border-color: #3b82f6; box-shadow: 0 0 15px rgba(59,130,246,0.2); }
         
-        .btn-action-master { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #ffffff; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s; box-shadow: 0 4px 14px rgba(59,130,246,0.25); }
-        .btn-action-master:active { transform: scale(0.97); }
+        .btn-action-master { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s; box-shadow: 0 4px 15px rgba(37,99,235,0.3); }
+        .btn-action-master:active { transform: scale(0.96); }
         
-        #navSlideDrawer { position: fixed; top: 0; left: -100%; width: 80%; height: 100%; background: #0c111c; z-index: 9999; transition: 0.3s ease-in-out; box-shadow: 10px 0 30px rgba(0,0,0,0.3); }
+        #navSlideDrawer { position: fixed; top: 0; left: -100%; width: 80%; height: 100%; background: #070b12; border-right: 1px solid #1e293b; z-index: 9999; transition: 0.3s ease-in-out; box-shadow: 15px 0 40px rgba(0,0,0,0.5); }
         #navSlideDrawer.active { left: 0; }
-        .nav-overlay-blur { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); z-index: 9998; }
+        .nav-overlay-blur { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); z-index: 9998; }
+        
+        /* Laser Pulse Animation for scanning */
+        @keyframes laserScan {
+            0% { transform: scale(0.9); opacity: 0.2; }
+            50% { opacity: 0.8; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+        .laser-glow-ring { position: absolute; border: 2px solid #3b82f6; border-radius: 50%; animation: laserScan 2s infinite ease-out; }
     </style>
 </head>
 <body>
 
     <div id="navOverlayBlur" class="nav-overlay-blur" onclick="toggleHamburgerDrawerMenu()"></div>
 
-    <div id="navSlideDrawer" class="p-5 flex flex-col justify-between">
+    <div id="navSlideDrawer" class="p-6 flex flex-col justify-between">
         <div>
-            <div class="flex items-center gap-4 mb-8 pb-3 border-b border-slate-700">
-                <img id="menuNodePic" src="https://api.dicebear.com/7.x/bottts/svg?seed=user" class="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700">
+            <div class="flex items-center gap-4 mb-8 pb-4 border-b border-slate-800">
+                <img id="menuNodePic" src="https://api.dicebear.com/7.x/bottts/svg?seed=user" class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800">
                 <div>
-                    <h4 id="menuNodeName" class="font-black text-slate-100 text-sm">CASHFLOW AGENT</h4>
-                    <p id="menuNodeBadge" class="text-[9px] font-black tracking-widest text-blue-500 uppercase mt-0.5">MATRIX NODE</p>
-                    <p id="menuNodeCity" class="text-[9px] text-slate-400 font-bold tracking-wider uppercase">Active Region: Multan Hub</p>
+                    <h4 id="menuNodeName" class="font-black text-slate-100 text-sm">CASHFLOW ACTIVE NODE</h4>
+                    <p id="menuNodeBadge" class="text-[9px] font-black tracking-widest text-blue-500 uppercase mt-0.5">SECURE MATRIX</p>
+                    <p id="menuNodeCity" class="text-[9px] text-slate-400 font-bold tracking-wider uppercase">Region: Multan</p>
                 </div>
             </div>
             <nav class="space-y-3">
-                <button onclick="toggleHamburgerDrawerMenu(); handleDynamicProfileSwitch();" class="w-full text-left p-3 rounded-xl bg-slate-800 hover:bg-slate-700 transition-all font-bold text-xs flex items-center justify-between text-slate-200"><span><i class="fa-solid fa-arrows-spin text-blue-500 mr-3"></i> Switch Node Operation</span><i class="fa-solid fa-chevron-right opacity-40 text-[10px]"></i></button>
-                <button onclick="localStorage.clear(); location.reload();" class="w-full text-left p-3 rounded-xl bg-red-900 text-red-200 hover:bg-red-800 transition-all font-bold text-xs"><i class="fa-solid fa-power-off mr-3"></i> Clear & Wipe System Cache</button>
+                <button onclick="toggleHamburgerDrawerMenu(); handleDynamicProfileSwitch();" class="w-full text-left p-4 rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 transition-all font-bold text-xs flex items-center justify-between text-slate-200"><span><i class="fa-solid fa-arrows-spin text-blue-500 mr-3"></i> Switch Operation Node</span><i class="fa-solid fa-chevron-right opacity-40 text-[10px]"></i></button>
+                <button onclick="localStorage.clear(); location.reload();" class="w-full text-left p-4 rounded-xl bg-red-950/40 text-red-400 border border-red-900/50 hover:bg-red-900/30 transition-all font-bold text-xs"><i class="fa-solid fa-power-off mr-3"></i> Clear & Wipe Cache</button>
             </nav>
         </div>
-        <div class="text-[9px] font-black text-slate-600 text-center tracking-widest">GLOBAL OPERATIONAL NETWORK</div>
+        <div class="text-[9px] font-black text-slate-700 text-center tracking-widest">GLOBAL OPERATIONAL NETWORK v14.0</div>
     </div>
 
-    <div id="authStagePanel" class="fixed inset-0 bg-[#0c111c] z-[9500] flex flex-col justify-center px-8">
+    <div id="authStagePanel" class="fixed inset-0 bg-[#070b12] z-[9500] flex flex-col justify-center px-8">
         <div class="text-center mb-10">
             <h1 class="text-5xl font-black italic tracking-tighter text-slate-100 mb-1">CASH<span class="text-blue-500">FLOW.</span></h1>
-            <p class="text-slate-400 text-[10px] font-black tracking-widest uppercase">MULTAN MATRIX CORE HUB</p>
+            <p class="text-slate-500 text-[10px] font-black tracking-widest uppercase">MULTAN HIGH-SPEED TECH TERMINAL</p>
         </div>
         <div class="space-y-1">
             <div id="authNameFieldBox" class="hidden"><input id="inputAuthName" placeholder="Enter Full Name" class="input-field-core"></div>
             <input id="inputAuthEmail" type="email" placeholder="Gmail Address" class="input-field-core">
             <input id="inputAuthPass" type="password" placeholder="Secure Password" class="input-field-core">
         </div>
-        <button id="authTriggerActionButton" onclick="processSecureGatewayAuth()" class="btn-action-master w-full p-3 rounded-xl text-white mt-5 font-bold text-sm">Authenticate Node</button>
-        <p onclick="toggleAuthInputState()" id="authModeToggleLabelText" class="text-center text-xs font-bold text-slate-400 mt-5 cursor-pointer hover:text-blue-500">Need a system identity? Create Account</p>
+        <button id="authTriggerActionButton" onclick="processSecureGatewayAuth()" class="btn-action-master w-full p-4 rounded-xl text-white mt-5 font-bold text-sm">Authenticate Terminal</button>
+        <p onclick="toggleAuthInputState()" id="authModeToggleLabelText" class="text-center text-xs font-bold text-slate-400 mt-5 cursor-pointer hover:text-blue-500">Need a network identity? Create Account</p>
     </div>
 
-    <div id="roleSelectorStagePanel" class="hidden fixed inset-0 bg-[#0c111c] z-[9000] flex flex-col justify-center px-8 text-center">
-        <h2 class="text-3xl font-black text-slate-100 mb-1 italic">Configure Active Node</h2>
-        <p class="text-slate-400 text-[10px] font-black tracking-widest uppercase mb-10">Select your operational region pipeline</p>
+    <div id="roleSelectorStagePanel" class="hidden fixed inset-0 bg-[#070b12] z-[9000] flex flex-col justify-center px-8 text-center">
+        <h2 class="text-3xl font-black text-slate-100 mb-1 italic">Configure Active Pipeline</h2>
+        <p class="text-slate-500 text-[10px] font-black tracking-widest uppercase mb-10">Select your operational network route</p>
         <div class="space-y-3">
-            <button onclick="selectProfileRoleNode('user')" class="w-full p-4 bg-slate-800 border border-slate-700 shadow-sm rounded-xl font-black flex items-center justify-between hover:border-blue-500 text-slate-100"><span><i class="fa-solid fa-user-tie text-blue-500 mr-4 text-lg"></i>PROCEED AS MATRIX CLIENT</span><i class="fa-solid fa-chevron-right text-slate-600"></i></button>
-            <button onclick="selectProfileRoleNode('agent')" class="w-full p-4 bg-slate-800 border border-slate-700 shadow-sm rounded-xl font-black flex items-center justify-between hover:border-emerald-500 text-slate-100"><span><i class="fa-solid fa-shield text-emerald-500 mr-4 text-lg"></i>PROCEED AS FIELD AGENT</span><i class="fa-solid fa-chevron-right text-slate-600"></i></button>
+            <button onclick="selectProfileRoleNode('user')" class="w-full p-5 bg-slate-900 border border-slate-800 shadow-lg rounded-xl font-black flex items-center justify-between hover:border-blue-500 text-slate-100"><span><i class="fa-solid fa-user-tie text-blue-500 mr-4 text-xl"></i>PROCEED AS SYSTEM CLIENT</span><i class="fa-solid fa-chevron-right text-slate-700"></i></button>
+            <button onclick="selectProfileRoleNode('agent')" class="w-full p-5 bg-slate-900 border border-slate-800 shadow-lg rounded-xl font-black flex items-center justify-between hover:border-amber-500 text-slate-100"><span><i class="fa-solid fa-shield text-amber-500 mr-4 text-xl"></i>PROCEED AS FIELD AGENT</span><i class="fa-solid fa-chevron-right text-slate-700"></i></button>
         </div>
     </div>
 
-    <div id="verificationStagePanel" class="hidden fixed inset-0 bg-[#0c111c] z-[8500] flex flex-col justify-center px-8">
+    <div id="verificationStagePanel" class="hidden fixed inset-0 bg-[#070b12] z-[8500] flex flex-col justify-center px-8">
         <h2 id="verificationViewTitle" class="text-3xl font-black text-slate-100 mb-1">Identity Ledger</h2>
-        <p class="text-slate-400 text-[10px] font-black uppercase tracking-wider mb-8">Verification check required to access Multan region airspace</p>
+        <p class="text-slate-500 text-[10px] font-black uppercase tracking-wider mb-8">Verification secure check required to access airspace</p>
         <div class="space-y-1">
             <input id="verifyPhone" type="tel" placeholder="Active Phone Number" class="input-field-core">
             <input id="verifyCNIC" placeholder="CNIC Number (13 Digits)" class="input-field-core">
@@ -88,54 +96,60 @@
                 <input id="verifyVehicle" placeholder="Vehicle Registration Number" class="input-field-core">
             </div>
             <select id="verifyCity" class="input-field-core text-slate-400">
-                <option value="" disabled selected>Operational Region</option>
-                <option value="multan">Multan Hub (Primary)</option>
+                <option value="" disabled selected>Operational Hub</option>
+                <option value="multan" selected>Multan Hub (Active Zone)</option>
                 <option value="lahore">Lahore Hub</option>
                 <option value="karachi">Karachi Hub</option>
             </select>
         </div>
-        <button onclick="commitVerificationLedgerData()" class="btn-action-master w-full p-3 rounded-xl text-white mt-5 font-bold text-sm">Save & Synchronize</button>
+        <button onclick="commitVerificationLedgerData()" class="btn-action-master w-full p-4 rounded-xl text-white mt-5 font-bold text-sm">Save & Boot Terminal</button>
     </div>
 
     <div id="mainApplicationAppFrame" class="hidden h-screen flex flex-col">
         <div class="flex flex-1 h-full overflow-hidden">
             <div class="flex-1 flex flex-col relative">
                 
-                <div id="map"></div>
+                <div class="relative w-full h-full flex flex-col">
+                    <div id="map"></div>
+                    <div id="laserRadarSignalEffect" class="hidden absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-[20]">
+                        <div class="laser-glow-ring w-20 h-20"></div>
+                        <div class="laser-glow-ring w-20 h-20 animate-delay-500"></div>
+                    </div>
+                </div>
                 
-                <button onclick="toggleHamburgerDrawerMenu()" class="absolute top-6 left-6 w-11 h-11 bg-[#111827] border border-slate-700 rounded-xl shadow-lg z-[300] flex items-center justify-center text-slate-200 hover:bg-slate-800"><i class="fa-solid fa-bars-staggered"></i></button>
+                <button onclick="toggleHamburgerDrawerMenu()" class="absolute top-6 left-6 w-12 h-12 bg-[#0d1527] border border-blue-900/50 rounded-xl shadow-2xl z-[300] flex items-center justify-center text-blue-400 hover:bg-slate-900"><i class="fa-solid fa-bars-staggered"></i></button>
 
                 <div class="app-bottom-sheet">
                     
                     <div id="panelUserDashboard" class="hidden h-full flex flex-col justify-between">
                         <div id="userHomeMenuLayout" class="space-y-4">
-                            <h3 class="text-lg font-black text-slate-100 italic">Liquid Operation Gateway</h3>
+                            <h3 class="text-base font-black text-slate-300 tracking-wider uppercase"><i class="fa-solid fa-fingerprint text-blue-500 mr-2"></i>Liquid Operation Node</h3>
                             <div class="grid grid-cols-2 gap-3">
-                                <button onclick="triggerRequestConfigForm('Cash Required')" class="p-4 bg-slate-800 rounded-xl border border-slate-700 text-center active:border-blue-500"><i class="fa-solid fa-sack-dollar text-blue-500 text-2xl mb-2"></i><p class="text-[10px] font-black text-slate-100">CASH REQUIRED SIGNAL</p></button>
-                                <button onclick="triggerRequestConfigForm('Cash Available')" class="p-4 bg-slate-800 rounded-xl border border-slate-700 text-center active:border-emerald-500"><i class="fa-solid fa-money-bill-trend-up text-emerald-500 text-2xl mb-2"></i><p class="text-[10px] font-black text-slate-100">CASH AVAILABLE SIGNAL</p></button>
+                                <button onclick="triggerRequestConfigForm('Cash Required')" class="p-5 bg-slate-900/60 rounded-2xl border border-slate-800 text-center hover:border-blue-500/50 transition-all"><i class="fa-solid fa-sack-dollar text-blue-500 text-3xl mb-2 block"></i><p class="text-[10px] font-black text-slate-200">NEED PHYSICAL CASH</p></button>
+                                <button onclick="triggerRequestConfigForm('Cash Available')" class="p-5 bg-slate-900/60 rounded-2xl border border-slate-800 text-center hover:border-amber-500/50 transition-all"><i class="fa-solid fa-money-bill-transfer text-amber-500 text-3xl mb-2 block"></i><p class="text-[10px] font-black text-slate-200">PROVIDE DIGITAL CASH</p></button>
                             </div>
                         </div>
 
                         <div id="userRequestSetupInputs" class="hidden space-y-3">
-                            <div class="flex justify-between items-center"><span onclick="abortUserSetupForm()" class="text-[10px] font-black text-slate-400 cursor-pointer hover:text-slate-600">← ABORT</span><span id="badgeFormTitle" class="text-[9px] bg-blue-900 text-blue-200 border border-blue-700 px-3 py-1 rounded-full font-black"></span></div>
-                            <input id="inputAmtValue" type="number" placeholder="Enter Amount Required (PKR)" class="input-field-core">
-                            <input id="inputTipValue" type="number" placeholder="Set Initial Delivery Tip (PKR)" class="input-field-core">
-                            <button onclick="injectRequestSignalToAirspace()" class="btn-action-master w-full p-3 rounded-xl text-xs font-black">Launch Multan Signal</button>
+                            <div class="flex justify-between items-center"><span onclick="abortUserSetupForm()" class="text-[10px] font-black text-red-400 cursor-pointer hover:text-red-500">← ABORT MATRIX</span><span id="badgeFormTitle" class="text-[9px] bg-blue-950 text-blue-400 border border-blue-800 px-3 py-1 rounded-full font-black uppercase"></span></div>
+                            <input id="inputAmtValue" type="number" placeholder="Enter Cash Amount (PKR)" class="input-field-core">
+                            <input id="inputTipValue" type="number" placeholder="Set Initial Agent Reward (PKR)" class="input-field-core">
+                            <button onclick="injectRequestSignalToAirspace()" class="btn-action-master w-full p-4 rounded-xl text-xs font-black">Broadcast Stream Signal</button>
                         </div>
 
                         <div id="userBiddingMonitorRadarRoom" class="hidden h-full flex flex-col justify-between overflow-hidden">
-                            <div class="bg-slate-800 p-3 rounded-xl border border-slate-700 mb-2 space-y-2">
+                            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 mb-2 space-y-3">
                                 <div class="flex justify-between items-center">
-                                    <p class="text-[9px] font-black text-slate-400 tracking-wider">REGIONAL RADAR STREAM</p>
-                                    <span class="text-[10px] font-black text-blue-400" id="liveRadarViewersTextCount"><i class="fa-solid fa-users animate-pulse mr-1"></i> Scanning Agents</span>
+                                    <p class="text-[9px] font-black text-slate-400 tracking-widest">3KM REGIONAL RADAR PIPELINE</p>
+                                    <span class="text-[10px] font-black text-blue-400 animate-pulse" id="liveRadarViewersTextCount"><i class="fa-solid fa-circle-radiation mr-1"></i> Laser Transmitting...</span>
                                 </div>
-                                <div class="text-[11px] text-slate-100 font-bold flex justify-between bg-[#111827] p-2 rounded-lg border border-slate-700">
-                                    <span>Signal Offer: PKR <strong id="userLiveOfferDisplay">0</strong></span>
-                                    <span>Reward Tip: <strong id="userLiveTipDisplay" class="text-blue-500">PKR 0</strong></span>
+                                <div class="text-xs text-slate-200 font-bold flex justify-between bg-[#070b12] p-3 rounded-xl border border-slate-800">
+                                    <span>Signal Value: <strong class="text-slate-100 font-black">PKR <span id="userLiveOfferDisplay">0</span></strong></span>
+                                    <span>Surge Reward: <strong class="text-blue-500 font-black">PKR <span id="userLiveTipDisplay">0</span></strong></span>
                                 </div>
                                 <div class="flex gap-2">
-                                    <button onclick="increaseUserOfferTipSurge()" class="flex-1 bg-amber-600 text-white font-black text-[10px] p-2 rounded-lg shadow-sm uppercase tracking-wider"><i class="fa-solid fa-bolt mr-1"></i> Surge Tip (+50 PKR)</button>
-                                    <button onclick="cancelActiveUserRequestSignal()" class="flex-1 bg-red-700 text-white font-black text-[10px] p-2 rounded-lg shadow-sm uppercase tracking-wider"><i class="fa-solid fa-trash-can mr-1"></i> Abort Signal</button>
+                                    <button onclick="increaseUserOfferTipSurge()" class="flex-1 bg-gradient-to-r from-amber-600 to-amber-700 text-white font-black text-[10px] p-3 rounded-xl shadow-lg uppercase tracking-wider"><i class="fa-solid fa-bolt mr-1 animate-bounce"></i> Raise Reward (+50 PKR)</button>
+                                    <button onclick="cancelActiveUserRequestSignal()" class="flex-1 bg-red-950/40 text-red-400 border border-red-900/40 font-black text-[10px] p-3 rounded-xl uppercase tracking-wider">Kill Signal</button>
                                 </div>
                             </div>
                             <div id="userLiveIncomingBidsFeed" class="flex-1 overflow-y-auto space-y-2 pr-1"></div>
@@ -143,27 +157,27 @@
                     </div>
 
                     <div id="panelAgentDashboard" class="hidden h-full flex flex-col justify-between overflow-hidden">
-                        <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-700">
-                            <h3 class="text-lg font-black text-slate-100 italic">Operational City Radar</h3>
+                        <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-800">
+                            <h3 class="text-sm font-black text-slate-200 tracking-wider uppercase"><i class="fa-solid fa-satellite-dish text-amber-500 mr-2"></i>Regional Radar Streams</h3>
                             <button id="agentRadarLifecycleBtn" onclick="toggleAgentRadarScanningState()" class="px-5 py-1.5 bg-red-700 text-white font-black text-[9px] rounded-full uppercase tracking-widest shadow-md">OFFLINE</button>
                         </div>
                         <div id="agentSingleFocusedStreamContainer" class="flex-1 overflow-y-auto space-y-3 pr-1 flex flex-col justify-center">
-                            <p id="agentStatusPlaceholderMsg" class="text-center text-xs text-slate-400 font-bold">Turn Radar ONLINE to connect.</p>
+                            <p id="agentStatusPlaceholderMsg" class="text-center text-xs text-slate-500 font-bold">Turn Radar ONLINE to hook into Multan pipeline.</p>
                         </div>
                     </div>
 
                     <div id="secureTransitNodeEndpointTerminal" class="hidden h-full flex flex-col justify-between overflow-hidden">
-                        <div class="flex justify-between items-center border-b border-slate-700 pb-2 mb-2">
-                            <span class="text-[10px] font-black text-emerald-500 tracking-wider"><i class="fa-solid fa-shield-halved mr-1"></i> SECURE MATRIX CHAT Terminal</span>
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-2 mb-2">
+                            <span class="text-[10px] font-black text-emerald-500 tracking-widest uppercase"><i class="fa-solid fa-shield-halved mr-1"></i> SECURE ENCRYPTED ROOM</span>
                             <button onclick="location.reload()" class="text-[9px] font-black text-red-500 uppercase">Disconnect</button>
                         </div>
-                        <div id="chatMessagesLoggerContainer" class="flex-1 overflow-y-auto bg-slate-800 p-3 rounded-2xl border border-slate-700 mb-3 flex flex-col gap-2 text-xs"></div>
+                        <div id="chatMessagesLoggerContainer" class="flex-1 overflow-y-auto bg-slate-900/80 p-3 rounded-2xl border border-slate-800 mb-3 flex flex-col gap-2 text-xs"></div>
                         <div class="flex gap-2 mb-3">
-                            <input id="inputTerminalChatMessageText" placeholder="Transmit text..." class="input-field-core !p-3 !text-xs !mb-0">
-                            <button onclick="dispatchSecureTerminalChatMessage()" class="bg-blue-600 text-white px-4 rounded-xl text-xs"><i class="fa-solid fa-paper-plane"></i></button>
+                            <input id="inputTerminalChatMessageText" placeholder="Transmit direct text..." class="input-field-core !p-3.5 !text-xs !mb-0">
+                            <button onclick="dispatchSecureTerminalChatMessage()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 rounded-xl text-xs transition-all"><i class="fa-solid fa-paper-plane"></i></button>
                         </div>
-                        <div id="userOTPDisplayFrameLabel" class="bg-blue-950 border border-blue-700 p-3 rounded-xl text-center"><p class="text-[8px] text-blue-400 font-black tracking-widest mb-1 uppercase">Settlement Key Token</p><h1 id="otpCodeNumericValueTextDisplay" class="text-3xl font-black text-blue-500 tracking-widest">----</h1></div>
-                        <div id="agentOTPInputFieldFrameLabel" class="hidden flex gap-2"><input id="agentInputOTPFieldToken" placeholder="ENTER UNIQUE AUTH TOKEN" class="input-field-core text-center text-sm tracking-widest !p-3 !mb-0"><button onclick="executeFinalAuthenticationTokenSettlement()" class="bg-blue-600 font-black px-4 text-xs rounded-xl text-white shadow-sm">VERIFY FUNDS</button></div>
+                        <div id="userOTPDisplayFrameLabel" class="bg-blue-950/60 border border-blue-800/80 p-3 rounded-2xl text-center"><p class="text-[9px] text-blue-400 font-black tracking-widest mb-1 uppercase">Settlement Key Token</p><h1 id="otpCodeNumericValueTextDisplay" class="text-3xl font-black text-blue-400 tracking-widest">----</h1></div>
+                        <div id="agentOTPInputFieldFrameLabel" class="hidden flex gap-2"><input id="agentInputOTPFieldToken" placeholder="ENTER 4-DIGIT UNIQUE CODE" class="input-field-core text-center text-sm tracking-widest !p-3 !mb-0"><button onclick="executeFinalAuthenticationTokenSettlement()" class="bg-blue-600 font-black px-4 text-xs rounded-xl text-white shadow-md">RELEASE PIPELINE</button></div>
                     </div>
 
                 </div>
@@ -172,15 +186,19 @@
     </div>
 
     <script>
-        // Core Connection Database corrected and set up.
-        const firebaseConfig = { databaseURL: "https://cashflow-81971-default-rtdb.firebaseio.com/" };
+        // Core Connection Database Setup
+        const firebaseConfig = { databaseURL: "https://cashflow-fa937-default-rtdb.firebaseio.com/" };
         firebase.initializeApp(firebaseConfig); const runtimeDBRef = firebase.database();
         
-        // Dynamic Matrix Node UID
-        let clientIdentityUIDToken = localStorage.getItem('cf_v13_matrix_uid') || "NODE-" + Math.floor(1000 + Math.random() * 9000); localStorage.setItem('cf_v13_matrix_uid', clientIdentityUIDToken);
+        let clientIdentityUIDToken = localStorage.getItem('cf_v14_matrix_uid') || "NODE-" + Math.floor(1000 + Math.random() * 9000); localStorage.setItem('cf_v14_matrix_uid', clientIdentityUIDToken);
         let activeOperationalRole = 'user'; let verifiedProfileMeta = null; let leafletMapEngineObj = null;
         let activeBroadcastOrderID = null; let isRadarListeningActive = false; let currentAuthModeState = 'login';
-        let currentUserMapPin = null; let currentAgentMapPin = null;
+        let userMarker = null; let agentMarker = null;
+
+        // Auto ID Generator to completely avoid "Core operational failure"
+        function preGenerateActiveOrderID() {
+            activeBroadcastOrderID = "TX-SIGNAL-" + Date.now();
+        }
 
         function setupStandardCleanLeafletMap() {
             if(leafletMapEngineObj) return;
@@ -191,8 +209,8 @@
         function toggleAuthInputState() {
             currentAuthModeState = (currentAuthModeState === 'login') ? 'register' : 'login';
             document.getElementById('authNameFieldBox').classList.toggle('hidden', currentAuthModeState === 'login');
-            document.getElementById('authTriggerActionButton').innerText = currentAuthModeState === 'login' ? 'Authenticate Node' : 'Initialize Matrix Identity';
-            document.getElementById('authModeToggleLabelText').innerText = currentAuthModeState === 'login' ? 'Need a matrix identity? Create Account' : 'Already have credentials? Login instead';
+            document.getElementById('authTriggerActionButton').innerText = currentAuthModeState === 'login' ? 'Authenticate Terminal' : 'Initialize Identity Node';
+            document.getElementById('authModeToggleLabelText').innerText = currentAuthModeState === 'login' ? 'Need a network identity? Create Account' : 'Already have credentials? Login instead';
         }
 
         function processSecureGatewayAuth() {
@@ -201,14 +219,14 @@
             if(!email || !pass || (currentAuthModeState === 'register' && !name)) { alert("Fields cannot be blank."); return; }
             
             verifiedProfileMeta = { name: currentAuthModeState === 'register' ? name : email.split('@')[0], email, role: 'user', pic: "https://api.dicebear.com/7.x/bottts/svg?seed=" + clientIdentityUIDToken, isVerifiedNode: false };
-            localStorage.setItem('cf_v13_auth_session', JSON.stringify(verifiedProfileMeta));
+            localStorage.setItem('cf_v14_auth_session', JSON.stringify(verifiedProfileMeta));
             document.getElementById('authStagePanel').classList.add('hidden');
             document.getElementById('roleSelectorStagePanel').classList.remove('hidden');
         }
 
         function selectProfileRoleNode(role) {
             activeOperationalRole = role; verifiedProfileMeta.role = role;
-            localStorage.setItem('cf_v13_operation_node', role);
+            localStorage.setItem('cf_v14_operation_node', role);
             document.getElementById('roleSelectorStagePanel').classList.add('hidden');
             document.getElementById('verificationStagePanel').classList.remove('hidden');
             if(role === 'agent') {
@@ -219,14 +237,14 @@
 
         function commitVerificationLedgerData() {
             const phone = document.getElementById('verifyPhone').value; const cnic = document.getElementById('verifyCNIC').value; const city = document.getElementById('verifyCity').value;
-            if(!phone || !cnic || !city) { alert("All filters must be provided."); return; }
+            if(!phone || !cnic || !city) { alert("All fields are required."); return; }
             
             verifiedProfileMeta.phone = phone; verifiedProfileMeta.cnic = cnic; verifiedProfileMeta.city = city.toLowerCase(); verifiedProfileMeta.isVerifiedNode = true;
             if(activeOperationalRole === 'agent') {
                 verifiedProfileMeta.license = document.getElementById('verifyLicense').value;
                 verifiedProfileMeta.vehicle = document.getElementById('verifyVehicle').value;
             }
-            localStorage.setItem('cf_v13_auth_session', JSON.stringify(verifiedProfileMeta));
+            localStorage.setItem('cf_v14_auth_session', JSON.stringify(verifiedProfileMeta));
             document.getElementById('verificationStagePanel').classList.add('hidden');
             initializeCoreApplicationWorkflowWindow();
         }
@@ -237,22 +255,22 @@
             if(verifiedProfileMeta) {
                 document.getElementById('menuNodeName').innerText = verifiedProfileMeta.name.toUpperCase();
                 document.getElementById('menuNodePic').src = verifiedProfileMeta.pic;
-                document.getElementById('menuNodeBadge').innerText = activeOperationalRole.toUpperCase() + " OPERATION HUB";
-                document.getElementById('menuNodeCity').innerText = "Operational Region: Multan Hub";
+                document.getElementById('menuNodeBadge').innerText = activeOperationalRole.toUpperCase() + " ROUTE TERMINAL";
             }
         }
 
         function handleDynamicProfileSwitch() {
             if(activeOperationalRole === 'user') {
-                if(verifiedProfileMeta.vehicle) { activeOperationalRole = 'agent'; localStorage.setItem('cf_v13_operation_node', 'agent'); initializeCoreApplicationWorkflowWindow(); } 
+                if(verifiedProfileMeta.vehicle) { activeOperationalRole = 'agent'; localStorage.setItem('cf_v14_operation_node', 'agent'); initializeCoreApplicationWorkflowWindow(); } 
                 else { document.getElementById('mainApplicationAppFrame').classList.add('hidden'); document.getElementById('verificationViewTitle').innerText = "Agent Compliance Hub"; document.getElementById('verifyAgentFieldsBlock').classList.remove('hidden'); document.getElementById('verificationStagePanel').classList.remove('hidden'); }
-            } else { activeOperationalRole = 'user'; localStorage.setItem('cf_v13_operation_node', 'user'); if(isRadarListeningActive) toggleAgentRadarScanningState(); initializeCoreApplicationWorkflowWindow(); }
+            } else { activeOperationalRole = 'user'; localStorage.setItem('cf_v14_operation_node', 'user'); if(isRadarListeningActive) toggleAgentRadarScanningState(); initializeCoreApplicationWorkflowWindow(); }
         }
 
         function initializeCoreApplicationWorkflowWindow() {
-            activeOperationalRole = localStorage.getItem('cf_v13_operation_node') || 'user';
+            activeOperationalRole = localStorage.getItem('cf_v14_operation_node') || 'user';
             document.getElementById('mainApplicationAppFrame').classList.remove('hidden'); 
             setupStandardCleanLeafletMap();
+            preGenerateActiveOrderID(); // Fresh ID ready!
             document.getElementById('panelUserDashboard').classList.toggle('hidden', activeOperationalRole !== 'user');
             document.getElementById('panelAgentDashboard').classList.toggle('hidden', activeOperationalRole !== 'agent');
             if(activeOperationalRole === 'agent') { toggleAgentRadarScanningState(true); }
@@ -261,18 +279,25 @@
         function triggerRequestConfigForm(type) { document.getElementById('userHomeMenuLayout').classList.add('hidden'); document.getElementById('userRequestSetupInputs').classList.remove('hidden'); document.getElementById('badgeFormTitle').innerText = type; }
         function abortUserSetupForm() { document.getElementById('userRequestSetupInputs').classList.add('hidden'); document.getElementById('userHomeMenuLayout').classList.remove('hidden'); }
 
-        // Core Firebase Root Correction for data push
+        // CORE SYSTEM USER INJECTION
         function injectRequestSignalToAirspace() {
-            if(!activeBroadcastOrderID) { alert("Core operational failure. System refresh required."); location.reload(); return; }
-            
             const cityNode = verifiedProfileMeta.city || 'multan';
             const generatedOTP = Math.floor(1000 + Math.random() * 8999);
             
             const dataPayload = { id: activeBroadcastOrderID, uid: clientIdentityUIDToken, uName: verifiedProfileMeta.name, uPic: verifiedProfileMeta.pic, city: cityNode, amt: document.getElementById('inputAmtValue').value, comm: document.getElementById('inputTipValue').value, type: document.getElementById('badgeFormTitle').innerText, status: 'pending', views: 1, otp: generatedOTP, timestamp: Date.now() };
             
-            // Core database connection established
-            runtimeDBRef.ref('orders/' + cityNode + '/' + activeBroadcastOrderID).set(dataPayload, (error) => {
-                if(error) { alert("Matrix write blocked. Rules terminal error."); }
+            // Render User Pin on Map (Green Dot)
+            if(leafletMapEngineObj) {
+                if(userMarker) leafletMapEngineObj.removeLayer(userMarker);
+                userMarker = L.circleMarker([30.1585, 71.5255], { color: '#10b981', radius: 10, fillColor: '#10b981', fillOpacity: 0.8 }).addTo(leafletMapEngineObj).bindPopup("<b>User Location</b>").openPopup();
+                leafletMapEngineObj.setView([30.1585, 71.5255], 15);
+            }
+
+            // Laser effect active
+            document.getElementById('laserRadarSignalEffect').classList.remove('hidden');
+
+            runtimeDBRef.ref('orders/' + cityNode + '/' + activeBroadcastOrderID).set(dataPayload, (err) => {
+                if(err) { alert("Database write blocked. Validate Rules terminal."); }
             });
             
             document.getElementById('userRequestSetupInputs').classList.add('hidden');
@@ -287,20 +312,20 @@
                 if(!tx) { abortActiveMonitorScreenState(); return; }
                 
                 document.getElementById('userLiveOfferDisplay').innerText = tx.amt;
-                document.getElementById('userLiveTipDisplay').innerText = "PKR " + tx.comm;
+                document.getElementById('userLiveTipDisplay').innerText = tx.comm;
                 
                 if(tx.status === 'pending' || tx.status === 'bidded') {
                     const block = document.getElementById('userLiveIncomingBidsFeed'); block.innerHTML = "";
                     if(tx.bids) {
                         Object.keys(tx.bids).forEach(key => {
                             const b = tx.bids[key]; block.innerHTML += `
-                                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex items-center justify-between shadow-sm">
-                                    <div class="flex items-center gap-3"><img src="${b.aPic}" class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700"><div class="text-left"><p class="font-black text-xs text-slate-100">${b.aName}</p><p class="text-[9px] text-blue-500 font-bold">Counter Proposal: PKR ${b.proposedBid}</p></div></div>
-                                    <div class="flex gap-1"><button onclick="executeUserDecisionMatrix('accept', '${b.aUID}', '${b.proposedBid}')" class="bg-blue-600 text-white font-black text-[10px] px-3 py-2 rounded-xl uppercase">Accept Deal</button><button onclick="executeUserDecisionMatrix('reject', '${b.aUID}', '0')" class="bg-slate-900 text-slate-500 text-[10px] px-2 py-2 rounded-lg"><i class="fa-solid fa-xmark"></i></button></div>
+                                <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex items-center justify-between shadow-md animate-slide-in">
+                                    <div class="flex items-center gap-3"><img src="${b.aPic}" class="w-10 h-10 rounded-xl bg-slate-950 border border-slate-800"><div class="text-left"><p class="font-black text-xs text-slate-100">${b.aName}</p><p class="text-[10px] text-blue-400 font-bold">Counter Offer: PKR ${b.proposedBid}</p></div></div>
+                                    <div class="flex gap-1"><button onclick="executeUserDecisionMatrix('accept', '${b.aUID}', '${b.proposedBid}')" class="bg-blue-600 hover:bg-blue-700 text-white font-black text-[10px] px-3 py-2 rounded-xl uppercase transition-all">Accept Deal</button><button onclick="executeUserDecisionMatrix('reject', '${b.aUID}', '0')" class="bg-slate-950 text-slate-600 text-[10px] px-2 py-2 rounded-lg"><i class="fa-solid fa-xmark"></i></button></div>
                                 </div>`;
                         });
                     } else {
-                        block.innerHTML = "<p class='text-center text-xs text-slate-400 font-bold py-6 animate-pulse'><i class='fa-solid fa-satellite-dish mr-1 text-base'></i> Awaiting Regional Agent proposals...</p>";
+                        block.innerHTML = "<p class='text-center text-xs text-slate-500 font-bold py-6 animate-pulse'><i class='fa-solid fa-circle-radiation mr-1 text-base animate-spin text-blue-500'></i> Transmitting 3KM Laser Request...</p>";
                     }
                 }
                 if(tx.status === 'locked') { launchSecureTransitNodeTerminalPanel(tx); }
@@ -325,7 +350,10 @@
         function abortActiveMonitorScreenState() {
             const cityNode = verifiedProfileMeta.city || 'multan';
             if(activeBroadcastOrderID) runtimeDBRef.ref('orders/' + cityNode + '/' + activeBroadcastOrderID).off();
-            activeBroadcastOrderID = null;
+            document.getElementById('laserRadarSignalEffect').classList.add('hidden');
+            if(userMarker) { leafletMapEngineObj.removeLayer(userMarker); userMarker = null; }
+            if(agentMarker) { leafletMapEngineObj.removeLayer(agentMarker); agentMarker = null; }
+            preGenerateActiveOrderID();
             document.getElementById('userBiddingMonitorRadarRoom').classList.add('hidden');
             document.getElementById('userHomeMenuLayout').classList.remove('hidden');
         }
@@ -336,7 +364,7 @@
             else { runtimeDBRef.ref('orders/' + cityNode + '/' + activeBroadcastOrderID + '/bids/' + agentUID).remove(); }
         }
 
-        // AGENT RADAR SYSTEM HUB
+        // AGENT OPERATIONS TRACKING
         function toggleAgentRadarScanningState(forceState = null) {
             isRadarListeningActive = (forceState !== null) ? forceState : !isRadarListeningActive;
             const btn = document.getElementById('agentRadarLifecycleBtn'); if(!btn) return;
@@ -347,7 +375,7 @@
             const cityNode = verifiedProfileMeta ? verifiedProfileMeta.city : 'multan';
             
             if(isRadarListeningActive) {
-                paneBox.innerHTML = "<div class='text-center text-xs font-black text-emerald-500 animate-pulse py-6'><i class='fa-solid fa-satellite-dish text-2xl mb-2 block'></i>Synchronizing Regional Streams...</div>";
+                paneBox.innerHTML = "<div class='text-center text-xs font-black text-amber-500 animate-pulse py-6'><i class='fa-solid fa-satellite-dish text-2xl mb-2 block animate-bounce'></i>Hooking into Multan Airspace...</div>";
                 
                 runtimeDBRef.ref('orders/' + cityNode).on('value', snapshot => {
                     if(!isRadarListeningActive) return; 
@@ -359,23 +387,22 @@
                             if(!requestLoaded && (o.status === 'pending' || (o.status === 'bidded' && o.bids && o.bids[clientIdentityUIDToken]))) {
                                 requestLoaded = true; 
                                 activeBroadcastOrderID = o.id;
-                                try { document.getElementById('audioNotificationAlert').play(); } catch(e){}
                                 
                                 paneBox.innerHTML = `
-                                    <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 text-left space-y-3 shadow-sm">
-                                        <div class="flex items-center gap-2"><img src="${o.uPic}" class="w-5 h-5 rounded-full bg-slate-900 border border-slate-700"><span class="text-[9px] font-black text-slate-500">${o.uName}</span><span class="ml-auto text-[8px] bg-blue-900 text-blue-200 border border-blue-700 font-black px-2 py-0.5 rounded-full uppercase">${o.type}</span></div>
+                                    <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 text-left space-y-3 shadow-2xl">
+                                        <div class="flex items-center gap-2"><img src="${o.uPic}" class="w-5 h-5 rounded-full bg-slate-950 border border-slate-800"><span class="text-[10px] font-black text-slate-400">${o.uName}</span><span class="ml-auto text-[8px] bg-blue-950 text-blue-400 border border-blue-800 font-black px-2 py-0.5 rounded-full uppercase">${o.type}</span></div>
                                         <h2 class="text-3xl font-black text-slate-100">PKR ${o.amt}</h2>
-                                        <p class="text-[11px] text-slate-500 font-bold bg-[#111827] px-2 py-1.5 rounded-lg border border-slate-700"><i class="fa-solid fa-bolt text-amber-500 mr-1"></i> Regional Tip: <strong class="text-blue-500">PKR ${o.comm}</strong></p>
-                                        <div class="flex gap-2 pt-1"><input id="inputAgentCounterProposalValue" type="number" value="${o.comm}" class="w-full bg-[#111827] p-3 text-xs rounded-xl border border-slate-700 text-slate-100 outline-none font-bold"><button onclick="dispatchAgentCounterBidSignal()" class="bg-blue-600 px-5 rounded-xl font-black text-xs text-white uppercase">Initialize Counter</button></div>
+                                        <p class="text-[11px] text-slate-400 font-bold bg-[#070b12] px-3 py-2 rounded-xl border border-slate-800"><i class="fa-solid fa-bolt text-amber-500 mr-1"></i> Offered Reward: <strong class="text-blue-500">PKR ${o.comm}</strong></p>
+                                        <div class="flex gap-2 pt-1"><input id="inputAgentCounterProposalValue" type="number" value="${o.comm}" class="w-full bg-[#070b12] p-3.5 text-xs rounded-xl border border-slate-800 text-slate-100 outline-none font-bold"><button onclick="dispatchAgentCounterBidSignal()" class="bg-blue-600 font-black px-5 rounded-xl text-xs text-white uppercase transition-all">Bid Counter</button></div>
                                     </div>`;
                             }
                         });
                     }
-                    if(!requestLoaded) paneBox.innerHTML = "<p class='text-center text-xs text-slate-400 font-bold py-8'>Operational Radar Cleared. Waiting for live streams...</p>";
+                    if(!requestLoaded) paneBox.innerHTML = "<p class='text-center text-xs text-slate-500 font-bold py-8'>Operational Radar Cleared. Awaiting signals...</p>";
                 });
             } else { 
                 runtimeDBRef.ref('orders/' + cityNode).off(); 
-                paneBox.innerHTML = "<p class='text-center text-xs text-slate-400 font-bold py-8'>Operational Radar Offline.</p>"; 
+                paneBox.innerHTML = "<p class='text-center text-xs text-slate-500 font-bold py-8'>Operational Radar Offline.</p>"; 
             }
         }
 
@@ -385,7 +412,7 @@
             runtimeDBRef.ref('orders/' + cityNode + '/' + activeBroadcastOrderID + '/bids/' + clientIdentityUIDToken).set({ aUID: clientIdentityUIDToken, aName: verifiedProfileMeta.name, aPic: verifiedProfileMeta.pic, proposedBid: val });
             runtimeDBRef.ref('orders/' + cityNode + '/' + activeBroadcastOrderID).update({ status: 'bidded' });
             
-            document.getElementById('agentSingleFocusedStreamContainer').innerHTML = "<div class='text-center p-6 text-xs font-black text-blue-500 animate-pulse'><i class='fa-solid fa-rotate animate-spin mr-2'></i>Proposal Transmitted. Awaiting matrix verification...</div>";
+            document.getElementById('agentSingleFocusedStreamContainer').innerHTML = "<div class='text-center p-6 text-xs font-black text-blue-500 animate-pulse'><i class='fa-solid fa-rotate animate-spin mr-2'></i>Proposal Transmitted. Awaiting client match...</div>";
             
             runtimeDBRef.ref('orders/' + cityNode + '/' + activeBroadcastOrderID + '/status').on('value', s => { 
                 if(s.val() === 'locked') { 
@@ -399,15 +426,26 @@
             const cityNode = verifiedProfileMeta.city || 'multan';
             document.getElementById('panelUserDashboard').classList.add('hidden');
             document.getElementById('panelAgentDashboard').classList.add('hidden');
+            document.getElementById('laserRadarSignalEffect').classList.add('hidden');
             document.getElementById('secureTransitNodeEndpointTerminal').classList.remove('hidden');
             
+            // Map Double Dots Triggering (User Green, Agent Red)
+            if(leafletMapEngineObj) {
+                if(!userMarker) userMarker = L.circleMarker([30.1585, 71.5255], { color: '#10b981', radius: 10, fillColor: '#10b981', fillOpacity: 0.9 }).addTo(leafletMapEngineObj).bindPopup("<b>User Base</b>");
+                agentMarker = L.circleMarker([30.1532, 71.5212], { color: '#ef4444', radius: 10, fillColor: '#ef4444', fillOpacity: 0.9 }).addTo(leafletMapEngineObj).bindPopup("<b>Agent En Route</b>").openPopup();
+                
+                // Adjust view to fit both dots nicely
+                const group = new L.featureGroup([userMarker, agentMarker]);
+                leafletMapEngineObj.fitBounds(group.getBounds().pad(0.3));
+            }
+
             if(activeOperationalRole === 'user') { document.getElementById('otpCodeNumericValueTextDisplay').innerText = tx.otp; } 
             else { document.getElementById('userOTPDisplayFrameLabel').classList.add('hidden'); document.getElementById('agentOTPInputFieldFrameLabel').classList.remove('hidden'); }
             
             runtimeDBRef.ref('orders/' + cityNode + '/' + activeBroadcastOrderID + '/chats').on('value', snap => {
                 const logger = document.getElementById('chatMessagesLoggerContainer'); logger.innerHTML = "";
                 if(snap.exists()){
-                    snap.forEach(c => { const m = c.val(); const isMe = m.sender === clientIdentityUIDToken; logger.innerHTML += `<div class="p-2 rounded-xl max-w-[85%] ${isMe ? 'bg-blue-600 text-white ml-auto' : 'bg-slate-900 border border-slate-700'}" style="word-break: break-word;">${m.msg}</div>`; });
+                    snap.forEach(c => { const m = c.val(); const isMe = m.sender === clientIdentityUIDToken; logger.innerHTML += `<div class="p-2.5 rounded-2xl max-w-[85%] ${isMe ? 'bg-blue-600 text-white ml-auto' : 'bg-slate-950 border border-slate-800 text-slate-200'}" style="word-break: break-word;">${m.msg}</div>`; });
                 }
                 logger.scrollTop = logger.scrollHeight;
             });
@@ -425,14 +463,14 @@
             const cityNode = verifiedProfileMeta.city || 'multan';
             runtimeDBRef.ref('orders/' + cityNode + '/' + activeBroadcastOrderID).once('value', s => {
                 if(s.val() && s.val().otp == ent) {
-                    alert("Settlement Key verified. Cycle locked.");
+                    alert("Settlement Pin Confirmed. Pipeline successfully closed!");
                     runtimeDBRef.ref('orders/' + cityNode + '/' + activeBroadcastOrderID).remove();
                     location.reload();
-                } else { alert("Verification key hash mismatch. Terminal error."); }
+                } else { alert("Token verification failure. Hash mismatch."); }
             });
         }
 
-        window.onload = () => { const cache = localStorage.getItem('cf_v13_auth_session'); if(cache) { verifiedProfileMeta = JSON.parse(cache); activeOperationalRole = localStorage.getItem('cf_v13_operation_node') || 'user'; document.getElementById('authStagePanel').classList.add('hidden'); initializeCoreApplicationWorkflowWindow(); } }
+        window.onload = () => { const cache = localStorage.getItem('cf_v14_auth_session'); if(cache) { verifiedProfileMeta = JSON.parse(cache); activeOperationalRole = localStorage.getItem('cf_v14_operation_node') || 'user'; document.getElementById('authStagePanel').classList.add('hidden'); initializeCoreApplicationWorkflowWindow(); } }
     </script>
 </body>
 </html>
