@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CASHFLOW GLOBAL - ULTIMATE MASTER ENGINE v15.2</title>
+    <title>CASHFLOW GLOBAL - ULTIMATE MASTER ENGINE v15.3</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -35,8 +35,9 @@
         .btn-action-master { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s; box-shadow: 0 4px 15px rgba(37,99,235,0.3); }
         .btn-action-master:active { transform: scale(0.96); }
         
+        /* Fixed Page Display Structure */
         .app-page { display: none; position: fixed; inset: 0; background: #070b12; z-index: 9000; flex-direction: column; justify-content: center; padding: 32px; text-align: center; }
-        .app-page.active { display: flex; }
+        .app-page.active { display: flex !important; }
     </style>
 </head>
 <body>
@@ -58,7 +59,7 @@
         <i class="fa-solid fa-satellite-dish text-6xl text-emerald-500 mb-6 animate-pulse"></i>
         <h2 class="text-3xl font-black text-slate-100">LASER AIRSPACE</h2>
         <p class="text-slate-400 text-xs mt-2 px-4">Realtime geospatial matrix connecting liquidity pools within radius instantly.</p>
-        <button onclick="endOnboarding()" class="btn-action-master mt-10 p-4 rounded-xl text-xs font-black">INITIALIZE TERMINAL</button>
+        <button onclick="endOnboarding()" class="btn-action-master mt-10 p-4 rounded-xl text-xs font-black w-full">INITIALIZE TERMINAL</button>
     </div>
 
     <div id="pageRoleSelect" class="app-page">
@@ -213,11 +214,11 @@
         firebase.initializeApp(firebaseConfig);
         const rtdb = firebase.database();
 
-        let myUID = localStorage.getItem('cf_uid_v15_2') || "NODE-" + Math.floor(100000 + Math.random() * 900000);
-        localStorage.setItem('cf_uid_v15_2', myUID);
+        let myUID = localStorage.getItem('cf_uid_v15_3') || "NODE-" + Math.floor(100000 + Math.random() * 900000);
+        localStorage.setItem('cf_uid_v15_3', myUID);
 
-        let myMeta = JSON.parse(localStorage.getItem('cf_meta_v15_2')) || null; 
-        let activeRole = 'user'; let activeMap = null; let globalOrderID = localStorage.getItem('cf_tx_v15_2') || null;
+        let myMeta = JSON.parse(localStorage.getItem('cf_meta_v15_3')) || null; 
+        let activeRole = 'user'; let activeMap = null; let globalOrderID = localStorage.getItem('cf_tx_v15_3') || null;
         let selectedRoleType = 'user'; let baseCapturedSelfieRaw = "";
 
         function log(m) { document.getElementById('sysLog').innerText = m; }
@@ -234,10 +235,21 @@
         }
 
         function endOnboarding() { showPage('pageRoleSelect'); }
+        
+        // PURE PAGE TOGGLE FUNCTION WITH FORCED CLASS MANAGEMENT
         function showPage(id) {
-            document.querySelectorAll('.app-page, #mainApplicationAppFrame').forEach(p => p.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-            if(id === 'mainApplicationAppFrame') document.getElementById(id).classList.add('flex');
+            document.querySelectorAll('.app-page, #mainApplicationAppFrame').forEach(p => {
+                p.classList.add('hidden');
+                p.classList.remove('active');
+            });
+            const targetedPage = document.getElementById(id);
+            targetedPage.classList.remove('hidden');
+            targetedPage.classList.add('active');
+            
+            if(id === 'mainApplicationAppFrame') {
+                targetedPage.classList.remove('hidden');
+                targetedPage.classList.add('flex');
+            }
         }
 
         function openRegistration(role) {
@@ -270,7 +282,7 @@
                         myMeta = { username: cleanGoogleUser, email: user.email, phone: "Google Sync ID", cnic: "Verified Node", city: "multan", role: "user", selfie: user.photoURL };
                         rtdb.ref('system_identities/multan/' + cleanGoogleUser).set(myMeta);
                     }
-                    localStorage.setItem('cf_meta_v15_2', JSON.stringify(myMeta));
+                    localStorage.setItem('cf_meta_v15_3', JSON.stringify(myMeta));
                     document.getElementById('loginError').classList.add('hidden');
                     showPage('mainApplicationAppFrame');
                     selectCoreRole(myMeta.role);
@@ -354,7 +366,7 @@
 
                 if(verifiedProfile) {
                     lb.classList.add('hidden'); myMeta = verifiedProfile;
-                    localStorage.setItem('cf_meta_v15_2', JSON.stringify(myMeta));
+                    localStorage.setItem('cf_meta_v15_3', JSON.stringify(myMeta));
                     showPage('mainApplicationAppFrame'); selectCoreRole(verifiedProfile.role);
                 } else {
                     // FLASH LIVE RED ERROR ALERT WINDOW
@@ -405,7 +417,7 @@
             if(!amt || !tip) { alert("Please complete input fields."); return; }
 
             globalOrderID = "TX-SIGNAL-" + Date.now();
-            localStorage.setItem('cf_tx_v15_2', globalOrderID);
+            localStorage.setItem('cf_tx_v15_3', globalOrderID);
             const otp = Math.floor(1000 + Math.random() * 8999);
             
             // EXACT DATA STRUCTURE MATCH WITH SCREENSHOT (orders -> city -> token)
@@ -448,7 +460,7 @@
         }
 
         function acceptAgentDeal(auid, finalBid) { rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).update({ status: 'locked', chosenAgent: auid, commission: finalBid }); }
-        function killActiveSignal() { if(globalOrderID) rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).remove(); document.getElementById('laserRadarAnchor').classList.add('hidden'); localStorage.removeItem('cf_tx_v15_2'); location.reload(); }
+        function killActiveSignal() { if(globalOrderID) rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).remove(); document.getElementById('laserRadarAnchor').classList.add('hidden'); localStorage.removeItem('cf_tx_v15_3'); location.reload(); }
 
         // ================= AGENT RADAR LISTENER NODE =================
         function startAgentRadarStream() {
@@ -477,7 +489,7 @@
             rtdb.ref('orders/' + myMeta.city).on('child_changed', snap => {
                 const updatedData = snap.val();
                 if(updatedData && updatedData.status === 'locked' && updatedData.chosenAgent === myUID) {
-                    globalOrderID = updatedData.id; localStorage.setItem('cf_tx_v15_2', globalOrderID); launchSecureChatRoom(updatedData);
+                    globalOrderID = updatedData.id; localStorage.setItem('cf_tx_v15_3', globalOrderID); launchSecureChatRoom(updatedData);
                 }
             });
         }
@@ -520,7 +532,7 @@
             rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).once('value', snap => {
                 if(snap.val() && snap.val().token == key) {
                     rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).remove();
-                    localStorage.removeItem('cf_tx_v15_2'); setTimeout(() => { location.reload(); }, 1000);
+                    localStorage.removeItem('cf_tx_v15_3'); setTimeout(() => { location.reload(); }, 1000);
                 } else { alert("Verification Token Security Mismatch."); }
             });
         }
@@ -534,7 +546,7 @@
                         document.getElementById('userBiddingMonitorRadarRoom').classList.remove('hidden');
                         listenToSignalLifecycle();
                     } else if(activeRole === 'agent' && data.chosenAgent === myUID) { launchSecureChatRoom(data); }
-                } else { localStorage.removeItem('cf_tx_v15_2'); globalOrderID = null; if(activeRole === 'agent') startAgentRadarStream(); }
+                } else { localStorage.removeItem('cf_tx_v15_3'); globalOrderID = null; if(activeRole === 'agent') startAgentRadarStream(); }
             });
         }
     </script>
