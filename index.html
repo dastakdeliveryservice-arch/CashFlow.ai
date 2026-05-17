@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CASHFLOW - AMIR CONFIG v14.5</title>
+    <title>CASHFLOW GLOBAL - ULTIMATE MASTER ENGINE v15.2</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -13,161 +13,409 @@
     
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-auth-compat.js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #070b12; color: #f8fafc; overflow: hidden; margin: 0; }
+        
+        /* Laser Wave Pulse Animation */
+        .laser-ripple { position: absolute; border: 3px solid #3b82f6; border-radius: 50%; animation: ripple 2s infinite linear; opacity: 0; pointer-events: none; }
+        @keyframes ripple {
+            0% { width: 0px; height: 0px; opacity: 0.9; transform: translate(-50%, -50%); }
+            100% { width: 320px; height: 320px; opacity: 0; transform: translate(-50%, -50%); }
+        }
+
         #map { width: 100%; height: 44vh; background: #0f172a; z-index: 10; border-bottom: 2px solid #1e293b; }
         .app-bottom-sheet { background: #0d1527; border-top: 2px solid #3b82f6; box-shadow: 0 -15px 50px rgba(0,0,0,0.6); border-radius: 36px 36px 0 0; height: 56vh; position: relative; z-index: 100; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
-        .input-field-core { width: 100%; padding: 12px 16px; border-radius: 14px; background: #15223e; border: 1px solid #223863; color: #f8fafc; font-weight: 600; outline: none; margin-bottom: 10px; text-align: center; }
-        .btn-action-master { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s; }
+        
+        .input-field-core { width: 100%; padding: 12px 16px; border-radius: 14px; background: #15223e; border: 1px solid #223863; color: #f8fafc; font-weight: 600; outline: none; margin-bottom: 10px; text-align: center; transition: 0.3s; }
+        .input-field-core:focus { border-color: #3b82f6; background: #0a1120; }
+        
+        .btn-action-master { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s; box-shadow: 0 4px 15px rgba(37,99,235,0.3); }
         .btn-action-master:active { transform: scale(0.96); }
+        
+        .app-page { display: none; position: fixed; inset: 0; background: #070b12; z-index: 9000; flex-direction: column; justify-content: center; padding: 32px; text-align: center; }
+        .app-page.active { display: flex; }
     </style>
 </head>
 <body>
 
-    <div id="authStagePanel" class="fixed inset-0 bg-[#070b12] z-[9500] flex flex-col justify-center px-8 text-center">
+    <div id="slide1" class="app-page active">
         <h1 class="text-5xl font-black italic tracking-tighter text-slate-100 mb-2">CASH<span class="text-blue-500">FLOW.</span></h1>
-        <p class="text-slate-500 text-[10px] font-black tracking-widest uppercase mb-10">FIXED AMIR ENGINE v14.5</p>
-        <input id="inputAuthName" placeholder="Enter Operator Call Sign / Name" class="input-field-core">
-        <button onclick="processQuickGateAuth()" class="btn-action-master w-full p-4 rounded-xl text-white font-bold text-sm shadow-xl">Secure Gateway Boot</button>
+        <p class="text-slate-400 text-sm mt-4 font-semibold">Instant Localized Physical Liquidity Router.</p>
+        <div class="mt-12 flex justify-center gap-1.5"><span class="w-6 h-1.5 bg-blue-500 rounded-full"></span><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span></div>
     </div>
 
-    <div id="roleSelectorStagePanel" class="hidden fixed inset-0 bg-[#070b12] z-[9000] flex flex-col justify-center px-8 text-center">
-        <h2 class="text-3xl font-black text-slate-100 mb-6 italic">Select Operational Node</h2>
-        <div class="space-y-3">
-            <button onclick="selectCoreRole('user')" class="w-full p-5 bg-slate-900 border border-slate-800 rounded-xl font-black flex items-center justify-between text-blue-400"><span><i class="fa-solid fa-user-tie mr-4 text-xl"></i>USER TERMINAL</span><i class="fa-solid fa-chevron-right text-slate-700"></i></button>
-            <button onclick="selectCoreRole('agent')" class="w-full p-5 bg-slate-900 border border-slate-800 rounded-xl font-black flex items-center justify-between text-amber-500"><span><i class="fa-solid fa-shield mr-4 text-xl"></i>AGENT RADAR</span><i class="fa-solid fa-chevron-right text-slate-700"></i></button>
+    <div id="slide2" class="app-page">
+        <i class="fa-solid fa-shield-halved text-6xl text-blue-500 mb-6"></i>
+        <h2 class="text-3xl font-black text-slate-100">STRICT SECURITY</h2>
+        <p class="text-slate-400 text-xs mt-2 px-4">Every operator verified via CNIC & Live Facial Identity Validation Node.</p>
+        <div class="mt-12 flex justify-center gap-1.5"><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span><span class="w-6 h-1.5 bg-blue-500 rounded-full"></span><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span></div>
+    </div>
+
+    <div id="slide3" class="app-page">
+        <i class="fa-solid fa-satellite-dish text-6xl text-emerald-500 mb-6 animate-pulse"></i>
+        <h2 class="text-3xl font-black text-slate-100">LASER AIRSPACE</h2>
+        <p class="text-slate-400 text-xs mt-2 px-4">Realtime geospatial matrix connecting liquidity pools within radius instantly.</p>
+        <button onclick="endOnboarding()" class="btn-action-master mt-10 p-4 rounded-xl text-xs font-black">INITIALIZE TERMINAL</button>
+    </div>
+
+    <div id="pageRoleSelect" class="app-page">
+        <h2 class="text-3xl font-black text-slate-100 mb-2 italic">Account Setup</h2>
+        <p class="text-slate-500 text-[10px] font-black tracking-widest uppercase mb-10">What do you want to create?</p>
+        <div class="space-y-4 w-full">
+            <button onclick="openRegistration('user')" class="w-full p-5 bg-slate-900 border border-slate-800 rounded-xl font-black flex items-center justify-between text-blue-400"><span><i class="fa-solid fa-user-tie mr-4 text-xl"></i>USER TERMINAL</span><i class="fa-solid fa-chevron-right text-slate-700"></i></button>
+            <button onclick="openRegistration('agent')" class="w-full p-5 bg-slate-900 border border-slate-800 rounded-xl font-black flex items-center justify-between text-amber-500"><span><i class="fa-solid fa-shield mr-4 text-xl"></i>FIELD AGENT HUB</span><i class="fa-solid fa-chevron-right text-slate-700"></i></button>
+            <div class="pt-6 border-t border-slate-900 text-xs text-slate-500 font-bold">Already verified? <span onclick="showPage('pageLogin')" class="text-blue-500 underline cursor-pointer">Login here</span></div>
+        </div>
+    </div>
+
+    <div id="pageRegister" class="app-page !justify-start overflow-y-auto pt-10">
+        <h2 id="regTitle" class="text-2xl font-black text-slate-100 italic mb-1">Create Account</h2>
+        <p class="text-slate-500 text-[9px] font-black tracking-widest uppercase mb-6">Identity Enforcer Layer</p>
+        
+        <div id="regError" class="hidden bg-red-950/80 border border-red-900 text-red-400 text-xs font-bold p-3 rounded-xl mb-4 text-left flex items-center gap-2">
+            <i class="fa-solid fa-triangle-exclamation"></i> <span id="regErrorText">Error!</span>
+        </div>
+
+        <div class="space-y-3 w-full">
+            <input id="regUser" placeholder="Choose Unique Username" class="input-field-core">
+            <input id="regPass" type="password" placeholder="Set Secure Password" class="input-field-core">
+            <input id="regPhone" type="tel" placeholder="Phone Number (e.g., 03001234567)" class="input-field-core">
+            <input id="regCNIC" type="number" placeholder="13-Digit CNIC Number" class="input-field-core">
+            
+            <select id="regCity" class="input-field-core bg-[#15223e] text-slate-300 font-bold appearance-none">
+                <option value="">-- Select Your City --</option>
+                <option value="multan">Multan</option>
+                <option value="lahore">Lahore</option>
+                <option value="karachi">Karachi</option>
+            </select>
+
+            <div id="agentSelfieBox" class="hidden bg-slate-900 p-4 rounded-xl border border-slate-800 flex flex-col items-center gap-3">
+                <p class="text-[10px] font-black text-amber-500 uppercase tracking-wider"><i class="fa-solid fa-camera mr-1"></i> Facial Identification Camera</p>
+                <video id="videoFeed" class="w-full max-h-[140px] bg-black rounded-lg hidden" autoplay playsinline></video>
+                <canvas id="canvasPhoto" class="w-full max-h-[140px] bg-black rounded-lg hidden"></canvas>
+                <img id="photoPreview" class="w-full max-h-[140px] rounded-lg hidden object-cover" src="">
+                <button id="btnTriggerCam" onclick="startCameraSync()" type="button" class="bg-slate-950 border border-slate-800 px-4 py-2 rounded-xl text-xs font-black text-slate-300">Open Camera Feed</button>
+                <button id="btnCaptureCam" onclick="captureSnapshot()" type="button" class="hidden bg-amber-600 px-4 py-2 rounded-xl text-xs font-black text-white">Capture Face Photo</button>
+            </div>
+
+            <button onclick="executeStrictRegistration()" class="btn-action-master w-full p-4 rounded-xl text-xs font-black mt-4">Verify & Register Account</button>
+            <p onclick="showPage('pageRoleSelect')" class="text-xs text-slate-500 underline pt-2 cursor-pointer">Go Back</p>
+        </div>
+    </div>
+
+    <div id="pageLogin" class="app-page">
+        <h1 class="text-4xl font-black italic tracking-tighter text-slate-100 mb-1">SECURE<span class="text-blue-500">GATE.</span></h1>
+        <p class="text-slate-500 text-[9px] font-black tracking-widest uppercase mb-6">Credential Validation Gateway</p>
+        
+        <div id="loginError" class="hidden bg-red-950/80 border border-red-900 text-red-400 text-xs font-bold p-3 rounded-xl mb-4 text-left flex items-center gap-2">
+            <i class="fa-solid fa-circle-exclamation text-red-500"></i> <span id="loginErrorText">Error!</span>
+        </div>
+
+        <div class="space-y-3 w-full">
+            <input id="loginUser" placeholder="Enter Username" class="input-field-core">
+            <input id="loginPass" type="password" placeholder="Enter Password" class="input-field-core">
+            <button onclick="executeSecureLoginAuth()" class="btn-action-master w-full p-4 rounded-xl text-white font-bold text-sm shadow-xl">Authorize Terminal Link</button>
+            
+            <div class="flex items-center my-4 text-slate-600 text-xs font-black"><hr class="flex-1 border-slate-800/80 mr-2">OR CONNECT WITH<hr class="flex-1 border-slate-800/80 ml-2"></div>
+            
+            <button onclick="executeGoogleOAuthLink()" class="w-full p-3.5 bg-white text-slate-900 rounded-xl font-bold text-sm flex items-center justify-center gap-3 shadow-xl border border-slate-200 active:scale-[0.97] transition-all">
+                <img class="w-5 h-5" src="https://cdnjs.cloudflare.com/ajax/libs/logos/1.0.0/google-icon.svg" alt="Google">
+                Continue with Google Secure Auth
+            </button>
+
+            <p onclick="showPage('pageRoleSelect')" class="text-xs text-slate-500 underline pt-4 cursor-pointer">Create New Account / Register</p>
         </div>
     </div>
 
     <div id="mainApplicationAppFrame" class="hidden h-screen flex flex-col">
+        
+        <div id="sidebarMenu" class="fixed top-0 bottom-0 left-0 w-[270px] bg-[#0d1527] border-r-2 border-blue-500 z-[9999] p-6 flex flex-col justify-between transform -translate-x-full transition-transform duration-300 shadow-2xl">
+            <div class="space-y-6">
+                <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
+                    <img id="sideProfilePic" class="w-12 h-12 rounded-full border-2 border-blue-500 object-cover bg-slate-900" src="https://api.dicebear.com/7.x/bottts/svg?seed=Amir">
+                    <div>
+                        <h3 id="sideProfileName" class="font-black text-sm text-slate-100">Operator</h3>
+                        <p id="sideProfileRole" class="text-[9px] font-black text-blue-400 tracking-widest uppercase">Node Client</p>
+                    </div>
+                </div>
+                <div class="space-y-3 text-xs font-bold text-slate-300">
+                    <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex items-center gap-3"><i class="fa-solid fa-building text-blue-500"></i> Active City: <span id="sideProfileCity" class="text-white uppercase ml-auto">Multan</span></div>
+                    <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex items-center gap-3"><i class="fa-solid fa-address-card text-blue-500"></i> Status: <span class="text-emerald-400 ml-auto">VERIFIED</span></div>
+                </div>
+            </div>
+            <button onclick="localStorage.clear(); firebase.auth().signOut(); location.reload();" class="w-full bg-red-950/60 border border-red-900 text-red-400 text-xs font-black p-3 rounded-xl"><i class="fa-solid fa-power-off mr-2"></i> TERMINATE NODE SESSION</button>
+        </div>
+
         <div class="flex-1 flex flex-col relative">
             <div id="map"></div>
-            <button onclick="localStorage.clear(); location.reload();" class="absolute top-4 right-4 bg-red-950/80 border border-red-900 text-red-400 text-xs font-black px-3 py-2 rounded-xl z-[500] shadow-2xl">RESET NODE</button>
+            
+            <button onclick="toggleSidebarMenu(true)" class="absolute top-4 left-4 bg-slate-900/90 border border-slate-800 text-slate-200 text-sm p-3 rounded-xl z-[500] shadow-xl"><i class="fa-solid fa-bars"></i></button>
+            <div id="laserRadarAnchor" class="absolute top-[22vh] left-1/2 -translate-x-1/2 -translate-y-1/2 z-[400] hidden"><div class="laser-ripple"></div></div>
 
             <div class="app-bottom-sheet">
                 <div class="flex-1 overflow-y-auto w-full">
                     
                     <div id="panelUserDashboard" class="hidden space-y-4">
                         <div id="userHomeMenuLayout" class="grid grid-cols-2 gap-3 pt-2">
-                            <button onclick="triggerUserForm('Cash Required')" class="p-5 bg-slate-900 rounded-2xl border border-slate-800 text-center"><i class="fa-solid fa-sack-dollar text-blue-500 text-3xl mb-2 block"></i><p class="text-[10px] font-black">NEED CASH</p></button>
-                            <button onclick="triggerUserForm('Cash Available')" class="p-5 bg-slate-900 rounded-2xl border border-slate-800 text-center"><i class="fa-solid fa-money-bill-transfer text-amber-500 text-3xl mb-2 block"></i><p class="text-[10px] font-black">PROVIDE CASH</p></button>
+                            <button onclick="triggerUserForm('Cash Required')" class="p-5 bg-slate-900 rounded-2xl border border-slate-800 text-center"><i class="fa-solid fa-sack-dollar text-blue-500 text-3xl mb-2 block"></i><p class="text-[10px] font-black">NEED PHYSICAL CASH</p></button>
+                            <button onclick="triggerUserForm('Cash Available')" class="p-5 bg-slate-900 rounded-2xl border border-slate-800 text-center"><i class="fa-solid fa-money-bill-transfer text-amber-500 text-3xl mb-2 block"></i><p class="text-[10px] font-black">PROVIDE DIGITAL CASH</p></button>
                         </div>
 
                         <div id="userRequestSetupInputs" class="hidden space-y-2">
                             <input id="inputAmtValue" type="number" placeholder="Amount (PKR)" class="input-field-core">
-                            <input id="inputTipValue" type="number" placeholder="Commission (PKR)" class="input-field-core">
-                            <button onclick="broadcastSignalToNetwork()" class="btn-action-master w-full p-4 rounded-xl text-xs font-black">LAUNCH LIVE SIGNAL</button>
+                            <input id="inputTipValue" type="number" placeholder="Commission Reward (PKR)" class="input-field-core">
+                            <button onclick="broadcastSignalToNetwork()" class="btn-action-master w-full p-4 rounded-xl text-xs font-black">LAUNCH AIRSPACE BROADCAST</button>
                         </div>
 
                         <div id="userBiddingMonitorRadarRoom" class="hidden space-y-3 bg-slate-900 p-4 rounded-2xl border border-slate-800">
                             <div class="flex justify-between items-center text-[10px] font-bold">
-                                <span class="text-emerald-400 animate-pulse"><i class="fa-solid fa-satellite-dish"></i> Transmitting Signal to Multan...</span>
+                                <span class="text-emerald-400 animate-pulse"><i class="fa-solid fa-satellite-dish"></i> Scanning Regional Airspace...</span>
                                 <span onclick="killActiveSignal()" class="text-red-500 font-black cursor-pointer bg-red-950 px-2 py-0.5 rounded">CANCEL</span>
                             </div>
-                            <div id="userLiveIncomingBidsFeed" class="space-y-2 pt-2"></div>
+                            <div id="userLiveIncomingBidsFeed" class="space-y-2 pt-1"></div>
                         </div>
                     </div>
 
                     <div id="panelAgentDashboard" class="hidden space-y-3">
                         <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                            <span class="text-[10px] font-black tracking-widest text-amber-500"><i class="fa-solid fa-circle-radiation mr-1"></i> MULTAN RADAR ACTIVE</span>
-                            <span class="text-[9px] bg-emerald-950 text-emerald-400 px-3 py-1 rounded-full border border-emerald-800 font-black">LIVE STREAM</span>
+                            <span class="text-[10px] font-black tracking-widest text-amber-500"><i class="fa-solid fa-circle-radiation mr-1"></i> FIELD RADAR STREAM</span>
+                            <span class="text-[9px] bg-emerald-950 text-emerald-400 px-3 py-1 rounded-full border border-emerald-800 font-black animate-pulse">ACTIVE LISTENING</span>
                         </div>
                         <div id="agentRadarStreamContainer" class="space-y-3 pt-1"></div>
                     </div>
 
                     <div id="secureTransitNodeEndpointTerminal" class="hidden space-y-3">
-                        <div class="bg-slate-950 p-3 rounded-2xl border border-slate-900 h-[130px] overflow-y-auto flex flex-col gap-2 text-xs" id="chatLogger"></div>
+                        <div class="bg-slate-950 p-3 rounded-2xl border border-slate-900 h-[120px] overflow-y-auto flex flex-col gap-2 text-xs" id="chatLogger"></div>
                         <div class="flex gap-2">
                             <input id="chatInput" placeholder="Type direct text message..." class="input-field-core !mb-0 text-left !p-3 !text-xs">
                             <button onclick="sendMsg()" class="bg-blue-600 text-white px-5 rounded-xl text-xs"><i class="fa-solid fa-paper-plane"></i></button>
                         </div>
                         <div id="otpBox" class="bg-blue-950/60 p-3 rounded-2xl border border-blue-800/60 text-center text-xs font-bold text-blue-400">Settlement Key Token: <span id="otpVal" class="font-black text-2xl ml-2 tracking-widest block mt-1">----</span></div>
-                        <div id="agentOtpBox" class="hidden flex gap-2"><input id="agentOtpInput" placeholder="ENTER 4-DIGIT SECURE CODE" class="input-field-core !mb-0 text-center tracking-widest font-black"><button onclick="verifyKeySettle()" class="bg-blue-600 font-black px-5 rounded-xl text-xs text-white">SETTLE</button></div>
+                        <div id="agentOtpBox" class="hidden flex gap-2"><input id="agentOtpInput" placeholder="ENTER 4-DIGIT SECURE CODE" class="input-field-core !mb-0 text-center tracking-widest font-black"><button onclick="verifyKeySettle()" class="bg-blue-600 font-black px-5 rounded-xl text-xs text-white">SETTLE ORDER</button></div>
                     </div>
 
                 </div>
 
-                <div class="mt-2 pt-2 border-t border-slate-800/80 bg-black/40 p-2 rounded-xl">
-                    <div id="sysLog" class="text-[10px] font-mono font-bold text-emerald-400">System Ready.</div>
+                <div class="mt-2 pt-2 border-t border-slate-800/80 bg-black/40 p-2 rounded-xl flex items-center gap-2">
+                    <span class="text-[8px] font-black text-blue-500 tracking-wider font-mono">CONSOLE:</span>
+                    <div id="sysLog" class="text-[10px] font-mono font-bold text-emerald-400 overflow-hidden text-ellipsis whitespace-nowrap">System Standby. Ready.</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // EXACT DATABASE REPLACEMENT FROM SCREENSHOT
+        // TARGET REALTIME DATABASE CONNECTOR
         const firebaseConfig = { databaseURL: "https://cashflow-fa937-default-rtdb.firebaseio.com/" };
         firebase.initializeApp(firebaseConfig);
         const rtdb = firebase.database();
 
-        let myUID = localStorage.getItem('cf_uid_v14_5') || "NODE-" + Math.floor(100000 + Math.random() * 900000);
-        localStorage.setItem('cf_uid_v14_5', myUID);
+        let myUID = localStorage.getItem('cf_uid_v15_2') || "NODE-" + Math.floor(100000 + Math.random() * 900000);
+        localStorage.setItem('cf_uid_v15_2', myUID);
 
-        let myMeta = null; let activeRole = 'user'; let activeMap = null; 
-        let globalOrderID = localStorage.getItem('cf_tx_14_5') || null;
+        let myMeta = JSON.parse(localStorage.getItem('cf_meta_v15_2')) || null; 
+        let activeRole = 'user'; let activeMap = null; let globalOrderID = localStorage.getItem('cf_tx_v15_2') || null;
+        let selectedRoleType = 'user'; let baseCapturedSelfieRaw = "";
 
-        function log(m) { document.getElementById('sysLog').innerText = `>> ${m}`; }
+        function log(m) { document.getElementById('sysLog').innerText = m; }
 
-        function setupMap() {
-            if(activeMap) return;
-            activeMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([30.1575, 71.5249], 14);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(activeMap);
-        }
-
-        function processQuickGateAuth() {
-            const name = document.getElementById('inputAuthName').value;
-            if(!name) { alert("Enter Name"); return; }
-            myMeta = { name: name, uid: myUID };
-            document.getElementById('authStagePanel').classList.add('hidden');
-            document.getElementById('roleSelectorStagePanel').classList.remove('hidden');
-        }
-
-        function selectCoreRole(role) {
-            activeRole = role;
-            document.getElementById('roleSelectorStagePanel').classList.add('hidden');
-            document.getElementById('mainApplicationAppFrame').classList.remove('hidden');
-            setupMap();
-            
-            document.getElementById('panelUserDashboard').classList.toggle('hidden', role !== 'user');
-            document.getElementById('panelAgentDashboard').classList.toggle('hidden', role !== 'agent');
-            
-            log(`Terminal Connected as: ${role.toUpperCase()}`);
-            
-            if(globalOrderID) {
-                recoverActiveSession();
-            } else if(role === 'agent') { 
-                startAgentRadarStream(); 
+        // FAST ONBOARDING CYCLE TIMERS
+        window.onload = () => {
+            if(myMeta) {
+                showPage('mainApplicationAppFrame');
+                selectCoreRole(myMeta.role);
+            } else {
+                setTimeout(() => { document.getElementById('slide1').classList.remove('active'); document.getElementById('slide2').classList.add('active'); }, 1200);
+                setTimeout(() => { document.getElementById('slide2').classList.remove('active'); document.getElementById('slide3').classList.add('active'); }, 2400);
             }
         }
 
-        function triggerUserForm(type) {
-            document.getElementById('userHomeMenuLayout').classList.add('hidden');
-            document.getElementById('userRequestSetupInputs').classList.remove('hidden');
+        function endOnboarding() { showPage('pageRoleSelect'); }
+        function showPage(id) {
+            document.querySelectorAll('.app-page, #mainApplicationAppFrame').forEach(p => p.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            if(id === 'mainApplicationAppFrame') document.getElementById(id).classList.add('flex');
         }
 
-        // ================= EXACT STRUCTURE WRITING SYNC =================
-        function broadcastSignalToNetwork() {
-            const amt = document.getElementById('inputAmtValue').value;
-            const tip = document.getElementById('inputTipValue').value;
-            if(!amt || !tip) { alert("Fill data!"); return; }
+        function openRegistration(role) {
+            selectedRoleType = role;
+            document.getElementById('regTitle').innerText = role === 'user' ? "Register User Client" : "Register Agent Hub";
+            document.getElementById('agentSelfieBox').classList.toggle('hidden', role !== 'agent');
+            document.getElementById('regError').classList.add('hidden');
+            showPage('pageRegister');
+        }
 
-            // Matching your exact format: TX-SIGNAL-TIMESTAMP
-            globalOrderID = "TX-SIGNAL-" + Date.now();
-            localStorage.setItem('cf_tx_14_5', globalOrderID);
-
-            const otp = Math.floor(1000 + Math.random() * 8999);
-            const payload = { id: globalOrderID, clientUID: myUID, clientName: myMeta.name, amount: amt, commission: tip, status: "pending", token: otp };
-
-            log("Injecting stream packet to orders/multan...");
+        // ================= GOOGLE AUTHENTICATION SYSTEM LAYER =================
+        function executeGoogleOAuthLink() {
+            log("Configuring Google API Handshake...");
+            const provider = new firebase.auth.GoogleAuthProvider();
             
-            // EXACT MATCHING OF YOUR TREE SCREENSHOT
-            rtdb.ref('orders/multan/' + globalOrderID).set(payload, (err) => {
-                if(err) { log("WRITE ERROR! System Blocked."); } 
+            firebase.auth().signInWithPopup(provider)
+            .then((result) => {
+                const user = result.user;
+                log(`Authorized email user: ${user.email}`);
+                
+                // Extracting valid clean key name for DB
+                let cleanGoogleUser = user.email.split('@')[0].replace(/[^a-zA-Z0-9]/g, "");
+
+                // Check or Create Entry inside Firebase
+                rtdb.ref('system_identities/multan/' + cleanGoogleUser).once('value', snap => {
+                    if(snap.exists()) {
+                        myMeta = snap.val();
+                    } else {
+                        // Default profile injection loop
+                        myMeta = { username: cleanGoogleUser, email: user.email, phone: "Google Sync ID", cnic: "Verified Node", city: "multan", role: "user", selfie: user.photoURL };
+                        rtdb.ref('system_identities/multan/' + cleanGoogleUser).set(myMeta);
+                    }
+                    localStorage.setItem('cf_meta_v15_2', JSON.stringify(myMeta));
+                    document.getElementById('loginError').classList.add('hidden');
+                    showPage('mainApplicationAppFrame');
+                    selectCoreRole(myMeta.role);
+                });
+            })
+            .catch((error) => {
+                const lb = document.getElementById('loginError'); const lt = document.getElementById('loginErrorText');
+                lb.classList.remove('hidden');
+                lt.innerText = "🛑 Google Bridge Error: " + error.message;
+            });
+        }
+
+        // ================= CAMERA SYSTEM MEDIA PIPELINE =================
+        let activeStreamRef = null;
+        async function startCameraSync() {
+            try {
+                activeStreamRef = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
+                const video = document.getElementById('videoFeed');
+                video.srcObject = activeStreamRef; video.classList.remove('hidden');
+                document.getElementById('btnTriggerCam').classList.add('hidden');
+                document.getElementById('btnCaptureCam').classList.remove('hidden');
+            } catch (err) { alert("Camera Access Denied by Permission Engine."); }
+        }
+
+        function captureSnapshot() {
+            const video = document.getElementById('videoFeed'); const canvas = document.getElementById('canvasPhoto');
+            canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            baseCapturedSelfieRaw = canvas.toDataURL('image/jpeg');
+            document.getElementById('photoPreview').src = baseCapturedSelfieRaw;
+            document.getElementById('photoPreview').classList.remove('hidden');
+            video.classList.add('hidden'); document.getElementById('btnCaptureCam').classList.add('hidden');
+            if(activeStreamRef) activeStreamRef.getTracks().forEach(t => t.stop());
+        }
+
+        // ================= STRICT ACCOUNT REGISTRATION VALIDATION =================
+        function executeStrictRegistration() {
+            const user = document.getElementById('regUser').value.trim().toLowerCase();
+            const pass = document.getElementById('regPass').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const cnic = document.getElementById('regCNIC').value.trim();
+            const city = document.getElementById('regCity').value;
+
+            if(!user || !pass || !phone || !cnic || !city) { showRegErr("Security Alert: All input data fields are strictly required."); return; }
+            if(phone.length < 11) { showRegErr("Validation Fault: Mobile sequence line must be 11 characters."); return; }
+            if(cnic.length !== 13) { showRegErr("Validation Fault: Identity CNIC must be exactly 13 digits."); return; }
+            if(selectedRoleType === 'agent' && !baseCapturedSelfieRaw) { showRegErr("Biometric Violation: Agent profile registration requires facial snap capture."); return; }
+
+            rtdb.ref('system_identities/' + city + '/' + user).once('value', snap => {
+                if(snap.exists()) { showRegErr("Identity Mismatch: Chosen Operator username already allocated."); } 
+                else {
+                    const profilePayload = { username: user, password: pass, phone: phone, cnic: cnic, city: city, role: selectedRoleType, selfie: baseCapturedSelfieRaw || "none" };
+                    rtdb.ref('system_identities/' + city + '/' + user).set(profilePayload, (err) => {
+                        if(err) { showRegErr("Database Packet Failure."); } 
+                        else { alert("Identity Node Committed!"); showPage('pageLogin'); }
+                    });
+                }
+            });
+        }
+
+        function showRegErr(m) { const eb = document.getElementById('regError'); eb.classList.remove('hidden'); document.getElementById('regErrorText').innerText = m; }
+
+        // ================= SECURE MANUAL LOGIN AUTH (RED ERROR ENFORCED) =================
+        function executeSecureLoginAuth() {
+            const user = document.getElementById('loginUser').value.trim().toLowerCase();
+            const pass = document.getElementById('loginPass').value.trim();
+            const lb = document.getElementById('loginError'); const lt = document.getElementById('loginErrorText');
+
+            if(!user || !pass) { lb.classList.remove('hidden'); lt.innerText = "Credentials entry bounds cannot be empty."; return; }
+
+            log("Querying profile mapping layer...");
+
+            rtdb.ref('system_identities').once('value', snap => {
+                let verifiedProfile = null;
+                snap.forEach(cityNode => {
+                    if(cityNode.hasChild(user)) {
+                        const candidate = cityNode.child(user).val();
+                        if(candidate.password === pass) verifiedProfile = candidate;
+                    }
+                });
+
+                if(verifiedProfile) {
+                    lb.classList.add('hidden'); myMeta = verifiedProfile;
+                    localStorage.setItem('cf_meta_v15_2', JSON.stringify(myMeta));
+                    showPage('mainApplicationAppFrame'); selectCoreRole(verifiedProfile.role);
+                } else {
+                    // FLASH LIVE RED ERROR ALERT WINDOW
+                    lb.classList.remove('hidden'); lt.innerText = "❌ Security Alert: Invalid Username or Password Key Hash Mismatch.";
+                }
+            });
+        }
+
+        // ================= GEOSPATIAL MAP DRAW ENGINE =================
+        function setupMap() {
+            if(activeMap) return;
+            let coordinates = [30.1575, 71.5249]; // Default Multan Location Coordinates
+            if(myMeta && myMeta.city === 'lahore') coordinates = [31.5204, 74.3587];
+            if(myMeta && myMeta.city === 'karachi') coordinates = [24.8607, 67.0011];
+
+            activeMap = L.map('map', { zoomControl: false, attributionControl: false }).setView(coordinates, 14);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(activeMap);
+
+            let dotColor = myMeta.role === 'user' ? '#10b981' : '#f59e0b';
+            L.circleMarker(coordinates, { color: dotColor, fillColor: dotColor, fillOpacity: 0.8, radius: 9 }).addTo(activeMap)
+                .bindPopup(`<b>My Node: ${myMeta.username.toUpperCase()}</b>`).openPopup();
+        }
+
+        function selectCoreRole(role) {
+            activeRole = role; setupMap();
+            document.getElementById('sideProfileName').innerText = myMeta.username.toUpperCase();
+            document.getElementById('sideProfileRole').innerText = role === 'user' ? "Node Client" : "Field Agent";
+            document.getElementById('sideProfileCity').innerText = myMeta.city;
+            if(myMeta.selfie && myMeta.selfie !== "none") document.getElementById('sideProfilePic').src = myMeta.selfie;
+
+            document.getElementById('panelUserDashboard').classList.toggle('hidden', role !== 'user');
+            document.getElementById('panelAgentDashboard').classList.toggle('hidden', role !== 'agent');
+            
+            log(`Terminal Channel Active: ${myMeta.city.toUpperCase()}`);
+            if(globalOrderID) recoverActiveSession();
+            else if(role === 'agent') startAgentRadarStream();
+        }
+
+        function toggleSidebarMenu(open) {
+            document.getElementById('sidebarMenu').style.transform = open ? 'translateX(0)' : 'translateX(-100%)';
+        }
+        document.getElementById('map').addEventListener('click', () => toggleSidebarMenu(false));
+        function triggerUserForm(type) { document.getElementById('userHomeMenuLayout').classList.add('hidden'); document.getElementById('userRequestSetupInputs').classList.remove('hidden'); }
+
+        // ================= SYSTEM BROADCST INTERACTION LAYER =================
+        function broadcastSignalToNetwork() {
+            const amt = document.getElementById('inputAmtValue').value; const tip = document.getElementById('inputTipValue').value;
+            if(!amt || !tip) { alert("Please complete input fields."); return; }
+
+            globalOrderID = "TX-SIGNAL-" + Date.now();
+            localStorage.setItem('cf_tx_v15_2', globalOrderID);
+            const otp = Math.floor(1000 + Math.random() * 8999);
+            
+            // EXACT DATA STRUCTURE MATCH WITH SCREENSHOT (orders -> city -> token)
+            const payload = { id: globalOrderID, clientUID: myUID, clientName: myMeta.username, amount: amt, commission: tip, status: "pending", token: otp, city: myMeta.city };
+
+            document.getElementById('laserRadarAnchor').classList.remove('hidden'); // Turn on live laser element
+            
+            rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).set(payload, (err) => {
+                if(err) { log("Data Pipeline Blocked."); } 
                 else { 
-                    log("SUCCESS! Data Visible on Console Tree.");
                     document.getElementById('userRequestSetupInputs').classList.add('hidden');
                     document.getElementById('userBiddingMonitorRadarRoom').classList.remove('hidden');
                     listenToSignalLifecycle();
@@ -176,101 +424,85 @@
         }
 
         function listenToSignalLifecycle() {
-            rtdb.ref('orders/multan/' + globalOrderID).on('value', snap => {
-                const data = snap.val();
-                if(!data) return;
-
+            rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).on('value', snap => {
+                const data = snap.val(); if(!data) return;
                 if(data.status === 'pending' || data.status === 'countered') {
                     const box = document.getElementById('userLiveIncomingBidsFeed'); box.innerHTML = "";
                     if(data.offers) {
                         Object.keys(data.offers).forEach(k => {
                             const f = data.offers[k];
+                            // AGENT IDENTITY CARD FEATURING LIVE PHOTO CAPTURED AT VERIFICATION GATE
                             box.innerHTML += `
-                                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
-                                    <div><p class="text-xs font-black text-slate-100">${f.agentName}</p><p class="text-[11px] text-blue-400 font-bold">Offer: PKR ${f.bid}</p></div>
+                                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center shadow-md">
+                                    <div class="flex items-center gap-2">
+                                        <img class="w-9 h-9 rounded-full object-cover border border-amber-500 bg-slate-900" src="${f.agentSelfie || 'https://api.dicebear.com/7.x/bottts/svg'}">
+                                        <div><p class="text-xs font-black text-slate-100">${f.agentName.toUpperCase()}</p><p class="text-[11px] text-blue-400 font-bold">Bid: PKR ${f.bid}</p></div>
+                                    </div>
                                     <button onclick="acceptAgentDeal('${f.agentUID}', '${f.bid}')" class="bg-blue-600 text-white font-black text-[10px] px-3 py-1.5 rounded-lg">ACCEPT</button>
                                 </div>`;
                         });
-                    } else { box.innerHTML = "<p class='text-center text-[10px] text-slate-500 font-bold py-4 animate-pulse'>Broadcasting Signal...</p>"; }
+                    } else { box.innerHTML = "<p class='text-center text-[10px] text-slate-500 font-bold py-4 animate-pulse'>Laser Airspace Scanner Sweep Active...</p>"; }
                 }
                 if(data.status === 'locked') { launchSecureChatRoom(data); }
             });
         }
 
-        function acceptAgentDeal(auid, finalBid) {
-            rtdb.ref('orders/multan/' + globalOrderID).update({ status: 'locked', chosenAgent: auid, commission: finalBid });
-        }
+        function acceptAgentDeal(auid, finalBid) { rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).update({ status: 'locked', chosenAgent: auid, commission: finalBid }); }
+        function killActiveSignal() { if(globalOrderID) rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).remove(); document.getElementById('laserRadarAnchor').classList.add('hidden'); localStorage.removeItem('cf_tx_v15_2'); location.reload(); }
 
-        function killActiveSignal() {
-            if(globalOrderID) rtdb.ref('orders/multan/' + globalOrderID).remove();
-            localStorage.removeItem('cf_tx_14_5');
-            location.reload();
-        }
-
-        // ================= AGENT RADAR READ SYNC =================
+        // ================= AGENT RADAR LISTENER NODE =================
         function startAgentRadarStream() {
-            log("Agent radar listening to orders/multan...");
             const container = document.getElementById('agentRadarStreamContainer');
-
-            rtdb.ref('orders/multan').on('value', snap => {
+            rtdb.ref('orders/' + myMeta.city).on('value', snap => {
                 if(activeRole !== 'agent' || globalOrderID) return;
-                container.innerHTML = "";
-                let signalsFound = false;
-
+                container.innerHTML = ""; let found = false;
                 if(snap.exists()) {
                     snap.forEach(child => {
-                        const signal = child.val();
-                        if(signal && (signal.status === 'pending' || (signal.status === 'countered' && signal.offers && signal.offers[myUID]))) {
-                            signalsFound = true;
-                            let targetID = signal.id;
-                            
+                        const sig = child.val();
+                        if(sig && (sig.status === 'pending' || (sig.status === 'countered' && sig.offers && sig.offers[myUID]))) {
+                            found = true;
                             container.innerHTML = `
                                 <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-3">
-                                    <div class="flex justify-between items-center text-[10px] font-bold text-slate-400"><span>CLIENT: ${signal.clientName}</span></div>
-                                    <h2 class="text-2xl font-black text-slate-100">PKR ${signal.amount}</h2>
-                                    <p class="text-xs text-slate-400">Commission: <span class="text-blue-500 font-black">PKR ${signal.commission}</span></p>
-                                    <div class="flex gap-2"><input id="counterInputPrice" type="number" value="${signal.commission}" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-center font-black text-slate-100 outline-none"><button onclick="sendAgentCounterOffer('${targetID}')" class="bg-blue-600 font-black text-xs text-white px-4 rounded-lg">BID</button></div>
+                                    <div class="flex justify-between items-center text-[10px] font-bold text-slate-400"><span>CLIENT NODE: ${sig.clientName.toUpperCase()}</span></div>
+                                    <h2 class="text-2xl font-black text-slate-100">PKR ${sig.amount}</h2>
+                                    <p class="text-xs text-slate-400">Commission Offered: <span class="text-blue-500 font-black">PKR ${sig.commission}</span></p>
+                                    <div class="flex gap-2"><input id="counterInputPrice" type="number" value="${sig.commission}" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-center font-black text-slate-100 outline-none"><button onclick="sendAgentCounterOffer('${sig.id}')" class="bg-blue-600 font-black text-xs text-white px-4 rounded-lg">BID</button></div>
                                 </div>`;
                         }
                     });
                 }
-                if(!signalsFound) { container.innerHTML = "<p class='text-center text-xs text-slate-600 font-bold py-4'>Scanning airspace...</p>"; }
+                if(!found) container.innerHTML = "<p class='text-center text-xs text-slate-600 font-bold py-4'>Listening for active channel streams...</p>";
             });
 
-            rtdb.ref('orders/multan').on('child_changed', snap => {
+            rtdb.ref('orders/' + myMeta.city).on('child_changed', snap => {
                 const updatedData = snap.val();
                 if(updatedData && updatedData.status === 'locked' && updatedData.chosenAgent === myUID) {
-                    globalOrderID = updatedData.id;
-                    localStorage.setItem('cf_tx_14_5', globalOrderID);
-                    launchSecureChatRoom(updatedData);
+                    globalOrderID = updatedData.id; localStorage.setItem('cf_tx_v15_2', globalOrderID); launchSecureChatRoom(updatedData);
                 }
             });
         }
 
         function sendAgentCounterOffer(targetID) {
-            const price = document.getElementById('counterInputPrice').value;
-            if(!price) return;
-            rtdb.ref('orders/multan/' + targetID + '/offers/' + myUID).set({ agentUID: myUID, agentName: myMeta.name, bid: price });
-            rtdb.ref('orders/multan/' + targetID).update({ status: 'countered' });
-            document.getElementById('agentRadarStreamContainer').innerHTML = "<p class='text-center text-xs text-blue-400 font-bold animate-pulse py-4'>Proposal Transmitted...</p>";
+            const price = document.getElementById('counterInputPrice').value; if(!price) return;
+            rtdb.ref('orders/' + myMeta.city + '/' + targetID + '/offers/' + myUID).set({ agentUID: myUID, agentName: myMeta.username, bid: price, agentSelfie: myMeta.selfie });
+            rtdb.ref('orders/' + myMeta.city + '/' + targetID).update({ status: 'countered' });
         }
 
-        // ================= CHAT TERMINAL SUITE =================
+        // ================= SECURE TUNNEL CHAT OPERATIONS =================
         function launchSecureChatRoom(tx) {
-            document.getElementById('panelUserDashboard').classList.add('hidden');
-            document.getElementById('panelAgentDashboard').classList.add('hidden');
+            document.getElementById('laserRadarAnchor').classList.add('hidden');
+            document.getElementById('panelUserDashboard').classList.add('hidden'); document.getElementById('panelAgentDashboard').classList.add('hidden');
             document.getElementById('secureTransitNodeEndpointTerminal').classList.remove('hidden');
-
+            
             if(activeRole === 'user') { document.getElementById('otpVal').innerText = tx.token; } 
             else { document.getElementById('otpBox').classList.add('hidden'); document.getElementById('agentOtpBox').classList.remove('hidden'); }
 
-            rtdb.ref('orders/multan/' + globalOrderID + '/chats').on('value', snap => {
+            rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID + '/chats').on('value', snap => {
                 const box = document.getElementById('chatLogger'); box.innerHTML = "";
                 if(snap.exists()) {
                     snap.forEach(c => {
-                        const m = c.val();
-                        const isMe = m.sender === myUID;
-                        box.innerHTML += `<div class="p-2 rounded-xl max-w-[80%] ${isMe ? 'bg-blue-600 text-white ml-auto' : 'bg-slate-900 border border-slate-800 text-slate-200'}">${m.msg}</div>`;
+                        const m = c.val(); const isMe = m.sender === myUID;
+                        box.innerHTML += `<div class="p-2.5 rounded-xl max-w-[80%] ${isMe ? 'bg-blue-600 text-white ml-auto' : 'bg-slate-900 border border-slate-800 text-slate-200'}">${m.msg}</div>`;
                     });
                 }
                 box.scrollTop = box.scrollHeight;
@@ -279,38 +511,30 @@
 
         function sendMsg() {
             const val = document.getElementById('chatInput').value; if(!val) return;
-            rtdb.ref('orders/multan/' + globalOrderID + '/chats').push({ sender: myUID, msg: val });
+            rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID + '/chats').push({ sender: myUID, msg: val });
             document.getElementById('chatInput').value = "";
         }
 
         function verifyKeySettle() {
             const key = document.getElementById('agentOtpInput').value;
-            rtdb.ref('orders/multan/' + globalOrderID).once('value', snap => {
+            rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).once('value', snap => {
                 if(snap.val() && snap.val().token == key) {
-                    log("Pipeline closed successfully!");
-                    rtdb.ref('orders/multan/' + globalOrderID).remove();
-                    localStorage.removeItem('cf_tx_14_5');
-                    setTimeout(() => { location.reload(); }, 1500);
-                } else { alert("Token mismatch."); }
+                    rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).remove();
+                    localStorage.removeItem('cf_tx_v15_2'); setTimeout(() => { location.reload(); }, 1000);
+                } else { alert("Verification Token Security Mismatch."); }
             });
         }
 
         function recoverActiveSession() {
-            rtdb.ref('orders/multan/' + globalOrderID).once('value', snap => {
+            rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).once('value', snap => {
                 const data = snap.val();
                 if(data) {
                     if(activeRole === 'user') {
                         document.getElementById('userHomeMenuLayout').classList.add('hidden');
                         document.getElementById('userBiddingMonitorRadarRoom').classList.remove('hidden');
                         listenToSignalLifecycle();
-                    } else if(activeRole === 'agent' && data.chosenAgent === myUID) {
-                        launchSecureChatRoom(data);
-                    }
-                } else {
-                    localStorage.removeItem('cf_tx_14_5');
-                    globalOrderID = null;
-                    if(activeRole === 'agent') startAgentRadarStream();
-                }
+                    } else if(activeRole === 'agent' && data.chosenAgent === myUID) { launchSecureChatRoom(data); }
+                } else { localStorage.removeItem('cf_tx_v15_2'); globalOrderID = null; if(activeRole === 'agent') startAgentRadarStream(); }
             });
         }
     </script>
