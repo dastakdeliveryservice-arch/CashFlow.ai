@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CASHFLOW GLOBAL - ULTIMATE MASTER ENGINE v15.8</title>
+    <title>CASHFLOW GLOBAL - ULTIMATE MASTER ENGINE v16.0</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -33,6 +33,7 @@
         
         .btn-action-master { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s; box-shadow: 0 4px 15px rgba(37,99,235,0.3); cursor: pointer; }
         .btn-action-master:active { transform: scale(0.96); }
+        .btn-action-master:disabled { background: #1e293b; color: #64748b; cursor: not-allowed; box-shadow: none; }
         
         .app-page { display: none; position: fixed; inset: 0; background: #070b12; z-index: 9000; flex-direction: column; justify-content: center; padding: 32px; text-align: center; }
         .app-page.active { display: flex !important; }
@@ -44,7 +45,7 @@
         <div class="my-auto">
             <h1 class="text-5xl font-black italic tracking-tighter text-slate-100 mb-2">CASH<span class="text-blue-500">FLOW.</span></h1>
             <p class="text-slate-400 text-sm mt-4 font-semibold">Instant Localized Physical Liquidity Router.</p>
-            <div class="mt-12 flex justify-center gap.1.5"><span class="w-6 h-1.5 bg-blue-500 rounded-full"></span><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span></div>
+            <div class="mt-12 flex justify-center gap-1.5"><span class="w-6 h-1.5 bg-blue-500 rounded-full"></span><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span><span class="w-2 h-1.5 bg-slate-800 rounded-full"></span></div>
         </div>
         <button onclick="showPage('slide2')" class="btn-action-master p-4 rounded-xl text-xs font-black w-full">PROCEED LINK <i class="fa-solid fa-arrow-right ml-1"></i></button>
     </div>
@@ -109,7 +110,7 @@
                 <button id="btnCaptureCam" onclick="captureSnapshot()" type="button" class="hidden bg-amber-600 px-4 py-2 rounded-xl text-xs font-black text-white cursor-pointer">Capture Face Photo</button>
             </div>
 
-            <button onclick="executeStrictRegistration()" class="btn-action-master w-full p-4 rounded-xl text-xs font-black mt-4">Verify & Register Account</button>
+            <button id="btnExecuteRegister" onclick="executeStrictRegistration()" class="btn-action-master w-full p-4 rounded-xl text-xs font-black mt-4">Verify & Register Account</button>
             <p onclick="showPage('pageRoleSelect')" class="text-xs text-slate-500 underline pt-2 cursor-pointer">Go Back</p>
         </div>
     </div>
@@ -123,9 +124,17 @@
         </div>
 
         <div class="space-y-3 w-full">
-            <input id="loginUser" placeholder="Enter Username" class="input-field-core">
+            <input id="loginUser" placeholder="Enter Username / Email" class="input-field-core">
             <input id="loginPass" type="password" placeholder="Enter Password" class="input-field-core">
-            <button onclick="executeSecureLoginAuth()" class="btn-action-master w-full p-4 rounded-xl text-white font-bold text-sm shadow-xl">Authorize Terminal Link</button>
+            
+            <select id="loginCity" class="input-field-core bg-[#15223e] text-slate-300 font-bold appearance-none">
+                <option value="">-- Select Registered City --</option>
+                <option value="multan">Multan</option>
+                <option value="lahore">Lahore</option>
+                <option value="karachi">Karachi</option>
+            </select>
+
+            <button id="btnLoginAction" onclick="executeSecureLoginAuth()" class="btn-action-master w-full p-4 rounded-xl text-white font-bold text-sm shadow-xl">Authorize Terminal Link</button>
             
             <div class="flex items-center my-4 text-slate-600 text-xs font-black"><hr class="flex-1 border-slate-800/80 mr-2">OR CONNECT WITH<hr class="flex-1 border-slate-800/80 ml-2"></div>
             
@@ -149,7 +158,7 @@
                     </div>
                 </div>
                 <div class="space-y-3 text-xs font-bold text-slate-300">
-                    <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex items-center gap-3"><i class="fa-solid fa-building text-blue-500"></i> Active City: <span id="sideProfileCity" class="text-white uppercase ml-auto">Multan</span></div>
+                    <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex items-center gap-3"><i class="fa-solid fa-building text-blue-500"></i> Active City: <span id="sideProfileCity" class="text-white uppercase ml-auto">---</span></div>
                     <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex items-center gap-3"><i class="fa-solid fa-address-card text-blue-500"></i> Status: <span class="text-emerald-400 ml-auto">VERIFIED</span></div>
                 </div>
             </div>
@@ -174,7 +183,7 @@
                         <div id="userRequestSetupInputs" class="hidden space-y-2">
                             <input id="inputAmtValue" type="number" placeholder="Amount (PKR)" class="input-field-core">
                             <input id="inputTipValue" type="number" placeholder="Commission Reward (PKR)" class="input-field-core">
-                            <button onclick="broadcastSignalToNetwork()" class="btn-action-master w-full p-4 rounded-xl text-xs font-black">LAUNCH AIRSPACE BROADCAST</button>
+                            <button id="btnLaunchBroadcast" onclick="broadcastSignalToNetwork()" class="btn-action-master w-full p-4 rounded-xl text-xs font-black">LAUNCH AIRSPACE BROADCAST</button>
                         </div>
 
                         <div id="userBiddingMonitorRadarRoom" class="hidden space-y-3 bg-slate-900 p-4 rounded-2xl border border-slate-800">
@@ -219,11 +228,12 @@
         firebase.initializeApp(firebaseConfig);
         const rtdb = firebase.database();
 
-        let myUID = localStorage.getItem('cf_uid_v15_7') || "NODE-" + Math.floor(100000 + Math.random() * 900000);
-        localStorage.setItem('cf_uid_v15_7', myUID);
+        let myUID = localStorage.getItem('cf_uid_v16_0') || "NODE-" + Math.floor(100000 + Math.random() * 900000);
+        localStorage.setItem('cf_uid_v16_0', myUID);
 
-        let myMeta = JSON.parse(localStorage.getItem('cf_meta_v15_7')) || null; 
-        let activeRole = 'user'; let activeMap = null; let globalOrderID = localStorage.getItem('cf_tx_v15_7') || null;
+        let myMeta = JSON.parse(localStorage.getItem('cf_meta_v16_0')) || null; 
+        let activeRole = 'user'; let activeMap = null; let myMarker = null;
+        let globalOrderID = localStorage.getItem('cf_tx_v16_0') || null;
         let selectedRoleType = 'user'; let baseCapturedSelfieRaw = "";
 
         function log(m) { document.getElementById('sysLog').innerText = m; }
@@ -235,22 +245,17 @@
             }
         }
 
-        function endOnboarding() { 
-            showPage('pageRoleSelect'); 
-        }
+        function endOnboarding() { showPage('pageRoleSelect'); }
         
         function showPage(id) {
             document.querySelectorAll('.app-page, #mainApplicationAppFrame').forEach(p => {
-                p.classList.add('hidden');
-                p.classList.remove('active');
+                p.classList.add('hidden'); p.classList.remove('active');
             });
             const targetedPage = document.getElementById(id);
-            targetedPage.classList.remove('hidden');
-            targetedPage.classList.add('active');
+            targetedPage.classList.remove('hidden'); targetedPage.classList.add('active');
             
             if(id === 'mainApplicationAppFrame') {
-                targetedPage.classList.remove('hidden');
-                targetedPage.classList.add('flex');
+                targetedPage.classList.remove('hidden'); targetedPage.classList.add('flex');
             }
         }
 
@@ -262,36 +267,7 @@
             showPage('pageRegister');
         }
 
-        function executeGoogleOAuthLink() {
-            log("Configuring Google API Handshake...");
-            const provider = new firebase.auth.GoogleAuthProvider();
-            
-            firebase.auth().signInWithPopup(provider)
-            .then((result) => {
-                const user = result.user;
-                log(`Authorized email user: ${user.email}`);
-                let cleanGoogleUser = user.email.replace(/[\.\#\$\[\]\@]/g, "-");
-
-                rtdb.ref('system_identities/multan/' + cleanGoogleUser).once('value', snap => {
-                    if(snap.exists()) {
-                        myMeta = snap.val();
-                    } else {
-                        myMeta = { username: cleanGoogleUser, email: user.email, phone: "Google Sync ID", cnic: "Verified Node", city: "multan", role: "user", selfie: user.photoURL };
-                        rtdb.ref('system_identities/multan/' + cleanGoogleUser).set(myMeta);
-                    }
-                    localStorage.setItem('cf_meta_v15_7', JSON.stringify(myMeta));
-                    document.getElementById('loginError').classList.add('hidden');
-                    showPage('mainApplicationAppFrame');
-                    selectCoreRole(myMeta.role);
-                });
-            })
-            .catch((error) => {
-                const lb = document.getElementById('loginError'); const lt = document.getElementById('loginErrorText');
-                lb.classList.remove('hidden');
-                lt.innerText = "🛑 Google Bridge Error: " + error.message;
-            });
-        }
-
+        // ================= BIOMETRIC COMPRESSION LOGIC =================
         let activeStreamRef = null;
         async function startCameraSync() {
             try {
@@ -300,89 +276,110 @@
                 video.srcObject = activeStreamRef; video.classList.remove('hidden');
                 document.getElementById('btnTriggerCam').classList.add('hidden');
                 document.getElementById('btnCaptureCam').classList.remove('hidden');
-            } catch (err) { alert("Camera Access Denied by Permission Engine."); }
+            } catch (err) { alert("Camera Access Denied."); }
         }
 
         function captureSnapshot() {
             const video = document.getElementById('videoFeed'); const canvas = document.getElementById('canvasPhoto');
-            canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0);
-            baseCapturedSelfieRaw = canvas.toDataURL('image/jpeg');
+            canvas.width = 240; canvas.height = 240; // Hard-scaled to keep size tiny
+            canvas.getContext('2d').drawImage(video, 0, 0, 240, 240);
+            baseCapturedSelfieRaw = canvas.toDataURL('image/jpeg', 0.4); // 40% compression ratio
             document.getElementById('photoPreview').src = baseCapturedSelfieRaw;
             document.getElementById('photoPreview').classList.remove('hidden');
             video.classList.add('hidden'); document.getElementById('btnCaptureCam').classList.add('hidden');
             if(activeStreamRef) activeStreamRef.getTracks().forEach(t => t.stop());
         }
 
-        // ================= ACCOUNT CREATION AND VALIDATION (FIXED) =================
+        // ================= STABLE REGISTRATION ROUTING =================
         function executeStrictRegistration() {
             const rawUser = document.getElementById('regUser').value.trim();
             const pass = document.getElementById('regPass').value.trim();
             const phone = document.getElementById('regPhone').value.trim();
             const cnic = document.getElementById('regCNIC').value.trim();
             const city = document.getElementById('regCity').value.trim().toLowerCase();
+            const btn = document.getElementById('btnExecuteRegister');
 
-            // Safe Regex replacement for special characters to prevent path breaking
             const user = rawUser.toLowerCase().replace(/[\.\#\$\[\]\@]/g, "-");
 
-            // Direct Screen Warnings instead of failing silently
-            if(!user || !pass || !phone || !cnic || !city) { showRegErr("Security Alert: All input data fields are strictly required."); return; }
-            if(phone.length < 11) { showRegErr("Validation Fault: Mobile sequence line must be at least 11 characters."); return; }
-            if(cnic.length !== 13) { showRegErr("Validation Fault: Identity CNIC must be exactly 13 digits."); return; }
-            if(selectedRoleType === 'agent' && !baseCapturedSelfieRaw) { showRegErr("Biometric Violation: Agent profile registration requires facial snap capture."); return; }
+            if(!user || !pass || !phone || !cnic || !city) { showRegErr("All fields are strictly required."); return; }
+            if(phone.length < 11) { showRegErr("Mobile number line must be 11 characters."); return; }
+            if(cnic.length !== 13) { showRegErr("Identity CNIC must be 13 digits."); return; }
+            if(selectedRoleType === 'agent' && !baseCapturedSelfieRaw) { showRegErr("Agent profile requires facial snapshot capture."); return; }
 
+            btn.disabled = true; btn.innerText = "VERIFYING IDENTITY HANDSHAKE...";
             log("Syncing packet metadata node...");
 
             rtdb.ref('system_identities/' + city + '/' + user).once('value', snap => {
-                if(snap.exists()) { showRegErr("Identity Mismatch: Chosen Operator username/email already allocated."); } 
-                else {
+                if(snap.exists()) { 
+                    showRegErr("Identity Mismatch: Username/Email already allocated."); 
+                    btn.disabled = false; btn.innerText = "Verify & Register Account";
+                } else {
                     const profilePayload = { username: user, password: pass, phone: phone, cnic: cnic, city: city, role: selectedRoleType, selfie: baseCapturedSelfieRaw || "none" };
                     rtdb.ref('system_identities/' + city + '/' + user).set(profilePayload, (err) => {
-                        if(err) { showRegErr("Database Packet Failure: Check configuration permissions. " + err.message); } 
+                        btn.disabled = false; btn.innerText = "Verify & Register Account";
+                        if(err) { showRegErr("Database Failure: " + err.message); } 
                         else { 
-                            alert("Identity Node Committed successfully! Switch to login screen."); 
+                            alert("Registration Successful! Redirecting to secure login."); 
                             document.getElementById('regError').classList.add('hidden');
                             showPage('pageLogin'); 
                         }
                     });
                 }
             }, (error) => {
-                showRegErr("Database Read Permission Denied: " + error.message);
+                btn.disabled = false; btn.innerText = "Verify & Register Account";
+                showRegErr("Database Security Denial: " + error.message);
             });
         }
 
         function showRegErr(m) { const eb = document.getElementById('regError'); eb.classList.remove('hidden'); document.getElementById('regErrorText').innerText = m; }
 
+        // ================= DIRECT PATH SECURE LOGIN =================
         function executeSecureLoginAuth() {
             const rawUser = document.getElementById('loginUser').value.trim();
             const pass = document.getElementById('loginPass').value.trim();
+            const city = document.getElementById('loginCity').value.trim().toLowerCase();
             const lb = document.getElementById('loginError'); const lt = document.getElementById('loginErrorText');
+            const btn = document.getElementById('btnLoginAction');
 
             const user = rawUser.toLowerCase().replace(/[\.\#\$\[\]\@]/g, "-");
 
-            if(!user || !pass) { lb.classList.remove('hidden'); lt.innerText = "Credentials entry bounds cannot be empty."; return; }
+            if(!user || !pass || !city) { lb.classList.remove('hidden'); lt.innerText = "All fields and city bounds are required."; return; }
 
-            log("Querying profile mapping layer...");
+            btn.disabled = true; btn.innerText = "AUTHORIZING ACCESS KEY...";
+            log("Querying precise profile route...");
 
-            rtdb.ref('system_identities').once('value', snap => {
-                let verifiedProfile = null;
-                snap.forEach(cityNode => {
-                    if(cityNode.hasChild(user)) {
-                        const candidate = cityNode.child(user).val();
-                        if(candidate.password === pass) verifiedProfile = candidate;
-                    }
-                });
-
-                if(verifiedProfile) {
-                    lb.classList.add('hidden'); myMeta = verifiedProfile;
-                    localStorage.setItem('cf_meta_v15_7', JSON.stringify(myMeta));
-                    showPage('mainApplicationAppFrame'); selectCoreRole(verifiedProfile.role);
-                } else {
-                    lb.classList.remove('hidden'); lt.innerText = "❌ Security Alert: Invalid Username or Password Key Hash Mismatch.";
-                }
+            rtdb.ref('system_identities/' + city + '/' + user).once('value', snap => {
+                btn.disabled = false; btn.innerText = "Authorize Terminal Link";
+                if(snap.exists()) {
+                    const profile = snap.val();
+                    if(profile.password === pass) {
+                        lb.classList.add('hidden'); myMeta = profile;
+                        localStorage.setItem('cf_meta_v16_0', JSON.stringify(myMeta));
+                        showPage('mainApplicationAppFrame'); selectCoreRole(profile.role);
+                    } else { lb.classList.remove('hidden'); lt.innerText = "Security Alert: Invalid Password Key Mismatch."; }
+                } else { lb.classList.remove('hidden'); lt.innerText = "No profile matched inside the specified city hub."; }
             });
         }
 
+        function executeGoogleOAuthLink() {
+            log("Configuring Google Handshake...");
+            const provider = new firebase.auth.GoogleAuthProvider();
+            firebase.auth().signInWithPopup(provider).then((result) => {
+                const user = result.user;
+                let cleanGoogleUser = user.email.replace(/[\.\#\$\[\]\@]/g, "-");
+                rtdb.ref('system_identities/multan/' + cleanGoogleUser).once('value', snap => {
+                    if(snap.exists()) { myMeta = snap.val(); } 
+                    else {
+                        myMeta = { username: cleanGoogleUser, email: user.email, phone: "Google Sync", cnic: "Verified Node", city: "multan", role: "user", selfie: user.photoURL };
+                        rtdb.ref('system_identities/multan/' + cleanGoogleUser).set(myMeta);
+                    }
+                    localStorage.setItem('cf_meta_v16_0', JSON.stringify(myMeta));
+                    showPage('mainApplicationAppFrame'); selectCoreRole(myMeta.role);
+                });
+            }).catch((err) => { alert("Google Link Error: " + err.message); });
+        }
+
+        // ================= DYNAMIC GEOSPATIAL MAP LAYER =================
         function setupMap() {
             if(activeMap) return;
             let coordinates = [30.1575, 71.5249]; 
@@ -393,8 +390,18 @@
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(activeMap);
 
             let dotColor = myMeta.role === 'user' ? '#10b981' : '#f59e0b';
-            L.circleMarker(coordinates, { color: dotColor, fillColor: dotColor, fillOpacity: 0.8, radius: 9 }).addTo(activeMap)
+            myMarker = L.circleMarker(coordinates, { color: dotColor, fillColor: dotColor, fillOpacity: 0.9, radius: 10 }).addTo(activeMap)
                 .bindPopup(`<b>My Node: ${myMeta.username.toUpperCase()}</b>`).openPopup();
+
+            // Real Live Location Tracking Trigger
+            if(navigator.geolocation) {
+                navigator.geolocation.watchPosition((pos) => {
+                    let liveLat = pos.coords.latitude; let liveLng = pos.coords.longitude;
+                    let newLoc = [liveLat, liveLng];
+                    myMarker.setLatLng(newLoc);
+                    activeMap.setView(newLoc, activeMap.getZoom());
+                }, () => { log("GPS Active tracking dropped. Fallback to city anchors."); }, { enableHighAccuracy: true });
+            }
         }
 
         function selectCoreRole(role) {
@@ -407,7 +414,6 @@
             document.getElementById('panelUserDashboard').classList.toggle('hidden', role !== 'user');
             document.getElementById('panelAgentDashboard').classList.toggle('hidden', role !== 'agent');
             
-            log(`Terminal Channel Active: ${myMeta.city.toUpperCase()}`);
             if(globalOrderID) recoverActiveSession();
             else if(role === 'agent') startAgentRadarStream();
         }
@@ -418,19 +424,22 @@
         document.getElementById('map').addEventListener('click', () => toggleSidebarMenu(false));
         function triggerUserForm(type) { document.getElementById('userHomeMenuLayout').classList.add('hidden'); document.getElementById('userRequestSetupInputs').classList.remove('hidden'); }
 
+        // ================= USER OPERATIONAL BROADCAST MATRIX =================
         function broadcastSignalToNetwork() {
             const amt = document.getElementById('inputAmtValue').value; const tip = document.getElementById('inputTipValue').value;
+            const btn = document.getElementById('btnLaunchBroadcast');
             if(!amt || !tip) { alert("Please complete input fields."); return; }
 
+            btn.disabled = true; btn.innerText = "STABILIZING RADAR FIELD...";
             globalOrderID = "TX-SIGNAL-" + Date.now();
-            localStorage.setItem('cf_tx_v15_7', globalOrderID);
+            localStorage.setItem('cf_tx_v16_0', globalOrderID);
             const otp = Math.floor(1000 + Math.random() * 8999);
             
-            const payload = { id: globalOrderID, clientUID: myUID, clientName: myMeta.username, amount: amt, commission: tip, status: "pending", token: otp, city: myMeta.city };
-
+            const payload = { id: globalOrderID, clientUID: myUID, clientName: myMeta.username, amount: amt, commission: tip, status: "pending", token: otp, city: myMeta.city, timestamp: Date.now() };
             document.getElementById('laserRadarAnchor').classList.remove('hidden'); 
             
             rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).set(payload, (err) => {
+                btn.disabled = false; btn.innerText = "LAUNCH AIRSPACE BROADCAST";
                 if(err) { log("Data Pipeline Blocked."); } 
                 else { 
                     document.getElementById('userRequestSetupInputs').classList.add('hidden');
@@ -448,8 +457,10 @@
                     if(data.offers) {
                         Object.keys(data.offers).forEach(k => {
                             const f = data.offers[k];
+                            // Escape text explicitly to prevent XSS script injections
+                            let safeAgentName = document.createElement('div'); safeAgentName.innerText = f.agentName.toUpperCase();
                             box.innerHTML += `<div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
-                                <div><p class="text-xs font-black text-white">${f.agentName.toUpperCase()}</p><p class="text-[11px] text-blue-400">Bid: PKR ${f.bid}</p></div>
+                                <div><p class="text-xs font-black text-white">${safeAgentName.innerHTML}</p><p class="text-[11px] text-blue-400">Bid: PKR ${f.bid}</p></div>
                                 <button onclick="acceptAgentDeal('${f.agentUID}', '${f.bid}')" class="bg-blue-600 text-white text-[10px] px-3 py-1 rounded-lg font-bold">ACCEPT</button>
                             </div>`;
                         });
@@ -465,9 +476,10 @@
         
         function killActiveSignal() { 
             if(globalOrderID) rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).remove(); 
-            localStorage.removeItem('cf_tx_v15_7'); location.reload(); 
+            localStorage.removeItem('cf_tx_v16_0'); location.reload(); 
         }
 
+        // ================= AGENT RADAR AIRSPACE CONTROL =================
         function startAgentRadarStream() {
             const container = document.getElementById('agentRadarStreamContainer');
             rtdb.ref('orders/' + myMeta.city).on('value', snap => {
@@ -476,6 +488,9 @@
                 if(snap.exists()) {
                     snap.forEach(child => {
                         const sig = child.val();
+                        // Filter out orders older than 15 minutes (Clean Garbage Collection)
+                        if(sig && Date.now() - sig.timestamp > 900000) return;
+
                         if(sig && (sig.status === 'pending' || (sig.status === 'countered' && sig.offers && sig.offers[myUID]))) {
                             found = true;
                             container.innerHTML += `<div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
@@ -494,7 +509,7 @@
             rtdb.ref('orders/' + myMeta.city).on('child_changed', snap => {
                 const updatedData = snap.val();
                 if(updatedData && updatedData.status === 'locked' && updatedData.chosenAgent === myUID) {
-                    globalOrderID = updatedData.id; localStorage.setItem('cf_tx_v15_7', globalOrderID); launchSecureChatRoom(updatedData);
+                    globalOrderID = updatedData.id; localStorage.setItem('cf_tx_v16_0', globalOrderID); launchSecureChatRoom(updatedData);
                 }
             });
         }
@@ -505,6 +520,7 @@
             rtdb.ref('orders/' + myMeta.city + '/' + targetID).update({ status: 'countered' });
         }
 
+        // ================= SECURE TUNNEL INTEGRATION & RECOVERY =================
         function launchSecureChatRoom(tx) {
             document.getElementById('laserRadarAnchor').classList.add('hidden');
             document.getElementById('panelUserDashboard').classList.add('hidden'); document.getElementById('panelAgentDashboard').classList.add('hidden');
@@ -522,7 +538,9 @@
                 if(snap.exists()) {
                     snap.forEach(c => {
                         const m = c.val(); 
-                        box.innerHTML += `<div class="p-2 rounded-lg max-w-[80%] text-xs font-semibold ${m.sender === myUID ? 'bg-blue-600 text-white ml-auto' : 'bg-slate-900 text-slate-200'}">${atob(m.msg)}</div>`;
+                        let textWrapper = document.createElement('div');
+                        textWrapper.innerText = atob(m.msg); // Safe decoding text allocation against injection leaks
+                        box.innerHTML += `<div class="p-2 rounded-lg max-w-[80%] text-xs font-semibold ${m.sender === myUID ? 'bg-blue-600 text-white ml-auto' : 'bg-slate-900 text-slate-200'}">${textWrapper.innerHTML}</div>`;
                     });
                 }
                 box.scrollTop = box.scrollHeight;
@@ -540,7 +558,7 @@
             rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).once('value', snap => {
                 if(snap.val() && snap.val().token == key) {
                     rtdb.ref('orders/' + myMeta.city + '/' + globalOrderID).remove();
-                    localStorage.removeItem('cf_tx_v15_7'); location.reload();
+                    localStorage.removeItem('cf_tx_v16_0'); location.reload();
                 } else { alert("Verification Mismatch: Code incorrect."); }
             });
         }
@@ -551,13 +569,16 @@
                 if(data) {
                     if(activeRole === 'user') {
                         document.getElementById('userHomeMenuLayout').classList.add('hidden');
-                        document.getElementById('userBiddingMonitorRadarRoom').classList.remove('hidden');
-                        listenToSignalLifecycle();
+                        if (data.status === 'locked') { launchSecureChatRoom(data); } 
+                        else {
+                            document.getElementById('userBiddingMonitorRadarRoom').classList.remove('hidden');
+                            listenToSignalLifecycle();
+                        }
                     } else if(activeRole === 'agent' && data.chosenAgent === myUID) { 
                         launchSecureChatRoom(data); 
                     }
                 } else { 
-                    localStorage.removeItem('cf_tx_v15_7'); globalOrderID = null; 
+                    localStorage.removeItem('cf_tx_v16_0'); globalOrderID = null; 
                     if(activeRole === 'agent') startAgentRadarStream(); 
                 }
             });
