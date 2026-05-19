@@ -1,3 +1,19 @@
+<!--
+FULL MULTI-SCREEN CASHRADAR APP UI
+Includes:
+- 3 Intro Screens
+- Role Selection
+- User Verification
+- Agent Verification
+- User Dashboard
+- Agent Dashboard
+- Live Radar
+- Laser Animation
+- Chat Box
+- OTP Modal
+- Realtime Styled UI
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -271,6 +287,220 @@
   </style>
 </head>
 <body>
+
+  <!-- INTRO SCREEN 1 -->
+  <section class="screen active" id="intro1">
+    <div class="centerBox">
+      <h1 class="megaTitle">CashRadar</h1>
+      <p class="megaText">Realtime Human ATM Network</p>
+    </div>
+  </section>
+
+  <!-- INTRO SCREEN 2 -->
+  <section class="screen" id="intro2">
+    <div class="centerBox">
+      <div class="bigRadar"></div>
+      <h1 class="megaTitle">LIVE TRACKING</h1>
+      <p class="megaText">Find Nearby Agents Instantly</p>
+    </div>
+  </section>
+
+  <!-- INTRO SCREEN 3 -->
+  <section class="screen" id="intro3">
+    <div class="centerBox">
+      <h1 class="megaTitle">OTP SECURITY</h1>
+      <p class="megaText">Secure • Fast • Verified</p>
+      <button class="btn" onclick="openRoleScreen()">ENTER APP</button>
+    </div>
+  </section>
+
+  <!-- ROLE SCREEN -->
+  <section class="screen" id="roleScreen">
+    <div class="glass bigGlass">
+      <h1 class="logo">SELECT MODE</h1>
+
+      <button class="btn" onclick="openUserVerification()">
+        CONTINUE AS USER
+      </button>
+
+      <button class="btn agentBtn" onclick="openAgentVerification()">
+        CONTINUE AS AGENT
+      </button>
+    </div>
+  </section>
+
+  <!-- USER VERIFICATION -->
+  <section class="screen" id="userVerification">
+    <div class="glass">
+      <h1 class="logo">USER VERIFICATION</h1>
+
+      <div class="inputBox">
+        <input type="text" placeholder="First Name">
+      </div>
+
+      <div class="inputBox">
+        <input type="text" placeholder="Last Name">
+      </div>
+
+      <div class="inputBox">
+        <input type="text" placeholder="CNIC Number">
+      </div>
+
+      <div class="inputBox">
+        <input type="text" placeholder="Phone Number">
+      </div>
+
+      <div class="inputBox">
+        <input type="text" placeholder="City">
+      </div>
+
+      <button class="btn" onclick="openUserChoice()">
+        VERIFY & CONTINUE
+      </button>
+    </div>
+  </section>
+
+  <!-- USER CHOICE -->
+  <section class="screen" id="userChoice">
+    <div class="glass">
+      <h1 class="logo">WHAT DO YOU NEED?</h1>
+
+      <button class="btn" onclick="openUserDashboard()">
+        I NEED ONLINE MONEY
+      </button>
+
+      <button class="btn agentBtn" onclick="openUserDashboard()">
+        I NEED CASH
+      </button>
+    </div>
+  </section>
+
+  <!-- AGENT VERIFICATION -->
+  <section class="screen" id="agentVerification">
+    <div class="glass">
+      <h1 class="logo">AGENT VERIFICATION</h1>
+
+      <div class="inputBox">
+        <input type="text" placeholder="First Name">
+      </div>
+
+      <div class="inputBox">
+        <input type="text" placeholder="Last Name">
+      </div>
+
+      <div class="inputBox">
+        <input type="text" placeholder="Vehicle Number">
+      </div>
+
+      <div class="inputBox">
+        <input type="text" placeholder="CNIC Number">
+      </div>
+
+      <div class="inputBox">
+        <input type="text" placeholder="Phone Number">
+      </div>
+
+      <div class="inputBox">
+        <input type="file">
+      </div>
+
+      <button class="btn" onclick="openAgentDashboard()">
+        VERIFY & CONTINUE
+      </button>
+    </div>
+  </section>
+
+  <!-- USER DASHBOARD -->
+  <section class="screen" id="userDashboard">
+
+    <div class="topMap">
+      <div class="greenDot"></div>
+      <div class="laserPulse"></div>
+    </div>
+
+    <div class="glass dashboardGlass">
+
+      <div class="menu">☰</div>
+
+      <h1 class="logo">REQUEST MONEY</h1>
+
+      <div class="row">
+        <div class="inputBox">
+          <input type="number" placeholder="Amount">
+        </div>
+
+        <div class="inputBox">
+          <input type="number" placeholder="Commission">
+        </div>
+      </div>
+
+      <button class="btn" onclick="findAgent()">
+        SEND REQUEST
+      </button>
+
+      <div class="chatBox">
+        <div class="chatHeader">LIVE CHAT</div>
+
+        <div class="messages">
+          <div class="msg left">Agent is arriving...</div>
+          <div class="msg right">Okay waiting</div>
+        </div>
+
+        <div class="chatInput">
+          <input type="text" placeholder="Type message...">
+          <button>➤</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- AGENT DASHBOARD -->
+  <section class="screen" id="agentDashboard">
+
+    <div class="topMap">
+      <div class="redDot"></div>
+      <div class="laserPulse"></div>
+    </div>
+
+    <div class="glass dashboardGlass">
+
+      <div class="menu">☰</div>
+
+      <h1 class="logo">AGENT RADAR</h1>
+
+      <div class="toggleBox">
+        <span>OFFLINE</span>
+        <label class="switch">
+          <input type="checkbox" checked>
+          <span class="slider"></span>
+        </label>
+        <span>ONLINE</span>
+      </div>
+
+      <div class="requestCard">
+        <h2>NEW REQUEST</h2>
+        <p>Amount: 5000</p>
+        <p>Commission: 120</p>
+
+        <div class="rowBtns">
+          <button class="smallBtn accept">ACCEPT</button>
+          <button class="smallBtn counter">+ COMMISSION</button>
+          <button class="smallBtn reject">REJECT</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- OTP POPUP -->
+  <div class="otpPopup" id="otpPopup">
+    <div class="otpBox">
+      <h1>ENTER OTP</h1>
+      <input type="text" placeholder="1234">
+      <button class="btn">COMPLETE DEAL</button>
+    </div>
+  </div>
 
   <div class="bg"></div>
   <div class="mapMock"></div>
