@@ -1,77 +1,363 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CashFlow - Ultimate Liquid Engine</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <style>
-        body { background: #0b0f19; color: white; font-family: 'Inter', sans-serif; }
-        .gradient-card { background: linear-gradient(145deg, #1a2234, #0f172a); border: 1px solid #334155; }
-        .radar-pulse { animation: ripple 2s infinite; }
-        @keyframes ripple { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(2); opacity: 0; } }
-        .btn-blue { background: #3b82f6; transition: 0.3s; }
-        .btn-blue:active { transform: scale(0.95); }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CashRadar</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: #071120;
+      overflow: hidden;
+      color: white;
+      height: 100vh;
+    }
+
+    .bg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background:
+        radial-gradient(circle at top left, rgba(0,255,255,0.18), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(123,97,255,0.22), transparent 30%),
+        #071120;
+      z-index: -1;
+    }
+
+    .radar {
+      position: absolute;
+      width: 700px;
+      height: 700px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,255,255,0.08);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: pulse 4s infinite linear;
+    }
+
+    .radar::before,
+    .radar::after {
+      content: '';
+      position: absolute;
+      inset: 60px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,255,255,0.08);
+    }
+
+    .radar::after {
+      inset: 120px;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+      }
+
+      100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+      }
+    }
+
+    .laser {
+      position: absolute;
+      width: 350px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00f5ff);
+      top: 50%;
+      left: 50%;
+      transform-origin: left;
+      animation: rotateLaser 4s linear infinite;
+      box-shadow: 0 0 25px #00f5ff;
+    }
+
+    @keyframes rotateLaser {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .container {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+    }
+
+    .glass {
+      width: 430px;
+      padding: 35px;
+      border-radius: 35px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(25px);
+      box-shadow: 0 0 60px rgba(0,0,0,0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .glass::before {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: rgba(0,245,255,0.1);
+      border-radius: 50%;
+      top: -100px;
+      right: -100px;
+    }
+
+    .logo {
+      font-size: 42px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      background: linear-gradient(to right, #00f5ff, #7b61ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: #8ea0c4;
+      margin-bottom: 35px;
+      line-height: 1.6;
+    }
+
+    .inputBox {
+      margin-bottom: 20px;
+    }
+
+    .inputBox label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: #9fb0d3;
+    }
+
+    .inputBox input,
+    .inputBox select {
+      width: 100%;
+      padding: 18px;
+      border: none;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.07);
+      color: white;
+      font-size: 15px;
+      outline: none;
+      transition: 0.3s;
+      border: 1px solid transparent;
+    }
+
+    .inputBox input:focus,
+    .inputBox select:focus {
+      border-color: #00f5ff;
+      box-shadow: 0 0 20px rgba(0,245,255,0.25);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 18px;
+      border: none;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #00f5ff, #7b61ff);
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 10px;
+      box-shadow: 0 0 30px rgba(0,245,255,0.25);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 0 40px rgba(0,245,255,0.45);
+    }
+
+    .status {
+      margin-top: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255,255,255,0.04);
+      padding: 16px;
+      border-radius: 18px;
+    }
+
+    .online {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #00ff9d;
+      font-weight: 600;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      background: #00ff9d;
+      border-radius: 50%;
+      box-shadow: 0 0 15px #00ff9d;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0.3;
+      }
+    }
+
+    .commission {
+      color: #00f5ff;
+      font-weight: 700;
+    }
+
+    .bottomText {
+      text-align: center;
+      margin-top: 25px;
+      color: #7485aa;
+      font-size: 13px;
+    }
+
+    .mapMock {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      inset: 0;
+      opacity: 0.08;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+      background-size: 50px 50px;
+      z-index: -1;
+    }
+
+    @media(max-width: 500px) {
+      .glass {
+        width: 100%;
+        padding: 25px;
+      }
+
+      .logo {
+        font-size: 32px;
+      }
+
+      .row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
-<body class="p-4">
+<body>
 
-    <!-- View Controller -->
-    <div id="app">
-        <!-- Step 1: Role Selection -->
-        <div id="view-role" class="space-y-6">
-            <h1 class="text-3xl font-bold text-center">CashFlow System</h1>
-            <button onclick="setRole('user')" class="w-full p-6 gradient-card rounded-2xl text-left border-l-4 border-blue-500">USER TERMINAL</button>
-            <button onclick="setRole('agent')" class="w-full p-6 gradient-card rounded-2xl text-left border-l-4 border-amber-500">AGENT HUB</button>
+  <div class="bg"></div>
+  <div class="mapMock"></div>
+  <div class="radar"></div>
+  <div class="laser"></div>
+
+  <div class="container">
+
+    <div class="glass">
+
+      <div class="logo">CashRadar</div>
+
+      <div class="subtitle">
+        Realtime cash ↔ online exchange system with live agent tracking, OTP protection, radar matching and instant deals.
+      </div>
+
+      <div class="row">
+
+        <div class="inputBox">
+          <label>Amount</label>
+          <input type="number" placeholder="5000" />
         </div>
 
-        <!-- Step 2: Verification (Dynamic) -->
-        <div id="view-verify" class="hidden space-y-4">
-            <h2 id="verify-title" class="text-xl font-bold">Verification Node</h2>
-            <input type="text" id="v-name" placeholder="Full Name" class="w-full p-3 bg-slate-800 rounded-lg">
-            <input type="text" id="v-cnic" placeholder="CNIC Number (13 digits)" class="w-full p-3 bg-slate-800 rounded-lg">
-            <div id="agent-only" class="hidden"><input type="text" placeholder="Vehicle Number" class="w-full p-3 bg-slate-800 rounded-lg"></div>
-            <button onclick="startApp()" class="w-full p-4 btn-blue rounded-xl font-bold">INITIALIZE SESSION</button>
+        <div class="inputBox">
+          <label>Commission</label>
+          <input type="number" placeholder="120" />
         </div>
 
-        <!-- Step 3: Dashboard (Map + Radar) -->
-        <div id="view-main" class="hidden h-screen flex flex-col">
-            <div id="map" class="h-1/2 rounded-2xl shadow-xl border border-slate-700"></div>
-            <div class="flex-1 p-4 space-y-4">
-                <div id="radar-ui" class="gradient-card p-6 rounded-3xl text-center">
-                    <div id="radar-circle" class="w-20 h-20 bg-blue-500 rounded-full mx-auto mb-4 radar-pulse"></div>
-                    <p id="status-text">SYSTEM STANDBY</p>
-                    <button id="toggle-btn" onclick="toggleStatus()" class="mt-4 px-6 py-2 bg-slate-700 rounded-full">GO ONLINE</button>
-                </div>
-            </div>
+      </div>
+
+      <div class="inputBox">
+        <label>Exchange Type</label>
+
+        <select>
+          <option>Need Online Money</option>
+          <option>Need Cash</option>
+        </select>
+      </div>
+
+      <div class="inputBox">
+        <label>City</label>
+        <input type="text" placeholder="Karachi" />
+      </div>
+
+      <button class="btn" onclick="findAgent()">
+        FIND AGENT
+      </button>
+
+      <div class="status">
+
+        <div class="online">
+          <div class="dot"></div>
+          24 Agents Nearby
         </div>
+
+        <div class="commission">
+          Avg Fee 2.1%
+        </div>
+
+      </div>
+
+      <div class="bottomText">
+        Secure • Live Tracking • OTP Protected • AI Fraud Detection
+      </div>
+
     </div>
 
-    <script>
-        let userData = { role: '', status: 'offline' };
-        let map = L.map('map').setView([30.1575, 71.5249], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+  </div>
 
-        function setRole(r) {
-            userData.role = r;
-            document.getElementById('view-role').classList.add('hidden');
-            document.getElementById('view-verify').classList.remove('hidden');
-            if(r === 'agent') document.getElementById('agent-only').classList.remove('hidden');
-        }
+  <script>
 
-        function startApp() {
-            document.getElementById('view-verify').classList.add('hidden');
-            document.getElementById('view-main').classList.remove('hidden');
-            L.marker([30.1575, 71.5249]).addTo(map).bindPopup("Current Position");
-        }
+    function findAgent() {
 
-        function toggleStatus() {
-            userData.status = userData.status === 'offline' ? 'online' : 'offline';
-            document.getElementById('status-text').innerText = userData.status.toUpperCase();
-            document.getElementById('radar-circle').style.background = userData.status === 'online' ? '#22c55e' : '#3b82f6';
-        }
-    </script>
+      const btn = document.querySelector('.btn');
+
+      btn.innerHTML = 'SEARCHING AGENTS...';
+
+      btn.style.boxShadow = '0 0 50px rgba(0,255,157,0.7)';
+
+      setTimeout(() => {
+        btn.innerHTML = 'AGENT FOUND ✓';
+        btn.style.background = 'linear-gradient(135deg,#00ff9d,#00f5ff)';
+      }, 3000);
+
+    }
+
+  </script>
+
 </body>
 </html>
