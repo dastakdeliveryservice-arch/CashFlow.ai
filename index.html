@@ -5,61 +5,113 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CASHFLOW GLOBAL</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        body { background-color: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; overflow: hidden; }
-        .page { display: none; height: 100vh; width: 100%; position: absolute; top: 0; left: 0; }
+        .page { display: none; height: 100vh; width: 100%; }
         .active { display: flex; flex-direction: column; }
-        .laser { animation: pulse 1.5s infinite; border: 2px solid #3b82f6; }
-        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(3); opacity: 0; } }
+        body { background: #020617; color: #f8fafc; overflow: hidden; }
     </style>
 </head>
 <body>
 
-    <div id="onboard" class="page active bg-slate-950 items-center justify-center p-8 text-center">
-        <h1 class="text-4xl font-black text-blue-500">CASHFLOW</h1>
-        <p class="text-gray-400 mt-2">Liquidity Router v1.0</p>
-        <button onclick="App.next()" class="mt-8 w-full bg-blue-600 p-4 rounded-xl font-bold">NEXT</button>
+    <div id="p1" class="page active items-center justify-center text-center p-6">
+        <h1 class="text-5xl font-black text-blue-500 italic">CASHFLOW</h1>
+        <button onclick="nav('p2')" class="mt-10 bg-blue-600 px-10 py-3 rounded-full font-bold">GET STARTED</button>
     </div>
 
-    <div id="role-select" class="page bg-slate-950 items-center justify-center p-6">
-        <h2 class="text-2xl font-bold mb-6">Select Identity</h2>
-        <button onclick="App.setRole('user')" class="w-full p-6 bg-slate-900 border border-blue-500 rounded-2xl mb-4">USER TERMINAL</button>
-        <button onclick="App.setRole('agent')" class="w-full p-6 bg-slate-900 border border-amber-500 rounded-2xl">AGENT HUB</button>
+    <div id="p2" class="page items-center justify-center p-6">
+        <h2 class="text-2xl font-bold mb-6">Who are you?</h2>
+        <button onclick="setRole('user')" class="w-full p-6 bg-slate-900 border border-blue-500 rounded-2xl mb-4">USER TERMINAL</button>
+        <button onclick="setRole('agent')" class="w-full p-6 bg-slate-900 border border-amber-500 rounded-2xl">AGENT HUB</button>
     </div>
 
-    <div id="dashboard" class="page bg-slate-950">
-        <div id="map" class="h-1/2 w-full"></div>
-        <div id="ui-panel" class="h-1/2 p-6 flex flex-col justify-between">
-            <div id="action-area" class="space-y-4">
-                </div>
-            <div id="radar-layer" class="hidden text-center">
-                <div class="laser w-20 h-20 mx-auto rounded-full"></div>
-                <p class="mt-4 font-bold animate-pulse text-blue-400">BROADCASTING...</p>
-            </div>
-        </div>
+    <div id="p3" class="page p-6">
+        <h2 id="verif-title" class="text-xl font-bold mb-4">Verification</h2>
+        <input id="fname" placeholder="First Name" class="p-3 bg-slate-800 rounded-lg mb-2">
+        <input id="idcard" placeholder="CNIC / ID Card" class="p-3 bg-slate-800 rounded-lg mb-2">
+        <button onclick="finishAuth()" class="bg-green-600 p-4 rounded-xl font-bold mt-4">COMPLETE SETUP</button>
     </div>
 
 <script>
-const App = {
-    role: null,
-    step: 0,
-    next: () => {
+    let role = '';
+    function nav(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById('role-select').classList.add('active');
-    },
-    setRole: (r) => {
-        App.role = r;
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById('dashboard').classList.add('active');
-        App.initMap();
-    },
-    initMap: () => {
-        const map = L.map('map', {zoomControl: false}).setView([30.1575, 71.5249], 14);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        document.getElementById(id).classList.add('active');
     }
-};
+    function setRole(r) { role = r; nav('p3'); }
+    function finishAuth() { /* Agla part yahan aayega */ }
 </script>
 </body>
 </html>
+// --- MAP & ORDER ENGINE ---
+let map, userMarker, agentMarker;
+
+function initMainSystem() {
+    // 1. Initialize Map
+    map = L.map('map', {zoomControl: false}).setView([30.1575, 71.5249], 14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    // 2. Radar System (Laser Pulse)
+    // Ye tab activate hoga jab user request bheje ga
+    const radarHtml = `
+        <div id="radar-pulse" class="fixed bottom-20 left-1/2 -translate-x-1/2 w-20 h-20 
+             border-4 border-blue-500 rounded-full animate-ping opacity-75"></div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', radarHtml);
+}
+
+// 3. Request Logic
+function broadcastOrder(amount, commission) {
+    console.log("Broadcasting to nearest Agents...");
+    // Firebase me req push karo
+    const orderRef = firebase.database().ref('orders/').push();
+    orderRef.set({
+        amount, commission, 
+        status: 'searching',
+        lat: 30.1575, lng: 71.5249,
+        timestamp: Date.now()
+    });
+    
+    // UI Update: Laser on
+    document.getElementById('radar-pulse').classList.remove('hidden');
+}
+
+// 4. Listen for Agents
+function listenForAgents() {
+    firebase.database().ref('orders/').on('child_changed', (snap) => {
+        if(snap.val().status === 'accepted') {
+            alert("Ding! Agent Found!");
+            // OTP Input field auto-trigger
+            showOTPField();
+        }
+    });
+} // --- DEAL SETTLEMENT & OTP ENGINE ---
+
+function showOTPField() {
+    const html = `
+        <div id="otp-box" class="fixed inset-0 bg-black/80 flex items-center justify-center p-6">
+            <div class="bg-slate-900 p-8 rounded-2xl w-full">
+                <h2 class="text-xl font-bold mb-4">Enter Deal OTP</h2>
+                <input id="otp-in" type="number" class="w-full p-4 bg-slate-800 rounded-xl mb-4 text-center text-2xl">
+                <button onclick="checkOTP()" class="w-full bg-green-600 p-4 rounded-xl">FINALIZE DEAL</button>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function checkOTP() {
+    const input = document.getElementById('otp-in').value;
+    // OTP logic jo Firebase se match karegi
+    if(input) {
+        alert("Deal Secured! Transaction Closed.");
+        document.getElementById('otp-box').remove();
+    }
+}
+
+// --- SWITCH MODE (User <-> Agent) ---
+function switchMode() {
+    // Ye check karega user ka current mode aur use switch kar dega
+    // Iske liye dobara verification ki call jayegi
+    alert("Switching Mode... Re-verifying credentials.");
+    window.location.reload(); // Hard reset to force clean state
+}
