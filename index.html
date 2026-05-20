@@ -6,6 +6,7 @@
     <title>CashFlow Pro | Live Network</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
@@ -14,48 +15,59 @@
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
 
     <style>
-        body { background-color: #0f172a; color: white; overflow: hidden; font-family: sans-serif; }
+        /* Modern Premium UI */
+        body { background-color: #0f172a; color: white; overflow: hidden; font-family: 'Inter', sans-serif; }
         .view { display: none; height: 100vh; width: 100vw; position: absolute; inset: 0; flex-direction: column; background: #0f172a; }
         .active { display: flex; animation: slideIn 0.3s ease-out; }
         @keyframes slideIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
         
-        .glass-input { background: #1e293b; border: 2px solid #334155; color: white; padding: 16px; border-radius: 12px; width: 100%; outline: none; transition: 0.3s; margin-bottom: 12px;}
-        .glass-input:focus { border-color: #0ea5e9; }
+        .glass-input { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(10px); border: 2px solid #334155; color: white; padding: 16px; border-radius: 12px; width: 100%; outline: none; transition: 0.3s; margin-bottom: 12px;}
+        .glass-input:focus { border-color: #0ea5e9; box-shadow: 0 0 15px rgba(14, 165, 233, 0.4); }
         
-        #map-area { flex-grow: 1; position: relative; }
+        /* Map Area (Full Screen base) */
+        #map-area { flex-grow: 1; position: absolute; top:0; left:0; width: 100%; height: 100vh; z-index: 1; }
         #map { height: 100%; width: 100%; z-index: 1; }
-        .marker-user { background: #22c55e; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 15px #22c55e; }
-        .marker-agent { background: #ef4444; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 15px #ef4444; }
         
+        /* Markers */
+        .marker-user { background: #22c55e; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 15px rgba(34, 197, 94, 0.8); }
+        .marker-agent { background: #ef4444; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 15px rgba(239, 68, 68, 0.8); }
+        
+        /* Laser Radar Effect */
         .laser-radar { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; pointer-events: none; }
         .ring { border: 2px solid #0ea5e9; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: radarPulse 2s infinite ease-out; }
-        @keyframes radarPulse { 0% { width: 0; height: 0; opacity: 1; } 100% { width: 300px; height: 300px; opacity: 0; } }
+        @keyframes radarPulse { 0% { width: 0; height: 0; opacity: 1; } 100% { width: 400px; height: 400px; opacity: 0; } }
         ::-webkit-scrollbar { display: none; }
+
+        /* UI Overlays floating above Map */
+        .floating-ui { position: absolute; z-index: 2000; width: 100%; }
+        .bottom-sheet { position: absolute; bottom: 0; width: 100%; z-index: 2000; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(15px); border-top-left-radius: 24px; border-top-right-radius: 24px; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); padding: 24px; padding-bottom: 40px; }
     </style>
 </head>
 <body>
 
-    <div id="v-splash" class="view active items-center justify-center text-center bg-slate-900">
-        <h1 class="text-5xl font-black text-blue-500 animate-pulse">CASHFLOW</h1>
-        <p class="text-gray-400 mt-2">LIVE NETWORK</p>
+    <audio id="ding-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+
+    <div id="v-splash" class="view active items-center justify-center text-center bg-slate-900 z-[9999]">
+        <h1 class="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 animate-pulse">CASHFLOW</h1>
+        <p class="text-gray-400 mt-2 tracking-widest">PRO NETWORK</p>
     </div>
 
-    <div id="v-role" class="view items-center justify-center p-6">
-        <h2 class="text-3xl font-black mb-8">IDENTITY</h2>
-        <button onclick="setRole('user')" class="w-full p-6 bg-slate-800 border-2 border-green-500 rounded-2xl mb-6 shadow-lg">
-            <h3 class="text-2xl font-bold text-green-400">USER TERMINAL</h3>
+    <div id="v-role" class="view items-center justify-center p-6 z-[5000] bg-slate-900">
+        <h2 class="text-4xl font-black mb-10 tracking-wide text-white">IDENTITY</h2>
+        <button onclick="setRole('user')" class="w-full p-6 bg-slate-800 border border-green-500 rounded-2xl mb-6 shadow-[0_0_20px_rgba(34,197,94,0.2)] hover:scale-105 transition">
+            <h3 class="text-2xl font-bold text-green-400"><i class="fas fa-user mb-2"></i> USER TERMINAL</h3>
         </button>
-        <button onclick="setRole('agent')" class="w-full p-6 bg-slate-800 border-2 border-red-500 rounded-2xl shadow-lg">
-            <h3 class="text-2xl font-bold text-red-400">AGENT HUB</h3>
+        <button onclick="setRole('agent')" class="w-full p-6 bg-slate-800 border border-red-500 rounded-2xl shadow-[0_0_20px_rgba(239,68,68,0.2)] hover:scale-105 transition">
+            <h3 class="text-2xl font-bold text-red-400"><i class="fas fa-motorcycle mb-2"></i> AGENT HUB</h3>
         </button>
     </div>
 
-    <div id="v-verify" class="view p-6 overflow-y-auto">
-        <h2 id="verify-title" class="text-3xl font-black mb-6 text-center mt-8">VERIFICATION</h2>
-        <div id="error-box" class="hidden bg-red-900/50 border border-red-500 text-red-200 p-3 rounded-lg mb-4 text-sm font-bold"></div>
+    <div id="v-verify" class="view p-6 overflow-y-auto z-[5000] bg-slate-900">
+        <h2 id="verify-title" class="text-3xl font-black mb-8 text-center mt-8">VERIFICATION</h2>
+        <div id="error-box" class="hidden bg-red-900/50 border border-red-500 text-red-200 p-3 rounded-lg mb-4 text-sm font-bold text-center"></div>
         
-        <input id="v-fname" type="text" placeholder="First Name (Min 3 chars)" class="glass-input">
-        <input id="v-cnic" type="number" placeholder="CNIC (Strictly 13 Digits)" class="glass-input">
+        <input id="v-fname" type="text" placeholder="Full Name" class="glass-input">
+        <input id="v-cnic" type="number" placeholder="CNIC (13 Digits)" class="glass-input">
         <input id="v-phone" type="number" placeholder="Phone (e.g. 03001234567)" class="glass-input">
         <input id="v-city" type="text" placeholder="City" class="glass-input">
         
@@ -63,89 +75,96 @@
             <input id="v-vehicle" type="text" placeholder="Vehicle Reg No." class="glass-input border-red-500">
         </div>
         
-        <button onclick="runVerification()" class="w-full p-4 mt-4 bg-blue-600 rounded-xl font-black text-xl shadow-lg">AUTHENTICATE</button>
+        <button onclick="runVerification()" class="w-full p-4 mt-6 bg-gradient-to-r from-blue-600 to-blue-400 rounded-xl font-black text-xl shadow-lg">AUTHENTICATE</button>
     </div>
 
-    <div id="v-dashboard" class="view">
+    <div id="v-dashboard" class="view bg-slate-100 relative">
+        
         <div id="map-area">
             <div id="map"></div>
             <div id="laser" class="laser-radar hidden">
-                <div class="ring"></div><div class="ring" style="animation-delay: 0.6s;"></div>
+                <div class="ring"></div><div class="ring" style="animation-delay: 0.6s;"></div><div class="ring" style="animation-delay: 1.2s;"></div>
             </div>
         </div>
 
-        <div class="absolute top-4 left-4 z-[1000]">
-            <button onclick="logout()" class="bg-slate-900 p-3 rounded-xl border border-red-500 text-red-400 font-bold shadow-lg"><i class="fas fa-power-off"></i></button>
-        </div>
-        
-        <div id="agent-status-toggle" class="absolute top-4 right-4 z-[1000] hidden bg-slate-900 p-3 rounded-xl border border-gray-700 font-bold">
-            Status: <span id="a-status-text" class="text-red-500">OFFLINE</span>
-            <button onclick="toggleAgentOnline()" class="ml-2 bg-blue-600 px-3 py-1 rounded">GO ONLINE</button>
+        <div class="floating-ui top-4 left-4 right-4 flex justify-between pointer-events-none">
+            <button onclick="logout()" class="bg-slate-900/80 backdrop-blur p-3 rounded-xl border border-red-500 text-red-400 font-bold shadow-lg pointer-events-auto">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+            
+            <div id="agent-status-toggle" class="hidden bg-slate-900/80 backdrop-blur p-3 rounded-xl border border-gray-700 font-bold pointer-events-auto items-center">
+                <span id="a-status-text" class="text-red-500 mr-2 text-sm">OFFLINE</span>
+                <button onclick="toggleAgentOnline()" class="bg-red-600 px-4 py-1 rounded-lg text-white font-bold text-sm shadow">GO ONLINE</button>
+            </div>
         </div>
 
-        <div id="user-sheet" class="bg-slate-900 rounded-t-3xl p-6 z-[1000] border-t-2 border-blue-500 hidden pb-8 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+        <div id="user-sheet" class="bottom-sheet border-t-4 border-blue-500 hidden">
             <div id="u-input-area">
-                <h3 class="text-xl font-black mb-4">REQUEST CASH</h3>
+                <h3 class="text-2xl font-black mb-4 text-center text-white">REQUEST CASH</h3>
                 <div class="flex gap-2 mb-4">
-                    <input id="u-amount" type="number" placeholder="Amount" class="glass-input w-2/3 !mb-0 font-bold">
-                    <input id="u-fee" type="number" placeholder="Fee" class="glass-input w-1/3 !mb-0 font-bold text-green-400">
+                    <input id="u-amount" type="number" placeholder="Amount (Rs)" class="glass-input w-2/3 !mb-0 font-bold text-xl">
+                    <input id="u-fee" type="number" placeholder="Fee" class="glass-input w-1/3 !mb-0 font-bold text-green-400 text-xl">
                 </div>
-                <button onclick="broadcastLive()" class="w-full bg-blue-600 p-4 rounded-xl font-black">BROADCAST SIGNAL <i class="fas fa-satellite-dish"></i></button>
+                <button onclick="broadcastLive()" class="w-full bg-blue-600 p-4 rounded-xl font-black text-lg shadow-[0_0_20px_rgba(37,99,235,0.4)]">
+                    BROADCAST SIGNAL <i class="fas fa-satellite-dish ml-2"></i>
+                </button>
             </div>
-            <div id="u-waiting" class="hidden text-center py-4">
-                <h3 class="text-xl font-bold text-blue-400 animate-pulse">BROADCASTING TO REAL AGENTS...</h3>
-                <p class="text-gray-400 text-sm mt-2">Waiting for someone to pick up...</p>
-                <button onclick="cancelBroadcast()" class="mt-4 text-red-500 font-bold">CANCEL</button>
+            <div id="u-waiting" class="hidden text-center py-2">
+                <h3 class="text-xl font-bold text-blue-400 animate-pulse mb-2"><i class="fas fa-radar"></i> SCANNING NETWORK...</h3>
+                <p class="text-gray-400 text-sm">Waiting for an agent to accept</p>
+                <button onclick="cancelBroadcast()" class="mt-4 bg-red-900/50 text-red-400 border border-red-500 px-6 py-2 rounded-lg font-bold">CANCEL</button>
             </div>
         </div>
 
-        <div id="agent-sheet" class="bg-slate-900 rounded-t-3xl p-6 z-[1000] border-t-2 border-red-500 hidden pb-8 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
-            <h3 class="text-xl font-black mb-4"><i class="fas fa-radar"></i> LIVE REQUESTS</h3>
-            <div id="live-orders" class="space-y-3 overflow-y-auto max-h-40">
-                <p class="text-gray-500 text-center">Go online to see requests...</p>
+        <div id="agent-sheet" class="bottom-sheet border-t-4 border-red-500 hidden">
+            <h3 class="text-xl font-black mb-4 text-white"><i class="fas fa-list"></i> LIVE REQUESTS</h3>
+            <div id="live-orders" class="space-y-3 overflow-y-auto max-h-[30vh]">
+                <p class="text-gray-400 text-center py-4">Go online to receive requests...</p>
+            </div>
+        </div>
+
+        <div id="m-active-deal" class="bottom-sheet border-t-4 border-green-500 hidden flex-col h-[45vh] !p-0">
+            <div class="p-4 bg-slate-800/90 rounded-t-3xl flex justify-between items-center border-b border-slate-700">
+                <div>
+                    <h3 class="font-bold text-green-400 animate-pulse"><i class="fas fa-circle text-xs mr-1"></i> DEAL ACTIVE</h3>
+                    <p class="text-xs text-gray-300">Navigate to location</p>
+                </div>
+                <button onclick="openOTP()" class="bg-green-600 px-4 py-2 rounded-lg font-bold text-white shadow-lg">SETTLE (OTP)</button>
+            </div>
+            <div class="flex-grow p-4 overflow-y-auto flex flex-col gap-2" id="chat-box"></div>
+            <div class="p-4 bg-slate-900/95 flex gap-2 border-t border-slate-700">
+                <input id="chat-msg" type="text" placeholder="Message..." class="glass-input !mb-0 !p-3 text-sm">
+                <button onclick="sendRealChat()" class="bg-blue-600 px-6 rounded-xl font-bold"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
 
-    <div id="m-nego" class="fixed inset-0 bg-black/90 z-[3000] hidden items-center justify-center p-6">
-        <div class="bg-slate-800 border-2 border-blue-500 p-6 rounded-2xl w-full text-center">
-            <h2 class="text-2xl font-black mb-2">AGENT RESPONDED</h2>
-            <p class="text-gray-400 mb-4">Agent accepted but requested a new fee:</p>
-            <div class="text-4xl font-black text-green-400 mb-6">Rs. <span id="n-fee-display"></span></div>
-            <button onclick="acceptNegotiation()" class="w-full bg-green-600 p-4 rounded-xl font-bold mb-2">AGREE & CONNECT</button>
-            <button onclick="rejectNegotiation()" class="w-full bg-red-600 p-4 rounded-xl font-bold">REJECT</button>
+    <div id="m-nego" class="fixed inset-0 bg-slate-900/95 z-[6000] hidden items-center justify-center p-6 backdrop-blur-md">
+        <div class="bg-slate-800 border-2 border-blue-500 p-8 rounded-3xl w-full text-center shadow-2xl">
+            <h2 class="text-2xl font-black mb-2 text-white">AGENT RESPONDED</h2>
+            <p class="text-gray-400 mb-6">Agent accepted but requested a new fee:</p>
+            <div class="text-5xl font-black text-green-400 mb-8">Rs. <span id="n-fee-display"></span></div>
+            <button onclick="acceptNegotiation()" class="w-full bg-green-600 p-4 rounded-xl font-bold mb-4 shadow-lg text-lg">AGREE & CONNECT</button>
+            <button onclick="rejectNegotiation()" class="w-full bg-red-600/20 text-red-400 border border-red-500 p-4 rounded-xl font-bold text-lg">REJECT</button>
         </div>
     </div>
 
-    <div id="m-active-deal" class="fixed bottom-0 left-0 w-full bg-slate-900 z-[2000] hidden flex-col h-3/4 rounded-t-3xl border-t border-green-500 shadow-[0_-10px_50px_rgba(0,0,0,0.8)]">
-        <div class="p-4 bg-slate-800 rounded-t-3xl flex justify-between items-center border-b border-slate-700">
-            <h3 class="font-bold text-green-400 animate-pulse">DEAL ACTIVE</h3>
-            <button onclick="openOTP()" class="bg-green-600 px-4 py-2 rounded-lg font-bold shadow-lg">SETTLE (OTP)</button>
-        </div>
-        
-        <div class="flex-grow p-4 overflow-y-auto flex flex-col gap-2" id="chat-box"></div>
-        
-        <div class="p-4 border-t border-slate-700 flex gap-2">
-            <input id="chat-msg" type="text" placeholder="Message..." class="glass-input !mb-0 text-sm">
-            <button onclick="sendRealChat()" class="bg-blue-600 px-6 rounded-xl font-bold">SEND</button>
-        </div>
-    </div>
-
-    <div id="m-otp" class="fixed inset-0 bg-black/95 z-[4000] hidden items-center justify-center p-6">
-        <div class="bg-slate-900 border border-gray-700 p-8 rounded-3xl w-full text-center shadow-2xl">
-            <h2 class="text-3xl font-black mb-6">CLOSE DEAL</h2>
+    <div id="m-otp" class="fixed inset-0 bg-slate-900/95 z-[6000] hidden items-center justify-center p-6 backdrop-blur-md">
+        <div class="bg-slate-800 border border-gray-600 p-8 rounded-3xl w-full text-center shadow-2xl">
+            <i class="fas fa-shield-check text-5xl text-green-500 mb-4"></i>
+            <h2 class="text-3xl font-black mb-6 text-white">CLOSE DEAL</h2>
             
             <div id="otp-user-view" class="hidden">
-                <p class="text-gray-400 mb-2">Show this to Agent</p>
-                <div id="u-otp-display" class="text-5xl font-black tracking-widest text-blue-500 bg-slate-800 py-4 rounded-xl mb-4"></div>
+                <p class="text-gray-400 mb-4 text-sm">Show this OTP to the Agent.</p>
+                <div id="u-otp-display" class="text-6xl font-black tracking-[0.2em] text-blue-400 bg-slate-900 py-6 rounded-2xl mb-4 border border-blue-500/30"></div>
             </div>
 
             <div id="otp-agent-view" class="hidden">
-                <p class="text-gray-400 mb-4">Enter User's OTP</p>
-                <input id="a-otp-input" type="number" class="glass-input text-center text-3xl font-black tracking-widest mb-4">
-                <button onclick="verifyRealOTP()" class="w-full bg-green-600 p-4 rounded-xl font-bold">CONFIRM TRANSFER</button>
+                <p class="text-gray-400 mb-4 text-sm">Enter the OTP provided by the user.</p>
+                <input id="a-otp-input" type="number" placeholder="----" class="glass-input text-center text-4xl font-black tracking-widest mb-6">
+                <button onclick="verifyRealOTP()" class="w-full bg-green-600 p-4 rounded-xl font-bold text-lg shadow-lg">CONFIRM TRANSFER</button>
             </div>
-            <button onclick="document.getElementById('m-otp').style.display='none'" class="mt-4 text-gray-500">Cancel</button>
+            <button onclick="document.getElementById('m-otp').style.display='none'" class="mt-6 text-gray-400 underline">Close window</button>
         </div>
     </div>
 
@@ -159,8 +178,16 @@
     let userProfile = JSON.parse(localStorage.getItem('cf_user')) || null;
     let map = null, uMarker = null, aMarker = null;
     let currentOrderId = null;
-    let myLoc = { lat: 30.1575, lng: 71.5249 }; // Default Multan
+    let myLoc = { lat: 30.1575, lng: 71.5249 }; // Multan default
+    let otherLoc = null;
     let agentOnline = false;
+
+    // --- SOUND ENGINE ---
+    function playDing() {
+        const audio = document.getElementById('ding-sound');
+        audio.currentTime = 0;
+        audio.play().catch(e => console.log("Sound autoplay blocked"));
+    }
 
     // --- UTILS ---
     function show(id) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(id).classList.add('active'); }
@@ -172,7 +199,7 @@
         else show('v-role');
     }, 2000);
 
-    // --- AUTH & STRICT VERIFICATION ---
+    // --- AUTH ---
     function setRole(r) {
         document.getElementById('verify-title').innerText = r.toUpperCase() + " VERIFICATION";
         document.getElementById('agent-fields').style.display = r === 'agent' ? 'block' : 'none';
@@ -187,21 +214,18 @@
         const phone = document.getElementById('v-phone').value.trim();
         const city = document.getElementById('v-city').value.trim();
         
-        // STRICT CHECKS
         if(fname.length < 3) return showError("Name must be at least 3 characters.");
-        if(!/^\d{13}$/.test(cnic)) return showError("Strict Error: CNIC must be exactly 13 digits without dashes.");
-        if(!/^03\d{9}$/.test(phone)) return showError("Strict Error: Phone must be 11 digits and start with 03.");
+        if(!/^\d{13}$/.test(cnic)) return showError("Strict Error: CNIC must be exactly 13 digits.");
+        if(!/^03\d{9}$/.test(phone)) return showError("Strict Error: Phone must be 11 digits (start with 03).");
         if(city.length < 3) return showError("Enter a valid city.");
         
         let data = { role, fname, cnic, phone, city };
-        
         if(role === 'agent') {
             const veh = document.getElementById('v-vehicle').value.trim();
-            if(veh.length < 4) return showError("Strict Error: Vehicle Registration is required.");
+            if(veh.length < 4) return showError("Strict Error: Vehicle Reg required.");
             data.vehicle = veh;
         }
 
-        // Save to DB & Local
         db.ref('users/' + phone).set(data).then(() => {
             localStorage.setItem('cf_user', JSON.stringify(data));
             userProfile = data;
@@ -223,36 +247,50 @@
         } else {
             document.getElementById('agent-sheet').classList.remove('hidden');
             document.getElementById('agent-status-toggle').classList.remove('hidden');
+            document.getElementById('agent-status-toggle').classList.add('flex');
         }
 
-        // Real Location Tracking
+        // Track GPS
         if(navigator.geolocation) {
             navigator.geolocation.watchPosition(pos => {
                 myLoc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
                 if(uMarker) uMarker.setLatLng([myLoc.lat, myLoc.lng]);
-                // If agent is online and walking, update their DB location
+                
                 if(userProfile.role === 'agent' && agentOnline) {
                     db.ref('agents/' + userProfile.phone).set({ lat: myLoc.lat, lng: myLoc.lng });
                 }
-            }, e => console.log("GPS Off, using default"), {enableHighAccuracy: true});
+            }, e => console.log("GPS Off"), {enableHighAccuracy: true});
         }
 
+        // Init Map (Indrive / Google Streets style tile layer for clear roads)
         setTimeout(() => {
             if(!map) {
                 map = L.map('map', {zoomControl: false}).setView([myLoc.lat, myLoc.lng], 15);
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+                // Standard bright street map (Clear roads)
+                L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+                    attribution: 'Map data &copy; Google',
+                    maxZoom: 19
+                }).addTo(map);
                 
                 let iconClass = userProfile.role === 'user' ? 'marker-user' : 'marker-agent';
-                uMarker = L.marker([myLoc.lat, myLoc.lng], {icon: L.divIcon({className: iconClass, iconSize:[16,16]})}).addTo(map);
+                uMarker = L.marker([myLoc.lat, myLoc.lng], {icon: L.divIcon({className: iconClass, iconSize:[20,20]})}).addTo(map);
             }
         }, 500);
 
-        // Start DB Listeners
         if(userProfile.role === 'user') listenToMyOrder();
     }
 
+    // --- MAP ZOOM LOGIC ---
+    function autoZoomMap() {
+        if(myLoc && otherLoc && map) {
+            let bounds = L.latLngBounds([myLoc.lat, myLoc.lng], [otherLoc.lat, otherLoc.lng]);
+            // Fit both markers on screen with padding so UI doesn't hide them
+            map.fitBounds(bounds, { paddingBottomRight: [50, window.innerHeight * 0.45], paddingTopLeft: [50, 50], maxZoom: 17 });
+        }
+    }
+
     // ==========================================
-    // USER LOGIC: BROADCAST & LISTEN
+    // USER LOGIC
     // ==========================================
     function broadcastLive() {
         const amt = document.getElementById('u-amount').value;
@@ -263,14 +301,12 @@
         document.getElementById('u-waiting').classList.remove('hidden');
         document.getElementById('laser').classList.remove('hidden');
 
-        currentOrderId = userProfile.phone; // Using phone as Order ID for simplicity
+        currentOrderId = userProfile.phone; 
         const otp = Math.floor(1000 + Math.random() * 9000);
 
         db.ref('orders/' + currentOrderId).set({
-            userPhone: userProfile.phone,
-            userName: userProfile.fname,
-            amount: amt, fee: fee,
-            status: 'pending',
+            userPhone: userProfile.phone, userName: userProfile.fname,
+            amount: amt, fee: fee, status: 'pending',
             lat: myLoc.lat, lng: myLoc.lng,
             otp: otp, timestamp: Date.now()
         });
@@ -289,24 +325,25 @@
             const order = snap.val();
             if(!order) return;
 
-            // Negotiation trigger
             if(order.status === 'negotiating') {
+                playDing(); // DING SOUND
                 document.getElementById('n-fee-display').innerText = order.newFee;
                 document.getElementById('m-nego').style.display = 'flex';
                 document.getElementById('laser').classList.add('hidden');
             }
             
-            // Accepted Trigger
             if(order.status === 'accepted') {
+                playDing(); // DING SOUND
                 document.getElementById('m-nego').style.display = 'none';
                 document.getElementById('user-sheet').classList.add('hidden');
-                document.getElementById('m-active-deal').style.display = 'flex';
+                document.getElementById('m-active-deal').classList.remove('hidden');
+                document.getElementById('m-active-deal').classList.add('flex');
                 document.getElementById('u-otp-display').innerText = order.otp;
+                
                 listenToChat();
                 listenToAgentLocation(order.agentPhone);
             }
 
-            // Completed Trigger
             if(order.status === 'completed') {
                 alert("TRANSACTION SUCCESSFUL!");
                 window.location.reload();
@@ -324,7 +361,7 @@
     }
 
     // ==========================================
-    // AGENT LOGIC: RADAR & ACCEPT
+    // AGENT LOGIC
     // ==========================================
     function toggleAgentOnline() {
         agentOnline = !agentOnline;
@@ -332,37 +369,42 @@
         const txt = document.getElementById('a-status-text');
         
         if(agentOnline) {
-            btn.innerText = "GO OFFLINE"; btn.classList.replace('bg-blue-600', 'bg-red-600');
+            btn.innerText = "OFFLINE"; btn.classList.replace('bg-red-600', 'bg-slate-600');
             txt.innerText = "ONLINE"; txt.classList.replace('text-red-500', 'text-green-500');
             
-            // Listen for pending orders
             db.ref('orders').on('value', snap => {
                 const list = document.getElementById('live-orders');
                 list.innerHTML = '';
+                let hasNew = false;
                 snap.forEach(child => {
                     let order = child.val();
                     if(order.status === 'pending') {
+                        hasNew = true;
                         list.innerHTML += `
-                            <div class="bg-slate-800 p-4 rounded-xl border border-blue-500 flex justify-between items-center">
-                                <div>
-                                    <div class="font-black text-xl">Rs. ${order.amount}</div>
-                                    <div class="text-green-400 text-sm">Fee: Rs. ${order.fee}</div>
+                            <div class="bg-slate-800 p-4 rounded-xl border border-blue-500/50 shadow-lg">
+                                <div class="flex justify-between items-center mb-3">
+                                    <div>
+                                        <div class="text-xs text-gray-400">Request from ${order.userName}</div>
+                                        <div class="font-black text-2xl text-white">Rs. ${order.amount}</div>
+                                    </div>
+                                    <div class="text-green-400 font-bold bg-green-900/30 px-3 py-1 rounded-lg">Fee: Rs. ${order.fee}</div>
                                 </div>
-                                <div class="flex flex-col gap-1">
-                                    <button onclick="acceptOrder('${child.key}', ${order.fee})" class="bg-green-600 px-4 py-1 rounded font-bold text-sm">ACCEPT</button>
-                                    <button onclick="negotiateOrder('${child.key}', ${order.fee})" class="bg-yellow-600 px-4 py-1 rounded font-bold text-sm">NEGOTIATE</button>
+                                <div class="flex gap-2">
+                                    <button onclick="acceptOrder('${child.key}', ${order.fee})" class="w-1/2 bg-green-600 py-2 rounded-lg font-bold">ACCEPT</button>
+                                    <button onclick="negotiateOrder('${child.key}', ${order.fee})" class="w-1/2 bg-yellow-600 py-2 rounded-lg font-bold">NEGOTIATE</button>
                                 </div>
                             </div>
                         `;
                     }
                 });
-                if(list.innerHTML === '') list.innerHTML = '<p class="text-gray-500 text-center">Scanning airspace...</p>';
+                if(hasNew) playDing(); // DING SOUND ON NEW REQUEST
+                if(list.innerHTML === '') list.innerHTML = '<p class="text-gray-400 text-center py-4">Scanning airspace...</p>';
             });
         } else {
-            btn.innerText = "GO ONLINE"; btn.classList.replace('bg-red-600', 'bg-blue-600');
+            btn.innerText = "GO ONLINE"; btn.classList.replace('bg-slate-600', 'bg-red-600');
             txt.innerText = "OFFLINE"; txt.classList.replace('text-green-500', 'text-red-500');
             db.ref('orders').off();
-            document.getElementById('live-orders').innerHTML = '<p class="text-gray-500 text-center">Go online to see requests...</p>';
+            document.getElementById('live-orders').innerHTML = '<p class="text-gray-400 text-center py-4">Go online to receive requests...</p>';
         }
     }
 
@@ -373,13 +415,12 @@
     }
 
     function negotiateOrder(oId, oldFee) {
-        let newFee = prompt(`Current Fee is ${oldFee}. Enter your new demand:`);
+        let newFee = prompt(`Current Fee is ${oldFee}. Enter new demand:`);
         if(newFee && newFee > oldFee) {
             currentOrderId = oId;
             db.ref('orders/' + oId).update({ status: 'negotiating', newFee: newFee, agentPhone: userProfile.phone });
-            alert("Sent to User! Waiting for approval...");
+            alert("Offer sent! Waiting for User.");
             
-            // Wait for user accept
             db.ref('orders/' + oId).on('value', snap => {
                 if(snap.val().status === 'accepted') startAgentDeal();
             });
@@ -387,29 +428,32 @@
     }
 
     function startAgentDeal() {
+        playDing();
         document.getElementById('agent-sheet').classList.add('hidden');
-        document.getElementById('m-active-deal').style.display = 'flex';
+        document.getElementById('m-active-deal').classList.remove('hidden');
+        document.getElementById('m-active-deal').classList.add('flex');
         listenToChat();
         
-        // Show User location on Map
         db.ref('orders/' + currentOrderId).once('value', snap => {
             let uLoc = snap.val();
+            otherLoc = { lat: uLoc.lat, lng: uLoc.lng };
             if(!aMarker) {
-                aMarker = L.marker([uLoc.lat, uLoc.lng], {icon: L.divIcon({className: 'marker-user', iconSize:[16,16]})}).addTo(map);
+                aMarker = L.marker([uLoc.lat, uLoc.lng], {icon: L.divIcon({className: 'marker-user', iconSize:[20,20]})}).addTo(map);
             }
-            map.fitBounds([[myLoc.lat, myLoc.lng], [uLoc.lat, uLoc.lng]], {padding: [50, 50]});
+            autoZoomMap(); // Zoom to both
         });
     }
 
     // ==========================================
-    // CHAT, OTP & LOCATION TRACKING
+    // CHAT, OTP & LOCATION ENGINE
     // ==========================================
     function listenToChat() {
         db.ref('orders/' + currentOrderId + '/chat').on('child_added', snap => {
             const msg = snap.val();
             const isMe = msg.sender === userProfile.phone;
-            const cls = isMe ? 'bg-blue-600 self-end text-right' : 'bg-slate-700 self-start text-left border border-slate-600';
-            document.getElementById('chat-box').innerHTML += `<div class="${cls} p-3 rounded-xl max-w-[80%] text-sm shadow">${msg.text}</div>`;
+            if(!isMe) playDing(); // Ding when receiving message
+            const cls = isMe ? 'bg-blue-600 text-white self-end' : 'bg-slate-700 text-white self-start';
+            document.getElementById('chat-box').innerHTML += `<div class="${cls} p-3 rounded-2xl max-w-[80%] text-sm shadow-md">${msg.text}</div>`;
             document.getElementById('chat-box').scrollTop = document.getElementById('chat-box').scrollHeight;
         });
     }
@@ -425,8 +469,10 @@
         db.ref('agents/' + agentPhone).on('value', snap => {
             let loc = snap.val();
             if(loc && loc.lat) {
-                if(!aMarker) aMarker = L.marker([loc.lat, loc.lng], {icon: L.divIcon({className: 'marker-agent', iconSize:[16,16]})}).addTo(map);
+                otherLoc = { lat: loc.lat, lng: loc.lng };
+                if(!aMarker) aMarker = L.marker([loc.lat, loc.lng], {icon: L.divIcon({className: 'marker-agent', iconSize:[20,20]})}).addTo(map);
                 else aMarker.setLatLng([loc.lat, loc.lng]);
+                autoZoomMap(); // Re-center map slightly as they move
             }
         });
     }
@@ -445,10 +491,10 @@
         db.ref('orders/' + currentOrderId).once('value', snap => {
             if(snap.val().otp == input) {
                 db.ref('orders/' + currentOrderId).update({ status: 'completed' });
-                alert("DEAL CLOSED SUCCESSFULLY!");
+                alert("DEAL SECURED & FUNDS TRANSFERRED!");
                 window.location.reload();
             } else {
-                alert("Incorrect OTP!");
+                alert("Invalid OTP! Try Again.");
             }
         });
     }
