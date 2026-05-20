@@ -1,489 +1,65 @@
-# CASHFLOW X — REALTIME FULL APP (HTML + FIREBASE)
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CASHFLOW X</title>
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-
-<style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial;
-}
-
-body{
-background:#050816;
-color:white;
-overflow:hidden;
-}
-
-.page{
-position:fixed;
-inset:0;
-display:none;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-padding:20px;
-background:#050816;
-}
-
-.page.active{
-display:flex;
-}
-
-.logo{
-font-size:55px;
-font-weight:900;
-background:linear-gradient(90deg,#00e0ff,#7c3aed);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-}
-
-.card{
-width:100%;
-max-width:420px;
-background:#0f172a;
-padding:25px;
-border-radius:30px;
-border:1px solid rgba(255,255,255,0.08);
-}
-
-.input{
-width:100%;
-padding:15px;
-border:none;
-outline:none;
-background:#111827;
-color:white;
-border-radius:16px;
-margin-top:12px;
-}
-
-.btn{
-width:100%;
-padding:15px;
-border:none;
-margin-top:15px;
-border-radius:16px;
-background:linear-gradient(90deg,#00e0ff,#2563eb);
-color:white;
-font-weight:900;
-cursor:pointer;
-}
-
-.dashboard{
-position:fixed;
-inset:0;
-display:none;
-flex-direction:column;
-background:#050816;
-}
-
-.dashboard.active{
-display:flex;
-}
-
-.map{
-height:42vh;
-width:100%;
-}
-
-.bottom{
-height:58vh;
-background:#0f172a;
-padding:20px;
-overflow:auto;
-border-top-left-radius:28px;
-border-top-right-radius:28px;
-}
-
-.request{
-background:#111827;
-padding:15px;
-border-radius:18px;
-margin-top:15px;
-}
-
-.chat{
-height:140px;
-overflow:auto;
-background:#111827;
-padding:10px;
-border-radius:15px;
-margin-top:15px;
-}
-
-.msg{
-padding:10px;
-margin-top:10px;
-border-radius:12px;
-background:#1e293b;
-}
-
-#laser{
-position:absolute;
-top:21%;
-left:50%;
-transform:translate(-50%,-50%);
-width:20px;
-height:20px;
-border:4px solid #00e0ff;
-border-radius:50%;
-display:none;
-animation:laser 2s infinite;
-z-index:999;
-}
-
-@keyframes laser{
-0%{
-width:20px;
-height:20px;
-opacity:1;
-}
-100%{
-width:350px;
-height:350px;
-opacity:0;
-}
-}
-
-.status{
-padding:12px;
-background:#052e16;
-color:#00ff88;
-border-radius:14px;
-text-align:center;
-font-weight:900;
-margin-top:15px;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CASHFLOW GLOBAL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body { background-color: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; overflow: hidden; }
+        .page { display: none; height: 100vh; width: 100%; position: absolute; top: 0; left: 0; }
+        .active { display: flex; flex-direction: column; }
+        .laser { animation: pulse 1.5s infinite; border: 2px solid #3b82f6; }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(3); opacity: 0; } }
+    </style>
 </head>
 <body>
 
-<div id="splash1" class="page active">
-<h1 class="logo">CASHFLOW</h1>
-<p style="margin-top:15px;color:#94a3b8;">Realtime Cash Exchange</p>
-</div>
+    <div id="onboard" class="page active bg-slate-950 items-center justify-center p-8 text-center">
+        <h1 class="text-4xl font-black text-blue-500">CASHFLOW</h1>
+        <p class="text-gray-400 mt-2">Liquidity Router v1.0</p>
+        <button onclick="App.next()" class="mt-8 w-full bg-blue-600 p-4 rounded-xl font-bold">NEXT</button>
+    </div>
 
-<div id="splash2" class="page">
-<h1 class="logo">LASER</h1>
-<p style="margin-top:15px;color:#94a3b8;">Live Radar System</p>
-</div>
+    <div id="role-select" class="page bg-slate-950 items-center justify-center p-6">
+        <h2 class="text-2xl font-bold mb-6">Select Identity</h2>
+        <button onclick="App.setRole('user')" class="w-full p-6 bg-slate-900 border border-blue-500 rounded-2xl mb-4">USER TERMINAL</button>
+        <button onclick="App.setRole('agent')" class="w-full p-6 bg-slate-900 border border-amber-500 rounded-2xl">AGENT HUB</button>
+    </div>
 
-<div id="splash3" class="page">
-<h1 class="logo">SECURE OTP</h1>
-<button class="btn" style="max-width:300px;" onclick="openRole()">ENTER APP</button>
-</div>
-
-<div id="rolePage" class="page">
-<div class="card">
-<h1 style="font-size:35px;font-weight:900;text-align:center;">SELECT ROLE</h1>
-<button class="btn" onclick="registerAs('user')">USER</button>
-<button class="btn" onclick="registerAs('agent')">AGENT</button>
-</div>
-</div>
-
-<div id="registerPage" class="page">
-<div class="card">
-<h1 id="registerTitle" style="font-size:32px;font-weight:900;text-align:center;">REGISTER</h1>
-<input id="name" class="input" placeholder="Name">
-<input id="phone" class="input" placeholder="Phone">
-<input id="cnic" class="input" placeholder="CNIC">
-<input id="city" class="input" placeholder="City">
-<div id="vehicleBox" style="display:none;">
-<input id="vehicle" class="input" placeholder="Vehicle Number">
-</div>
-<button class="btn" onclick="completeRegister()">VERIFY</button>
-</div>
-</div>
-
-<div id="userDash" class="dashboard">
-<div id="laser"></div>
-<div id="userMap" class="map"></div>
-<div class="bottom">
-<h1 style="font-size:30px;font-weight:900;">REQUEST CASH</h1>
-<input id="amount" class="input" placeholder="Amount">
-<input id="commission" class="input" placeholder="Commission">
-<button class="btn" onclick="sendRequest()">SEND REQUEST</button>
-<div class="chat" id="userChat"></div>
-</div>
-</div>
-
-<div id="agentDash" class="dashboard">
-<div id="agentMap" class="map"></div>
-<div class="bottom">
-<h1 style="font-size:30px;font-weight:900;">AGENT RADAR</h1>
-<div class="status">ONLINE SCANNING</div>
-<div id="requests"></div>
-<div class="chat" id="agentChat"></div>
-</div>
-</div>
+    <div id="dashboard" class="page bg-slate-950">
+        <div id="map" class="h-1/2 w-full"></div>
+        <div id="ui-panel" class="h-1/2 p-6 flex flex-col justify-between">
+            <div id="action-area" class="space-y-4">
+                </div>
+            <div id="radar-layer" class="hidden text-center">
+                <div class="laser w-20 h-20 mx-auto rounded-full"></div>
+                <p class="mt-4 font-bold animate-pulse text-blue-400">BROADCASTING...</p>
+            </div>
+        </div>
+    </div>
 
 <script>
-
-const firebaseConfig = {
-apiKey: "PASTE_API_KEY",
-authDomain: "PASTE_AUTH_DOMAIN",
-databaseURL: "PASTE_DATABASE_URL",
-projectId: "PASTE_PROJECT_ID",
-storageBucket: "PASTE_BUCKET",
-messagingSenderId: "PASTE_SENDER_ID",
-appId: "PASTE_APP_ID"
+const App = {
+    role: null,
+    step: 0,
+    next: () => {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('role-select').classList.add('active');
+    },
+    setRole: (r) => {
+        App.role = r;
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('dashboard').classList.add('active');
+        App.initMap();
+    },
+    initMap: () => {
+        const map = L.map('map', {zoomControl: false}).setView([30.1575, 71.5249], 14);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    }
 };
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-let currentRole = "";
-let myId = "user_" + Date.now();
-
-setTimeout(()=>{
-document.getElementById('splash1').classList.remove('active');
-document.getElementById('splash2').classList.add('active');
-},1500);
-
-setTimeout(()=>{
-document.getElementById('splash2').classList.remove('active');
-document.getElementById('splash3').classList.add('active');
-},3000);
-
-function openRole(){
-document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-document.getElementById('rolePage').classList.add('active');
-}
-
-function registerAs(role){
-currentRole = role;
-document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-document.getElementById('registerPage').classList.add('active');
-
-if(role === 'agent'){
-document.getElementById('vehicleBox').style.display = 'block';
-}else{
-document.getElementById('vehicleBox').style.display = 'none';
-}
-}
-
-function completeRegister(){
-
-let name = document.getElementById('name').value;
-let phone = document.getElementById('phone').value;
-let cnic = document.getElementById('cnic').value;
-let city = document.getElementById('city').value;
-
-if(!name || !phone || !cnic || !city){
-alert('Fill all fields');
-return;
-}
-
-localStorage.setItem('cashflow_role', currentRole);
-
-if(currentRole === 'user'){
-openUser();
-}else{
-openAgent();
-}
-}
-
-function openUser(){
-document.getElementById('userDash').classList.add('active');
-
-setTimeout(()=>{
-let map = L.map('userMap').setView([24.8607,67.0011],15);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-L.circleMarker([24.8607,67.0011],{
-radius:10,
-color:'#00ff88',
-fillColor:'#00ff88',
-fillOpacity:1
-}).addTo(map);
-},300);
-
-listenUserUpdates();
-}
-
-function openAgent(){
-document.getElementById('agentDash').classList.add('active');
-
-setTimeout(()=>{
-let map = L.map('agentMap').setView([24.8607,67.0011],15);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-L.circleMarker([24.8607,67.0011],{
-radius:10,
-color:'#ff3b5c',
-fillColor:'#ff3b5c',
-fillOpacity:1
-}).addTo(map);
-},300);
-
-listenRequests();
-}
-
-function sendRequest(){
-
-let amount = document.getElementById('amount').value;
-let commission = document.getElementById('commission').value;
-
-if(!amount || !commission){
-alert('Enter Details');
-return;
-}
-
-let requestId = 'REQ_' + Date.now();
-
-let data = {
-id: requestId,
-userId: myId,
-amount: amount,
-commission: commission,
-status: 'pending',
-otp: Math.floor(1000 + Math.random() * 9000)
-};
-
-
-db.ref('requests/' + requestId).set(data);
-
-document.getElementById('laser').style.display = 'block';
-
-document.getElementById('userChat').innerHTML += `
-<div class="msg">Searching Nearby Agents...</div>
-`;
-}
-
-function listenRequests(){
-
-db.ref('requests').on('value', snap=>{
-
-let data = snap.val();
-let html = '';
-
-for(let id in data){
-
-let req = data[id];
-
-if(req.status === 'pending'){
-
-html += `
-<div class="request">
-<h2>NEW REQUEST</h2>
-<p style="margin-top:10px;">Amount: PKR ${req.amount}</p>
-<p style="margin-top:10px;">Commission: PKR ${req.commission}</p>
-<input id="counter_${id}" class="input" placeholder="Your Commission">
-<button class="btn" onclick="acceptRequest('${id}')">ACCEPT</button>
-<button class="btn" onclick="counterRequest('${id}')">COUNTER OFFER</button>
-</div>
-`;
-
-}
-
-}
-
-document.getElementById('requests').innerHTML = html;
-
-});
-}
-
-function acceptRequest(id){
-
-db.ref('requests/' + id).update({
-status:'accepted'
-});
-
-alert('Request Accepted');
-}
-
-function counterRequest(id){
-
-let value = document.getElementById('counter_' + id).value;
-
-if(!value){
-alert('Enter Commission');
-return;
-}
-
-
-db.ref('requests/' + id).update({
-commission:value,
-status:'countered'
-});
-
-alert('Counter Offer Sent');
-}
-
-function listenUserUpdates(){
-
-db.ref('requests').on('value', snap=>{
-
-let data = snap.val();
-
-for(let id in data){
-
-let req = data[id];
-
-if(req.status === 'accepted'){
-
-document.getElementById('laser').style.display = 'none';
-
-document.getElementById('userChat').innerHTML += `
-<div class="msg">
-Agent Accepted Your Request
-</div>
-`;
-
-}
-
-if(req.status === 'countered'){
-
-document.getElementById('userChat').innerHTML += `
-<div class="msg">
-Agent Changed Commission To PKR ${req.commission}
-</div>
-`;
-
-}
-
-}
-
-});
-}
-
 </script>
 </body>
 </html>
-```
-
-## IMPORTANT
-
-1. Firebase console me realtime database enable karo.
-2. Rules temporary testing ke liye:
-
-```json
-{
-  "rules": {
-    ".read": true,
-    ".write": true
-  }
-}
-```
-
-3. Firebase config apni original values se replace karo.
-4. Same app 2 mobiles me kholo:
-
-   * mobile 1 = user
-   * mobile 2 = agent
-5. User request bheje ga.
-6. Agent ko realtime request nazar aa jayegi.
-7. Accept/counter realtime kaam karega.
