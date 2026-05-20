@@ -1,593 +1,997 @@
-<!--
-FULL MULTI-SCREEN CASHRADAR APP UI
-Includes:
-- 3 Intro Screens
-- Role Selection
-- User Verification
-- Agent Verification
-- User Dashboard
-- Agent Dashboard
-- Live Radar
-- Laser Animation
-- Chat Box
-- OTP Modal
-- Realtime Styled UI
--->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CashRadar</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CASHFLOW X</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
-    }
+<style>
 
-    body {
-      background: #071120;
-      overflow: hidden;
-      color: white;
-      height: 100vh;
-    }
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
 
-    .bg {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background:
-        radial-gradient(circle at top left, rgba(0,255,255,0.18), transparent 30%),
-        radial-gradient(circle at bottom right, rgba(123,97,255,0.22), transparent 30%),
-        #071120;
-      z-index: -1;
-    }
+body{
+background:#050816;
+overflow:hidden;
+color:white;
+}
 
-    .radar {
-      position: absolute;
-      width: 700px;
-      height: 700px;
-      border-radius: 50%;
-      border: 1px solid rgba(0,255,255,0.08);
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      animation: pulse 4s infinite linear;
-    }
+/* PAGES */
 
-    .radar::before,
-    .radar::after {
-      content: '';
-      position: absolute;
-      inset: 60px;
-      border-radius: 50%;
-      border: 1px solid rgba(0,255,255,0.08);
-    }
+.page{
+position:fixed;
+inset:0;
+display:none;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+padding:20px;
+background:#050816;
+overflow:auto;
+}
 
-    .radar::after {
-      inset: 120px;
-    }
+.page.active{
+display:flex;
+}
 
-    @keyframes pulse {
-      0% {
-        transform: translate(-50%, -50%) rotate(0deg);
-      }
+/* SPLASH */
 
-      100% {
-        transform: translate(-50%, -50%) rotate(360deg);
-      }
-    }
+.logo{
+font-size:52px;
+font-weight:900;
+background:linear-gradient(90deg,#00e0ff,#7c3aed);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
 
-    .laser {
-      position: absolute;
-      width: 350px;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #00f5ff);
-      top: 50%;
-      left: 50%;
-      transform-origin: left;
-      animation: rotateLaser 4s linear infinite;
-      box-shadow: 0 0 25px #00f5ff;
-    }
+.sub{
+margin-top:10px;
+font-size:14px;
+color:#94a3b8;
+}
 
-    @keyframes rotateLaser {
-      from {
-        transform: rotate(0deg);
-      }
+/* CARD */
 
-      to {
-        transform: rotate(360deg);
-      }
-    }
+.card{
+width:100%;
+max-width:420px;
+background:#0f172a;
+padding:25px;
+border-radius:28px;
+border:1px solid rgba(255,255,255,0.08);
+box-shadow:0 0 40px rgba(0,0,0,0.5);
+}
 
-    .container {
-      width: 100%;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 30px;
-    }
+/* INPUT */
 
-    .glass {
-      width: 430px;
-      padding: 35px;
-      border-radius: 35px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      backdrop-filter: blur(25px);
-      box-shadow: 0 0 60px rgba(0,0,0,0.5);
-      position: relative;
-      overflow: hidden;
-    }
+.input{
+width:100%;
+padding:15px;
+border:none;
+outline:none;
+margin-top:12px;
+border-radius:16px;
+background:#111827;
+color:white;
+font-size:15px;
+}
 
-    .glass::before {
-      content: '';
-      position: absolute;
-      width: 200px;
-      height: 200px;
-      background: rgba(0,245,255,0.1);
-      border-radius: 50%;
-      top: -100px;
-      right: -100px;
-    }
+/* BUTTON */
 
-    .logo {
-      font-size: 42px;
-      font-weight: 800;
-      margin-bottom: 8px;
-      background: linear-gradient(to right, #00f5ff, #7b61ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+.btn{
+width:100%;
+padding:15px;
+margin-top:15px;
+border:none;
+border-radius:16px;
+background:linear-gradient(90deg,#00e0ff,#2563eb);
+color:white;
+font-weight:900;
+cursor:pointer;
+font-size:15px;
+}
 
-    .subtitle {
-      color: #8ea0c4;
-      margin-bottom: 35px;
-      line-height: 1.6;
-    }
+.btn:active{
+transform:scale(0.96);
+}
 
-    .inputBox {
-      margin-bottom: 20px;
-    }
+/* DASH */
 
-    .inputBox label {
-      display: block;
-      margin-bottom: 10px;
-      font-size: 14px;
-      color: #9fb0d3;
-    }
+.dashboard{
+position:fixed;
+inset:0;
+display:none;
+flex-direction:column;
+background:#050816;
+}
 
-    .inputBox input,
-    .inputBox select {
-      width: 100%;
-      padding: 18px;
-      border: none;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.07);
-      color: white;
-      font-size: 15px;
-      outline: none;
-      transition: 0.3s;
-      border: 1px solid transparent;
-    }
+.dashboard.active{
+display:flex;
+}
 
-    .inputBox input:focus,
-    .inputBox select:focus {
-      border-color: #00f5ff;
-      box-shadow: 0 0 20px rgba(0,245,255,0.25);
-    }
+/* MAP */
 
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
+.map{
+height:42vh;
+width:100%;
+}
 
-    .btn {
-      width: 100%;
-      padding: 18px;
-      border: none;
-      border-radius: 20px;
-      background: linear-gradient(135deg, #00f5ff, #7b61ff);
-      color: white;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: 0.3s;
-      margin-top: 10px;
-      box-shadow: 0 0 30px rgba(0,245,255,0.25);
-    }
+/* BOTTOM */
 
-    .btn:hover {
-      transform: translateY(-3px) scale(1.02);
-      box-shadow: 0 0 40px rgba(0,245,255,0.45);
-    }
+.bottom{
+height:58vh;
+background:#0f172a;
+border-top-left-radius:28px;
+border-top-right-radius:28px;
+padding:20px;
+overflow:auto;
+}
 
-    .status {
-      margin-top: 25px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(255,255,255,0.04);
-      padding: 16px;
-      border-radius: 18px;
-    }
+/* CHAT */
 
-    .online {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: #00ff9d;
-      font-weight: 600;
-    }
+.chat{
+height:130px;
+overflow:auto;
+background:#111827;
+border-radius:16px;
+padding:10px;
+margin-top:15px;
+}
 
-    .dot {
-      width: 12px;
-      height: 12px;
-      background: #00ff9d;
-      border-radius: 50%;
-      box-shadow: 0 0 15px #00ff9d;
-      animation: blink 1s infinite;
-    }
+.msg{
+padding:10px;
+margin-top:10px;
+border-radius:12px;
+max-width:80%;
+}
 
-    @keyframes blink {
-      50% {
-        opacity: 0.3;
-      }
-    }
+.left{
+background:#1e293b;
+}
 
-    .commission {
-      color: #00f5ff;
-      font-weight: 700;
-    }
+.right{
+background:#00e0ff;
+color:black;
+margin-left:auto;
+}
 
-    .bottomText {
-      text-align: center;
-      margin-top: 25px;
-      color: #7485aa;
-      font-size: 13px;
-    }
+/* REQUEST */
 
-    .mapMock {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      inset: 0;
-      opacity: 0.08;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
-      background-size: 50px 50px;
-      z-index: -1;
-    }
+.request{
+background:#111827;
+padding:15px;
+border-radius:20px;
+margin-top:15px;
+}
 
-    @media(max-width: 500px) {
-      .glass {
-        width: 100%;
-        padding: 25px;
-      }
+/* LASER */
 
-      .logo {
-        font-size: 32px;
-      }
+#laser{
+position:absolute;
+top:21%;
+left:50%;
+transform:translate(-50%,-50%);
+width:30px;
+height:30px;
+border-radius:50%;
+border:4px solid #00e0ff;
+display:none;
+animation:laser 2s infinite;
+z-index:999;
+}
 
-      .row {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+@keyframes laser{
+
+0%{
+width:30px;
+height:30px;
+opacity:1;
+}
+
+100%{
+width:360px;
+height:360px;
+opacity:0;
+}
+
+}
+
+/* STATUS */
+
+.status{
+background:#052e16;
+padding:10px;
+border-radius:14px;
+text-align:center;
+font-weight:900;
+color:#00ff88;
+margin-top:15px;
+}
+
+</style>
 </head>
+
 <body>
 
-  <!-- INTRO SCREEN 1 -->
-  <section class="screen active" id="intro1">
-    <div class="centerBox">
-      <h1 class="megaTitle">CashRadar</h1>
-      <p class="megaText">Realtime Human ATM Network</p>
-    </div>
-  </section>
-
-  <!-- INTRO SCREEN 2 -->
-  <section class="screen" id="intro2">
-    <div class="centerBox">
-      <div class="bigRadar"></div>
-      <h1 class="megaTitle">LIVE TRACKING</h1>
-      <p class="megaText">Find Nearby Agents Instantly</p>
-    </div>
-  </section>
-
-  <!-- INTRO SCREEN 3 -->
-  <section class="screen" id="intro3">
-    <div class="centerBox">
-      <h1 class="megaTitle">OTP SECURITY</h1>
-      <p class="megaText">Secure • Fast • Verified</p>
-      <button class="btn" onclick="openRoleScreen()">ENTER APP</button>
-    </div>
-  </section>
-
-  <!-- ROLE SCREEN -->
-  <section class="screen" id="roleScreen">
-    <div class="glass bigGlass">
-      <h1 class="logo">SELECT MODE</h1>
-
-      <button class="btn" onclick="openUserVerification()">
-        CONTINUE AS USER
-      </button>
-
-      <button class="btn agentBtn" onclick="openAgentVerification()">
-        CONTINUE AS AGENT
-      </button>
-    </div>
-  </section>
-
-  <!-- USER VERIFICATION -->
-  <section class="screen" id="userVerification">
-    <div class="glass">
-      <h1 class="logo">USER VERIFICATION</h1>
-
-      <div class="inputBox">
-        <input type="text" placeholder="First Name">
-      </div>
-
-      <div class="inputBox">
-        <input type="text" placeholder="Last Name">
-      </div>
-
-      <div class="inputBox">
-        <input type="text" placeholder="CNIC Number">
-      </div>
-
-      <div class="inputBox">
-        <input type="text" placeholder="Phone Number">
-      </div>
-
-      <div class="inputBox">
-        <input type="text" placeholder="City">
-      </div>
-
-      <button class="btn" onclick="openUserChoice()">
-        VERIFY & CONTINUE
-      </button>
-    </div>
-  </section>
-
-  <!-- USER CHOICE -->
-  <section class="screen" id="userChoice">
-    <div class="glass">
-      <h1 class="logo">WHAT DO YOU NEED?</h1>
-
-      <button class="btn" onclick="openUserDashboard()">
-        I NEED ONLINE MONEY
-      </button>
-
-      <button class="btn agentBtn" onclick="openUserDashboard()">
-        I NEED CASH
-      </button>
-    </div>
-  </section>
-
-  <!-- AGENT VERIFICATION -->
-  <section class="screen" id="agentVerification">
-    <div class="glass">
-      <h1 class="logo">AGENT VERIFICATION</h1>
-
-      <div class="inputBox">
-        <input type="text" placeholder="First Name">
-      </div>
-
-      <div class="inputBox">
-        <input type="text" placeholder="Last Name">
-      </div>
-
-      <div class="inputBox">
-        <input type="text" placeholder="Vehicle Number">
-      </div>
-
-      <div class="inputBox">
-        <input type="text" placeholder="CNIC Number">
-      </div>
-
-      <div class="inputBox">
-        <input type="text" placeholder="Phone Number">
-      </div>
-
-      <div class="inputBox">
-        <input type="file">
-      </div>
-
-      <button class="btn" onclick="openAgentDashboard()">
-        VERIFY & CONTINUE
-      </button>
-    </div>
-  </section>
-
-  <!-- USER DASHBOARD -->
-  <section class="screen" id="userDashboard">
-
-    <div class="topMap">
-      <div class="greenDot"></div>
-      <div class="laserPulse"></div>
-    </div>
-
-    <div class="glass dashboardGlass">
+<!-- SPLASH 1 -->
 
-      <div class="menu">☰</div>
-
-      <h1 class="logo">REQUEST MONEY</h1>
-
-      <div class="row">
-        <div class="inputBox">
-          <input type="number" placeholder="Amount">
-        </div>
-
-        <div class="inputBox">
-          <input type="number" placeholder="Commission">
-        </div>
-      </div>
-
-      <button class="btn" onclick="findAgent()">
-        SEND REQUEST
-      </button>
-
-      <div class="chatBox">
-        <div class="chatHeader">LIVE CHAT</div>
+<div id="s1" class="page active">
 
-        <div class="messages">
-          <div class="msg left">Agent is arriving...</div>
-          <div class="msg right">Okay waiting</div>
-        </div>
-
-        <div class="chatInput">
-          <input type="text" placeholder="Type message...">
-          <button>➤</button>
-        </div>
-      </div>
+<h1 class="logo">
+CASHFLOW
+</h1>
 
-    </div>
-  </section>
-
-  <!-- AGENT DASHBOARD -->
-  <section class="screen" id="agentDashboard">
-
-    <div class="topMap">
-      <div class="redDot"></div>
-      <div class="laserPulse"></div>
-    </div>
+<p class="sub">
+Realtime Human ATM Network
+</p>
 
-    <div class="glass dashboardGlass">
+</div>
 
-      <div class="menu">☰</div>
+<!-- SPLASH 2 -->
 
-      <h1 class="logo">AGENT RADAR</h1>
+<div id="s2" class="page">
 
-      <div class="toggleBox">
-        <span>OFFLINE</span>
-        <label class="switch">
-          <input type="checkbox" checked>
-          <span class="slider"></span>
-        </label>
-        <span>ONLINE</span>
-      </div>
+<h1 class="logo">
+LASER SECURITY
+</h1>
 
-      <div class="requestCard">
-        <h2>NEW REQUEST</h2>
-        <p>Amount: 5000</p>
-        <p>Commission: 120</p>
+<p class="sub">
+OTP + Live Tracking + CNIC
+</p>
 
-        <div class="rowBtns">
-          <button class="smallBtn accept">ACCEPT</button>
-          <button class="smallBtn counter">+ COMMISSION</button>
-          <button class="smallBtn reject">REJECT</button>
-        </div>
-      </div>
+</div>
 
-    </div>
-  </section>
+<!-- SPLASH 3 -->
 
-  <!-- OTP POPUP -->
-  <div class="otpPopup" id="otpPopup">
-    <div class="otpBox">
-      <h1>ENTER OTP</h1>
-      <input type="text" placeholder="1234">
-      <button class="btn">COMPLETE DEAL</button>
-    </div>
-  </div>
+<div id="s3" class="page">
 
-  <div class="bg"></div>
-  <div class="mapMock"></div>
-  <div class="radar"></div>
-  <div class="laser"></div>
+<h1 class="logo">
+RADAR SYSTEM
+</h1>
 
-  <div class="container">
+<p class="sub">
+Nearby Agents Detection
+</p>
 
-    <div class="glass">
+<button class="btn"
+style="max-width:300px;"
+onclick="openRole()">
+ENTER APP
+</button>
 
-      <div class="logo">CashRadar</div>
+</div>
 
-      <div class="subtitle">
-        Realtime cash ↔ online exchange system with live agent tracking, OTP protection, radar matching and instant deals.
-      </div>
+<!-- ROLE -->
 
-      <div class="row">
+<div id="rolePage" class="page">
 
-        <div class="inputBox">
-          <label>Amount</label>
-          <input type="number" placeholder="5000" />
-        </div>
+<div class="card">
 
-        <div class="inputBox">
-          <label>Commission</label>
-          <input type="number" placeholder="120" />
-        </div>
+<h1 style="
+font-size:35px;
+font-weight:900;
+text-align:center;">
+SELECT ROLE
+</h1>
 
-      </div>
+<button class="btn"
+onclick="openRegister('user')">
+USER
+</button>
 
-      <div class="inputBox">
-        <label>Exchange Type</label>
+<button class="btn"
+onclick="openRegister('agent')">
+AGENT
+</button>
 
-        <select>
-          <option>Need Online Money</option>
-          <option>Need Cash</option>
-        </select>
-      </div>
+<button class="btn"
+style="background:linear-gradient(90deg,#7c3aed,#2563eb);"
+onclick="openLogin()">
+LOGIN
+</button>
 
-      <div class="inputBox">
-        <label>City</label>
-        <input type="text" placeholder="Karachi" />
-      </div>
+</div>
 
-      <button class="btn" onclick="findAgent()">
-        FIND AGENT
-      </button>
+</div>
 
-      <div class="status">
+<!-- REGISTER -->
 
-        <div class="online">
-          <div class="dot"></div>
-          24 Agents Nearby
-        </div>
+<div id="registerPage" class="page">
 
-        <div class="commission">
-          Avg Fee 2.1%
-        </div>
+<div class="card">
 
-      </div>
+<h1 id="registerTitle"
+style="
+font-size:35px;
+font-weight:900;
+text-align:center;">
+REGISTER
+</h1>
 
-      <div class="bottomText">
-        Secure • Live Tracking • OTP Protected • AI Fraud Detection
-      </div>
+<input id="name"
+class="input"
+placeholder="First Name">
 
-    </div>
+<input id="lastname"
+class="input"
+placeholder="Last Name">
 
-  </div>
+<input id="phone"
+class="input"
+placeholder="Phone Number">
 
-  <script>
+<input id="cnic"
+class="input"
+placeholder="CNIC">
 
-    function findAgent() {
+<input id="city"
+class="input"
+placeholder="City">
 
-      const btn = document.querySelector('.btn');
+<div id="vehicleBox"
+style="display:none;">
 
-      btn.innerHTML = 'SEARCHING AGENTS...';
+<input id="vehicle"
+class="input"
+placeholder="Vehicle Number">
 
-      btn.style.boxShadow = '0 0 50px rgba(0,255,157,0.7)';
+</div>
 
-      setTimeout(() => {
-        btn.innerHTML = 'AGENT FOUND ✓';
-        btn.style.background = 'linear-gradient(135deg,#00ff9d,#00f5ff)';
-      }, 3000);
+<button class="btn"
+onclick="completeRegister()">
+VERIFY & CONTINUE
+</button>
 
-    }
+</div>
 
-  </script>
+</div>
+
+<!-- LOGIN -->
+
+<div id="loginPage" class="page">
+
+<div class="card">
+
+<h1 style="
+font-size:35px;
+font-weight:900;
+text-align:center;">
+LOGIN
+</h1>
+
+<input id="loginPhone"
+class="input"
+placeholder="Phone Number">
+
+<input id="loginCnic"
+class="input"
+placeholder="CNIC">
+
+<button class="btn"
+onclick="loginNow()">
+LOGIN
+</button>
+
+</div>
+
+</div>
+
+<!-- USER DASH -->
+
+<div id="userDash"
+class="dashboard">
+
+<div id="laser"></div>
+
+<div id="userMap"
+class="map"></div>
+
+<div class="bottom">
+
+<h2 style="
+font-size:30px;
+font-weight:900;">
+REQUEST CASH
+</h2>
+
+<input id="amount"
+class="input"
+placeholder="Amount">
+
+<input id="commission"
+class="input"
+placeholder="Commission">
+
+<button class="btn"
+onclick="sendRequest()">
+SEND REQUEST
+</button>
+
+<div class="chat"
+id="userChat">
+
+<div class="msg left">
+System Ready
+</div>
+
+</div>
+
+<div style="
+display:flex;
+gap:10px;">
+
+<input id="userText"
+class="input"
+placeholder="Message">
+
+<button class="btn"
+style="width:120px;"
+onclick="sendUserMsg()">
+SEND
+</button>
+
+</div>
+
+<button class="btn"
+onclick="completeDeal()">
+COMPLETE DEAL
+</button>
+
+</div>
+
+</div>
+
+<!-- AGENT DASH -->
+
+<div id="agentDash"
+class="dashboard">
+
+<div id="agentMap"
+class="map"></div>
+
+<div class="bottom">
+
+<h2 style="
+font-size:30px;
+font-weight:900;">
+AGENT RADAR
+</h2>
+
+<div class="status">
+RADAR ONLINE
+</div>
+
+<div id="requests"></div>
+
+<div class="chat"
+id="agentChat">
+
+<div class="msg left">
+Waiting Requests
+</div>
+
+</div>
+
+<div style="
+display:flex;
+gap:10px;">
+
+<input id="agentText"
+class="input"
+placeholder="Message">
+
+<button class="btn"
+style="width:120px;"
+onclick="sendAgentMsg()">
+SEND
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+/* SPLASH */
+
+setTimeout(()=>{
+s1.classList.remove("active");
+s2.classList.add("active");
+},1500);
+
+setTimeout(()=>{
+s2.classList.remove("active");
+s3.classList.add("active");
+},3000);
+
+/* GLOBAL */
+
+let role = "";
+let requests = [];
+
+/* OPEN ROLE */
+
+function openRole(){
+
+document.querySelectorAll(".page")
+.forEach(p=>p.classList.remove("active"));
+
+rolePage.classList.add("active");
+
+}
+
+/* REGISTER */
+
+function openRegister(type){
+
+role = type;
+
+document.querySelectorAll(".page")
+.forEach(p=>p.classList.remove("active"));
+
+registerPage.classList.add("active");
+
+if(type==="agent"){
+
+vehicleBox.style.display="block";
+registerTitle.innerText="AGENT REGISTER";
+
+}else{
+
+vehicleBox.style.display="none";
+registerTitle.innerText="USER REGISTER";
+
+}
+
+}
+
+/* LOGIN */
+
+function openLogin(){
+
+document.querySelectorAll(".page")
+.forEach(p=>p.classList.remove("active"));
+
+loginPage.classList.add("active");
+
+}
+
+/* VERIFY */
+
+function completeRegister(){
+
+let name =
+document.getElementById("name").value;
+
+let phone =
+document.getElementById("phone").value;
+
+let cnic =
+document.getElementById("cnic").value;
+
+if(!name || !phone || !cnic){
+
+alert("FILL ALL DETAILS");
+return;
+
+}
+
+alert("VERIFICATION SUCCESS");
+
+if(role==="user"){
+
+openUserDash();
+
+}else{
+
+openAgentDash();
+
+}
+
+}
+
+/* LOGIN */
+
+function loginNow(){
+
+let phone =
+document.getElementById("loginPhone").value;
+
+let cnic =
+document.getElementById("loginCnic").value;
+
+if(!phone || !cnic){
+
+alert("ENTER DETAILS");
+return;
+
+}
+
+alert("LOGIN SUCCESS");
+
+openUserDash();
+
+}
+
+/* USER DASH */
+
+function openUserDash(){
+
+document.getElementById("userDash")
+.classList.add("active");
+
+setTimeout(()=>{
+
+let map = L.map('userMap')
+.setView([24.8607,67.0011],15);
+
+L.tileLayer(
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+).addTo(map);
+
+L.circleMarker(
+[24.8607,67.0011],
+{
+radius:10,
+color:"#00ff88",
+fillColor:"#00ff88",
+fillOpacity:1
+}
+).addTo(map);
+
+},300);
+
+}
+
+/* AGENT DASH */
+
+function openAgentDash(){
+
+document.getElementById("agentDash")
+.classList.add("active");
+
+setTimeout(()=>{
+
+let map = L.map('agentMap')
+.setView([24.8607,67.0011],15);
+
+L.tileLayer(
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+).addTo(map);
+
+L.circleMarker(
+[24.8607,67.0011],
+{
+radius:10,
+color:"#ff3b5c",
+fillColor:"#ff3b5c",
+fillOpacity:1
+}
+).addTo(map);
+
+},300);
+
+renderRequests();
+
+}
+
+/* SEND REQUEST */
+
+function sendRequest(){
+
+let amount =
+document.getElementById("amount").value;
+
+let commission =
+document.getElementById("commission").value;
+
+if(!amount || !commission){
+
+alert("ENTER DETAILS");
+return;
+
+}
+
+/* LASER */
+
+document.getElementById("laser")
+.style.display="block";
+
+/* SAVE */
+
+let request = {
+
+id:Date.now(),
+amount,
+commission
+
+};
+
+requests.push(request);
+
+renderRequests();
+
+/* USER CHAT */
+
+userChat.innerHTML += `
+
+<div class="msg left">
+
+Request Sent:
+PKR ${amount}
+
+</div>
+
+`;
+
+}
+
+/* RENDER */
+
+function renderRequests(){
+
+let html = "";
+
+requests.forEach(req=>{
+
+html += `
+
+<div class="request">
+
+<h3 style="
+font-size:24px;
+font-weight:900;">
+NEW REQUEST
+</h3>
+
+<p style="margin-top:10px;">
+Amount:
+PKR ${req.amount}
+</p>
+
+<p style="margin-top:10px;">
+Commission:
+PKR ${req.commission}
+</p>
+
+<input
+id="counter_${req.id}"
+class="input"
+placeholder="Your Commission">
+
+<button
+class="btn"
+onclick="acceptRequest(${req.id})">
+
+ACCEPT
+
+</button>
+
+<button
+class="btn"
+onclick="counterRequest(${req.id})">
+
+COUNTER
+
+</button>
+
+<button
+class="btn"
+style="background:red;"
+onclick="rejectRequest(${req.id})">
+
+REJECT
+
+</button>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("requests")
+.innerHTML = html;
+
+}
+
+/* ACCEPT */
+
+function acceptRequest(id){
+
+document.getElementById("laser")
+.style.display="none";
+
+alert("REQUEST ACCEPTED");
+
+userChat.innerHTML += `
+
+<div class="msg left">
+
+Agent Accepted Request
+
+</div>
+
+`;
+
+}
+
+/* COUNTER */
+
+function counterRequest(id){
+
+let value =
+document.getElementById(
+"counter_"+id
+).value;
+
+if(!value){
+
+alert("ENTER COMMISSION");
+return;
+
+}
+
+userChat.innerHTML += `
+
+<div class="msg left">
+
+Counter Offer:
+PKR ${value}
+
+</div>
+
+`;
+
+}
+
+/* REJECT */
+
+function rejectRequest(id){
+
+requests =
+requests.filter(
+r=>r.id!==id
+);
+
+renderRequests();
+
+userChat.innerHTML += `
+
+<div class="msg left">
+
+Request Rejected
+
+</div>
+
+`;
+
+}
+
+/* USER CHAT */
+
+function sendUserMsg(){
+
+let text =
+document.getElementById("userText")
+.value;
+
+if(!text) return;
+
+userChat.innerHTML += `
+
+<div class="msg right">
+
+${text}
+
+</div>
+
+`;
+
+agentChat.innerHTML += `
+
+<div class="msg left">
+
+${text}
+
+</div>
+
+`;
+
+document.getElementById("userText")
+.value="";
+
+}
+
+/* AGENT CHAT */
+
+function sendAgentMsg(){
+
+let text =
+document.getElementById("agentText")
+.value;
+
+if(!text) return;
+
+agentChat.innerHTML += `
+
+<div class="msg right">
+
+${text}
+
+</div>
+
+`;
+
+userChat.innerHTML += `
+
+<div class="msg left">
+
+${text}
+
+</div>
+
+`;
+
+document.getElementById("agentText")
+.value="";
+
+}
+
+/* OTP */
+
+function completeDeal(){
+
+let otp =
+Math.floor(
+1000+Math.random()*9000
+);
+
+let input =
+prompt("ENTER OTP: "+otp);
+
+if(input==otp){
+
+alert("DEAL COMPLETED");
+
+userChat.innerHTML += `
+
+<div class="msg left">
+
+Deal Completed
+
+</div>
+
+`;
+
+agentChat.innerHTML += `
+
+<div class="msg left">
+
+Deal Completed
+
+</div>
+
+`;
+
+}else{
+
+alert("WRONG OTP");
+
+}
+
+}
+
+</script>
 
 </body>
 </html>
