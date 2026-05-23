@@ -2,560 +2,322 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CashFlow Pro | Beast Network</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CashFlow - Cash Exchange App</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    
-    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;900&display=swap');
+        /* Custom App Styling */
+        body { background-color: #121212; color: #ffffff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; }
+        .screen { display: none; height: 100vh; width: 100vw; flex-direction: column; }
+        .active-screen { display: flex; }
+        
+        /* Map Styles */
+        #user-map, #agent-map { flex-grow: 1; z-index: 10; }
+        .leaflet-bottom, .leaflet-control-zoom { display: none; } /* Hide map watermarks/zoom for app feel */
 
-        /* Beast Level Premium UI */
-        body { background-color: #020617; color: white; overflow: hidden; font-family: 'Space Grotesk', sans-serif; }
-        .view { display: none; height: 100vh; width: 100vw; position: absolute; inset: 0; flex-direction: column; background: #020617; }
-        .active { display: flex; animation: fadeInScale 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes fadeInScale { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
-        
-        /* Glass & Neon Inputs */
-        .glass-input { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(51, 65, 85, 0.5); color: #e2e8f0; padding: 18px; border-radius: 16px; width: 100%; outline: none; transition: all 0.3s ease; margin-bottom: 16px; font-weight: 600; font-size: 1.1rem; }
-        .glass-input:focus { border-color: #3b82f6; box-shadow: 0 0 25px rgba(59, 130, 246, 0.3); background: rgba(15, 23, 42, 0.9); }
-        .glass-input::placeholder { color: #64748b; font-weight: 400; }
-        
-        /* Naked Large Inputs for Amount */
-        .naked-input { background: transparent; border: none; border-bottom: 3px solid #1e293b; color: white; font-size: 2.5rem; font-weight: 900; text-align: center; width: 100%; outline: none; transition: 0.3s; padding-bottom: 10px;}
-        .naked-input:focus { border-bottom-color: #10b981; text-shadow: 0 0 20px rgba(16, 185, 129, 0.5); }
+        /* Input Fields */
+        .input-glass { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; border-radius: 12px; padding: 12px; outline: none; transition: 0.3s; }
+        .input-glass:focus { border-color: #00ff88; box-shadow: 0 0 10px rgba(0, 255, 136, 0.2); }
 
-        /* Map Area & Dark Theme */
-        #map-area { flex-grow: 1; position: absolute; top:0; left:0; width: 100%; height: 100vh; z-index: 1; }
-        #map { height: 100%; width: 100%; z-index: 1; filter: contrast(1.1) saturate(1.2); }
-        
-        /* Glowing Markers */
-        .marker-user { background: #10b981; width: 22px; height: 22px; border-radius: 50%; border: 3px solid #020617; box-shadow: 0 0 20px #10b981, 0 0 40px #10b981; animation: pulseMarker 2s infinite; }
-        .marker-agent { background: #f43f5e; width: 22px; height: 22px; border-radius: 50%; border: 3px solid #020617; box-shadow: 0 0 20px #f43f5e, 0 0 40px #f43f5e; animation: pulseMarker 2s infinite; }
-        @keyframes pulseMarker { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
-        
-        /* Cinematic Radar */
-        .laser-radar { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; pointer-events: none; }
-        .ring { border: 2px solid rgba(59, 130, 246, 0.8); border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 30px rgba(59, 130, 246, 0.4) inset; animation: radarPulse 2.5s infinite cubic-bezier(0.1, 0.7, 0.1, 1); }
-        @keyframes radarPulse { 0% { width: 0; height: 0; opacity: 1; border-width: 4px; } 100% { width: 600px; height: 600px; opacity: 0; border-width: 1px; } }
-        
-        ::-webkit-scrollbar { display: none; }
+        /* Buttons */
+        .btn-green { background: linear-gradient(135deg, #00b09b, #96c93d); color: white; font-weight: bold; border-radius: 12px; transition: transform 0.2s; }
+        .btn-red { background: linear-gradient(135deg, #ff416c, #ff4b2b); color: white; font-weight: bold; border-radius: 12px; transition: transform 0.2s; }
+        .btn-green:active, .btn-red:active { transform: scale(0.95); }
 
-        /* Floating Sheets (Glassmorphism Beast) */
-        .floating-ui { position: absolute; z-index: 2000; width: 100%; }
-        .bottom-sheet { position: absolute; bottom: 0; width: 100%; z-index: 2000; background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.1); border-top-left-radius: 32px; border-top-right-radius: 32px; box-shadow: 0 -20px 50px rgba(0,0,0,0.8); padding: 30px; padding-bottom: 50px; transition: transform 0.4s ease; }
+        /* Laser / Radar Animation */
+        .radar-box { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; display: none; pointer-events: none; }
+        .ring { border: 2px solid #00ff88; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: pulse 2s infinite ease-out; opacity: 0; }
+        .ring:nth-child(2) { animation-delay: 0.5s; }
+        .ring:nth-child(3) { animation-delay: 1s; }
+        @keyframes pulse { 0% { width: 0; height: 0; opacity: 1; } 100% { width: 300px; height: 300px; opacity: 0; } }
+
+        /* Sidebar Menu */
+        .sidebar { position: fixed; top: 0; left: -250px; width: 250px; height: 100vh; background: #1e1e1e; z-index: 2000; transition: 0.3s; padding: 20px; box-shadow: 5px 0 15px rgba(0,0,0,0.5); }
+        .sidebar.open { left: 0; }
         
-        /* Agent Order Card Hover */
-        .order-card { transition: all 0.3s ease; border: 1px solid rgba(59, 130, 246, 0.2); }
-        .order-card:hover { transform: translateY(-3px); border-color: rgba(59, 130, 246, 0.6); box-shadow: 0 10px 30px rgba(59, 130, 246, 0.15); }
+        /* Modals */
+        .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 3000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .modal-card { background: #1e1e1e; padding: 20px; border-radius: 16px; width: 90%; max-width: 400px; border: 1px solid rgba(255,255,255,0.1); text-align: center; }
     </style>
 </head>
 <body>
 
-    <audio id="ding-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+    <audio id="ding-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
 
-    <div id="v-splash" class="view active items-center justify-center text-center relative overflow-hidden">
-        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-900/20 via-slate-900 to-black z-0"></div>
-        <div class="z-10">
-            <h1 class="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-blue-400 via-emerald-400 to-teal-200 drop-shadow-[0_0_25px_rgba(52,211,153,0.4)] animate-pulse mb-2">CASHFLOW</h1>
-            <p class="text-emerald-500/80 mt-2 tracking-[0.3em] font-bold text-xl">PRO NETWORK</p>
+    <div id="sidebar" class="sidebar flex flex-col">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-xl font-bold text-[#00ff88]">Menu</h2>
+            <i class="fas fa-times text-2xl text-gray-400" onclick="toggleSidebar()"></i>
+        </div>
+        <button onclick="switchRole('agent')" class="p-3 mb-4 bg-gray-800 rounded-lg text-left"><i class="fas fa-exchange-alt mr-2 text-[#ff4b2b]"></i> Switch to Agent Mode</button>
+        <button onclick="switchRole('user')" class="p-3 bg-gray-800 rounded-lg text-left"><i class="fas fa-user mr-2 text-[#00ff88]"></i> Switch to User Mode</button>
+    </div>
+
+    <div id="splash" class="screen active-screen justify-center items-center bg-black">
+        <h1 id="splash-text" class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#00b09b] to-[#96c93d] transition-opacity duration-500 opacity-0">CashFlow</h1>
+    </div>
+
+    <div id="role-select" class="screen p-6 justify-center bg-[#121212]">
+        <h2 class="text-3xl font-bold mb-8 text-center">I want to...</h2>
+        <button onclick="nav('user-reg')" class="btn-green p-4 mb-6 text-xl shadow-lg"><i class="fas fa-money-bill-wave mr-2"></i> Get Cash (User)</button>
+        <button onclick="nav('agent-reg')" class="btn-red p-4 text-xl shadow-lg"><i class="fas fa-motorcycle mr-2"></i> Provide Cash (Agent)</button>
+    </div>
+
+    <div id="user-reg" class="screen p-6 overflow-y-auto">
+        <h2 class="text-2xl font-bold mb-6 text-[#00ff88]">User Verification</h2>
+        <input type="text" placeholder="First Name" class="input-glass mb-4 w-full">
+        <input type="text" placeholder="Last Name" class="input-glass mb-4 w-full">
+        <input type="number" placeholder="CNIC Number" class="input-glass mb-4 w-full">
+        <input type="tel" placeholder="Phone Number" class="input-glass mb-4 w-full">
+        <input type="text" placeholder="City" class="input-glass mb-8 w-full">
+        <button onclick="nav('payment-method')" class="btn-green p-4 w-full mt-auto">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+
+    <div id="agent-reg" class="screen p-6 overflow-y-auto">
+        <h2 class="text-2xl font-bold mb-6 text-[#ff4b2b]">Agent Verification</h2>
+        <input type="text" placeholder="First Name" class="input-glass mb-4 w-full">
+        <input type="text" placeholder="Last Name" class="input-glass mb-4 w-full">
+        <input type="text" placeholder="Vehicle No." class="input-glass mb-4 w-full">
+        <input type="number" placeholder="CNIC Number" class="input-glass mb-4 w-full">
+        <input type="tel" placeholder="Phone Number" class="input-glass mb-4 w-full">
+        <div class="mb-8">
+            <label class="text-sm text-gray-400 mb-2 block">Upload Profile Pic</label>
+            <input type="file" accept="image/*" class="input-glass w-full text-sm">
+        </div>
+        <button onclick="nav('agent-dash', initAgentMap)" class="btn-red p-4 w-full mt-auto">Verify & Login <i class="fas fa-check"></i></button>
+    </div>
+
+    <div id="payment-method" class="screen p-6 justify-center">
+        <h2 class="text-2xl font-bold mb-8 text-center text-[#00ff88]">How do you want cash?</h2>
+        <button onclick="nav('user-dash', initUserMap)" class="btn-green p-4 mb-6 text-lg"><i class="fas fa-wallet mr-2"></i> Cash at Location</button>
+        <button onclick="nav('user-dash', initUserMap)" class="input-glass p-4 text-lg text-white border-[#00ff88]"><i class="fas fa-mobile-alt mr-2"></i> Online Transfer</button>
+    </div>
+
+    <div id="user-dash" class="screen relative">
+        <div class="absolute top-4 left-4 z-[1000] bg-[#1e1e1e] p-3 rounded-full shadow-lg" onclick="toggleSidebar()">
+            <i class="fas fa-bars text-xl text-white"></i>
+        </div>
+        
+        <div id="user-map"></div>
+
+        <div id="radar" class="radar-box">
+            <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+        </div>
+
+        <div class="bg-[#1e1e1e] p-6 rounded-t-3xl shadow-2xl z-[1000]">
+            <h3 class="text-lg font-bold mb-4 text-center">Request Cash</h3>
+            <div class="flex space-x-4 mb-4">
+                <input type="number" id="req-amount" placeholder="Amount (e.g. 5000)" class="input-glass w-2/3">
+                <input type="number" id="req-comm" placeholder="Comm (120)" class="input-glass w-1/3 border-[#00ff88]">
+            </div>
+            <button id="find-agent-btn" onclick="findAgent()" class="btn-green p-4 w-full text-lg shadow-lg shadow-[#00ff88]/30">Find Agent</button>
         </div>
     </div>
 
-    <div id="v-role" class="view items-center justify-center p-6 z-[5000]">
-        <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-blue-600/20 blur-[100px] rounded-full"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-emerald-600/20 blur-[100px] rounded-full"></div>
-        
-        <h2 class="text-5xl font-black mb-12 tracking-wider text-white drop-shadow-lg z-10">SELECT GRID</h2>
-        
-        <button onclick="setRole('user')" class="w-full relative group p-8 bg-slate-900/60 backdrop-blur-md border border-emerald-500/50 rounded-3xl mb-8 overflow-hidden hover:scale-[1.02] transition-all duration-300 shadow-[0_0_30px_rgba(16,185,129,0.1)] z-10">
-            <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <h3 class="text-3xl font-black text-emerald-400 tracking-wide"><i class="fas fa-satellite-dish mb-3 block text-4xl"></i> USER TERMINAL</h3>
-        </button>
-        
-        <button onclick="setRole('agent')" class="w-full relative group p-8 bg-slate-900/60 backdrop-blur-md border border-rose-500/50 rounded-3xl overflow-hidden hover:scale-[1.02] transition-all duration-300 shadow-[0_0_30px_rgba(244,63,94,0.1)] z-10">
-            <div class="absolute inset-0 bg-gradient-to-r from-rose-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <h3 class="text-3xl font-black text-rose-400 tracking-wide"><i class="fas fa-fighter-jet mb-3 block text-4xl"></i> AGENT HUB</h3>
-        </button>
+    <div id="agent-dash" class="screen relative">
+        <div class="absolute top-4 left-4 z-[1000] bg-[#1e1e1e] p-3 rounded-full shadow-lg" onclick="toggleSidebar()">
+            <i class="fas fa-bars text-xl text-white"></i>
+        </div>
+
+        <div id="agent-map"></div>
+
+        <div class="bg-[#1e1e1e] p-6 rounded-t-3xl shadow-2xl z-[1000]">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold">Radar System</h3>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="agent-online" class="sr-only peer" onchange="toggleAgentStatus()">
+                    <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#ff4b2b]"></div>
+                </label>
+            </div>
+            <p id="agent-status-text" class="text-sm text-gray-400 text-center mb-4">You are offline. Go online to receive requests.</p>
+        </div>
     </div>
 
-    <div id="v-verify" class="view p-8 overflow-y-auto z-[5000]">
-        <h2 id="verify-title" class="text-3xl font-black mb-10 text-center mt-10 tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">VERIFICATION</h2>
-        <div id="error-box" class="hidden bg-rose-900/40 border border-rose-500 text-rose-200 p-4 rounded-xl mb-6 text-sm font-bold text-center backdrop-blur"></div>
-        
-        <div class="space-y-2">
-            <input id="v-fname" type="text" placeholder="Full Name" class="glass-input">
-            <input id="v-cnic" type="number" placeholder="CNIC (13 Digits)" class="glass-input">
-            <input id="v-phone" type="number" placeholder="Phone (03XX...)" class="glass-input">
-            <input id="v-city" type="text" placeholder="City Area" class="glass-input">
-            
-            <div id="agent-fields" class="hidden">
-                <input id="v-vehicle" type="text" placeholder="Vehicle Reg No. (PRO-123)" class="glass-input border-rose-500/50 focus:border-rose-500 focus:shadow-[0_0_25px_rgba(244,63,94,0.3)]">
-            </div>
+    <div id="active-deal" class="screen bg-[#121212]">
+        <div class="p-4 bg-[#1e1e1e] flex justify-between items-center">
+            <h3 class="font-bold text-[#00ff88]"><i class="fas fa-user-circle mr-2"></i> Partner En-route</h3>
+            <button onclick="openOtp()" class="bg-[#00ff88] text-black px-3 py-1 rounded text-sm font-bold">Close Deal</button>
         </div>
-        
-        <button onclick="runVerification()" class="w-full p-5 mt-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl font-black text-xl tracking-widest shadow-[0_10px_30px_rgba(79,70,229,0.4)] hover:shadow-[0_10px_40px_rgba(79,70,229,0.6)] transition-all">AUTHENTICATE</button>
-    </div>
-
-    <div id="v-dashboard" class="view relative">
-        
-        <div id="map-area">
-            <div id="map"></div>
-            <div id="laser" class="laser-radar hidden">
-                <div class="ring"></div><div class="ring" style="animation-delay: 0.8s;"></div><div class="ring" style="animation-delay: 1.6s;"></div>
-            </div>
-        </div>
-
-        <div class="floating-ui top-6 left-6 right-6 flex justify-between pointer-events-none items-start">
-            <button onclick="logout()" class="bg-slate-900/90 backdrop-blur-md w-14 h-14 rounded-2xl border border-rose-500/50 text-rose-400 font-bold shadow-[0_0_20px_rgba(0,0,0,0.5)] pointer-events-auto hover:bg-rose-900/20 transition flex items-center justify-center text-xl">
-                <i class="fas fa-power-off"></i>
-            </button>
-            
-            <div id="agent-status-toggle" class="hidden bg-slate-900/90 backdrop-blur-md p-2 pl-5 rounded-2xl border border-slate-700/50 pointer-events-auto items-center shadow-[0_0_30px_rgba(0,0,0,0.5)]">
-                <div class="flex items-center gap-3">
-                    <div class="relative flex h-3 w-3">
-                      <span id="a-status-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                      <span id="a-status-dot" class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
-                    </div>
-                    <span id="a-status-text" class="text-rose-500 font-bold tracking-wider text-sm mr-2">OFFLINE</span>
-                </div>
-                <button onclick="toggleAgentOnline()" class="bg-rose-600 px-6 py-3 rounded-xl text-white font-black text-sm shadow-lg hover:scale-105 transition ml-2 tracking-widest">CONNECT</button>
-            </div>
-        </div>
-
-        <div id="user-sheet" class="bottom-sheet border-t-4 border-emerald-500 hidden">
-            <div id="u-input-area" class="w-full">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-bold text-gray-400">INITIATE DROP</h3>
-                    <div class="bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-xs font-bold border border-emerald-500/30">SECURE</div>
-                </div>
-                
-                <div class="mb-8 relative">
-                    <span class="absolute left-4 top-4 text-gray-500 font-bold text-2xl">Rs.</span>
-                    <input id="u-amount" type="number" placeholder="0" class="naked-input">
-                </div>
-
-                <div class="grid grid-cols-4 gap-2 mb-8">
-                    <button onclick="setAmount(1000)" class="bg-slate-800 hover:bg-slate-700 text-gray-300 py-2 rounded-lg text-sm font-bold border border-slate-700 transition">+1K</button>
-                    <button onclick="setAmount(5000)" class="bg-slate-800 hover:bg-slate-700 text-gray-300 py-2 rounded-lg text-sm font-bold border border-slate-700 transition">+5K</button>
-                    <button onclick="setAmount(10000)" class="bg-slate-800 hover:bg-slate-700 text-gray-300 py-2 rounded-lg text-sm font-bold border border-slate-700 transition">+10K</button>
-                    <button onclick="setAmount(50000)" class="bg-slate-800 hover:bg-slate-700 text-gray-300 py-2 rounded-lg text-sm font-bold border border-slate-700 transition">+50K</button>
-                </div>
-
-                <div class="bg-slate-800/50 p-4 rounded-2xl border border-slate-700 flex justify-between items-center mb-8">
-                    <div>
-                        <div class="text-xs text-gray-400 font-bold mb-1">AGENT REWARD (FEE)</div>
-                        <input id="u-fee" type="number" placeholder="e.g. 250" class="bg-transparent text-emerald-400 font-black text-2xl w-32 outline-none">
-                    </div>
-                    <i class="fas fa-gem text-3xl text-emerald-500/30"></i>
-                </div>
-
-                <button onclick="broadcastLive()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 p-5 rounded-2xl font-black text-xl shadow-[0_10px_30px_rgba(16,185,129,0.3)] hover:shadow-[0_10px_40px_rgba(16,185,129,0.5)] transition-all flex justify-center items-center gap-3">
-                    BROADCAST SIGNAL <i class="fas fa-broadcast-tower"></i>
-                </button>
-            </div>
-
-            <div id="u-waiting" class="hidden text-center py-6">
-                <div class="relative w-24 h-24 mx-auto mb-6">
-                    <div class="absolute inset-0 border-4 border-emerald-500/30 rounded-full border-t-emerald-500 animate-spin"></div>
-                    <i class="fas fa-radar absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl text-emerald-400"></i>
-                </div>
-                <h3 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 mb-2">SCANNING GRID...</h3>
-                <p class="text-gray-400 text-sm font-bold tracking-widest mb-8">LOCATING NEAREST PRO AGENTS</p>
-                <button onclick="cancelBroadcast()" class="w-full bg-transparent text-rose-400 border-2 border-rose-500/50 p-4 rounded-2xl font-bold tracking-widest hover:bg-rose-500/10 transition">ABORT MISSION</button>
-            </div>
-        </div>
-
-        <div id="agent-sheet" class="bottom-sheet border-t-4 border-blue-500 hidden">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-black text-white tracking-widest">LIVE <span class="text-blue-500">RADAR</span></h3>
-                <div class="text-xs font-bold text-gray-500 bg-slate-800 px-3 py-1 rounded-full"><span id="job-count">0</span> TARGETS</div>
-            </div>
-            <div id="live-orders" class="space-y-4 overflow-y-auto max-h-[40vh] pb-4">
-                <div class="flex flex-col items-center justify-center py-10 opacity-50">
-                    <i class="fas fa-satellite text-4xl text-gray-600 mb-4 animate-bounce"></i>
-                    <p class="text-gray-400 text-sm font-bold tracking-widest text-center">SYSTEM OFFLINE.<br>CONNECT TO RECEIVE SIGNALS.</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="m-active-deal" class="bottom-sheet border-t-4 border-teal-400 hidden flex-col h-[55vh] !p-0 overflow-hidden">
-            <div class="p-5 bg-gradient-to-r from-slate-900 to-slate-800 rounded-t-[32px] flex justify-between items-center border-b border-slate-700/50 relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-teal-400 to-transparent animate-[pulse_2s_ease-in-out_infinite]"></div>
-                <div class="z-10">
-                    <div class="flex items-center gap-2 mb-1">
-                        <span class="relative flex h-3 w-3"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-teal-500"></span></span>
-                        <h3 class="font-black text-teal-400 tracking-widest text-lg">LINK ESTABLISHED</h3>
-                    </div>
-                    <p class="text-xs text-gray-400 font-bold">Secure comms channel open</p>
-                </div>
-                <button onclick="openOTP()" class="bg-teal-500/20 border border-teal-500/50 px-5 py-3 rounded-xl font-black text-teal-300 shadow-[0_0_15px_rgba(45,212,191,0.2)] hover:bg-teal-500 hover:text-black transition-all z-10">EXECUTE</button>
-            </div>
-            
-            <div class="flex-grow p-4 overflow-y-auto flex flex-col gap-3 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-slate-900/50" id="chat-box"></div>
-            
-            <div class="p-4 bg-slate-900/95 flex gap-3 border-t border-slate-800 backdrop-blur-xl pb-8">
-                <input id="chat-msg" type="text" placeholder="Transmit message..." class="glass-input !mb-0 !p-4 !rounded-2xl text-sm flex-grow border-slate-700 bg-slate-800/80">
-                <button onclick="sendRealChat()" class="bg-gradient-to-br from-blue-600 to-indigo-600 w-14 rounded-2xl flex items-center justify-center font-bold text-white shadow-[0_0_20px_rgba(79,70,229,0.4)] hover:scale-105 transition"><i class="fas fa-paper-plane"></i></button>
+        <div class="flex-grow bg-gray-900 p-4 flex flex-col justify-end">
+            <div class="bg-[#1e1e1e] p-3 rounded-lg w-3/4 mb-2">Hello, I am arriving in 2 mins.</div>
+            <div class="bg-[#005c4b] p-3 rounded-lg w-3/4 self-end mb-4 text-white">Okay, I am outside.</div>
+            <div class="flex">
+                <input type="text" placeholder="Message..." class="input-glass flex-grow mr-2 rounded-full">
+                <button class="bg-[#00ff88] text-black w-12 h-12 rounded-full flex justify-center items-center"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
 
-    <div id="m-nego" class="fixed inset-0 bg-slate-950/90 z-[6000] hidden items-center justify-center p-6 backdrop-blur-xl">
-        <div class="bg-slate-900 border border-indigo-500/50 p-8 rounded-[32px] w-full text-center shadow-[0_0_50px_rgba(99,102,241,0.2)] relative overflow-hidden">
-            <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-indigo-500 shadow-[0_0_20px_#6366f1]"></div>
-            
-            <div class="bg-indigo-500/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 border border-indigo-500/30">
-                <i class="fas fa-handshake text-3xl text-indigo-400"></i>
+    <div id="nego-modal" class="modal-bg flex">
+        <div class="modal-card">
+            <h3 class="text-xl font-bold mb-2">Agent Found!</h3>
+            <p class="text-gray-400 text-sm mb-4">Agent wants to negotiate the commission.</p>
+            <div class="bg-black p-4 rounded-lg mb-6">
+                <p>Requested: <span class="text-gray-400 line-through">120 PKR</span></p>
+                <p class="text-2xl font-bold text-[#00ff88]">New Offer: 150 PKR</p>
             </div>
-            
-            <h2 class="text-2xl font-black mb-2 text-white tracking-widest">COUNTER OFFER</h2>
-            <p class="text-gray-400 mb-6 text-sm">Agent requested a revised fee:</p>
-            
-            <div class="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 mb-10 drop-shadow-lg">
-                Rs. <span id="n-fee-display"></span>
+            <div class="flex space-x-2">
+                <button onclick="closeModal('nego-modal'); resetUserDash();" class="flex-1 bg-gray-800 p-3 rounded-lg">Reject</button>
+                <button onclick="acceptDeal()" class="flex-1 btn-green p-3">Accept Deal</button>
             </div>
-            
-            <button onclick="acceptNegotiation()" class="w-full bg-gradient-to-r from-indigo-600 to-blue-600 p-5 rounded-2xl font-black mb-4 shadow-[0_10px_30px_rgba(79,70,229,0.3)] text-lg tracking-widest">ACCEPT TERMS</button>
-            <button onclick="rejectNegotiation()" class="w-full bg-transparent text-gray-400 p-4 rounded-2xl font-bold tracking-widest hover:bg-white/5 transition">DECLINE</button>
         </div>
     </div>
 
-    <div id="m-otp" class="fixed inset-0 bg-slate-950/95 z-[6000] hidden items-center justify-center p-6 backdrop-blur-xl">
-        <div class="bg-slate-900 border border-teal-500/30 p-8 rounded-[32px] w-full text-center shadow-[0_0_60px_rgba(20,184,166,0.15)]">
-            <div class="relative w-24 h-24 mx-auto mb-6">
-                <div class="absolute inset-0 bg-teal-500/20 rounded-full animate-ping"></div>
-                <div class="absolute inset-0 flex items-center justify-center bg-slate-800 border-2 border-teal-500 rounded-full z-10">
-                    <i class="fas fa-shield-check text-4xl text-teal-400"></i>
-                </div>
+    <div id="incoming-modal" class="modal-bg flex">
+        <div class="modal-card border-[#ff4b2b]">
+            <h3 class="text-xl font-bold mb-2 text-[#ff4b2b]">New Request!</h3>
+            <p class="text-gray-400 text-sm mb-4">Distance: 1.2 KM</p>
+            <div class="bg-black p-4 rounded-lg mb-6 text-left">
+                <p>Amount: <strong class="text-white">5000 PKR</strong></p>
+                <p>Offered Comm: <strong class="text-white">120 PKR</strong></p>
             </div>
-            
-            <h2 class="text-3xl font-black mb-2 text-white tracking-widest">SECURE SETTLEMENT</h2>
-            <div class="h-1 w-16 bg-teal-500 mx-auto rounded-full mb-8"></div>
-            
-            <div id="otp-user-view" class="hidden">
-                <p class="text-gray-400 mb-6 font-bold">Provide this code to the Agent.</p>
-                <div id="u-otp-display" class="text-7xl font-black tracking-[0.3em] text-teal-400 bg-slate-950/50 py-8 rounded-3xl mb-4 border border-teal-500/20 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]"></div>
+            <input type="number" value="150" id="counter-comm" class="input-glass w-full mb-4 text-center" placeholder="Counter Commission">
+            <div class="flex space-x-2">
+                <button onclick="closeModal('incoming-modal')" class="flex-1 bg-gray-800 p-3 rounded-lg">Reject</button>
+                <button onclick="agentSendCounter()" class="flex-1 btn-red p-3">Counter & Accept</button>
             </div>
-
-            <div id="otp-agent-view" class="hidden">
-                <p class="text-gray-400 mb-6 font-bold">Enter User's secure pin to close contract.</p>
-                <input id="a-otp-input" type="number" placeholder="• • • •" class="bg-slate-950/50 border-2 border-slate-700 text-teal-400 rounded-3xl w-full p-6 text-center text-5xl font-black tracking-[0.3em] mb-8 outline-none focus:border-teal-500 focus:shadow-[0_0_30px_rgba(20,184,166,0.2)] transition">
-                <button onclick="verifyRealOTP()" class="w-full bg-gradient-to-r from-teal-500 to-emerald-500 p-5 rounded-2xl font-black text-xl shadow-[0_10px_30px_rgba(16,185,129,0.3)] tracking-widest text-slate-900">VERIFY & CLOSE</button>
-            </div>
-            <button onclick="document.getElementById('m-otp').style.display='none'" class="mt-8 text-gray-500 font-bold tracking-widest hover:text-white transition uppercase text-sm">Return to UI</button>
         </div>
     </div>
 
-<script>
-    // --- FIREBASE INIT ---
-    const firebaseConfig = { databaseURL: "https://cashflow-fa937-default-rtdb.firebaseio.com/" };
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    <div id="otp-modal" class="modal-bg flex">
+        <div class="modal-card">
+            <h3 class="text-xl font-bold mb-4">Complete Deal</h3>
+            <p class="text-gray-400 text-sm mb-6" id="otp-text">Enter the 4-digit OTP from the User to release funds.</p>
+            <input type="number" id="otp-input" placeholder="X X X X" class="input-glass w-full text-center text-2xl tracking-widest mb-6">
+            <button onclick="finishDeal()" class="btn-green w-full p-3 text-lg">Verify OTP</button>
+        </div>
+    </div>
 
-    // --- GLOBAL STATE ---
-    let userProfile = JSON.parse(localStorage.getItem('cf_user')) || null;
-    let map = null, uMarker = null, aMarker = null;
-    let currentOrderId = null;
-    let myLoc = { lat: 30.1575, lng: 71.5249 }; // Multan default
-    let otherLoc = null;
-    let agentOnline = false;
 
-    // --- UTILS & HELPERS ---
-    function playDing() {
-        const audio = document.getElementById('ding-sound');
-        audio.currentTime = 0; audio.play().catch(e => console.log("Sound blocked"));
-    }
-    function show(id) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-    function showError(msg) { const e = document.getElementById('error-box'); e.innerText = msg; e.classList.remove('hidden'); setTimeout(()=>e.classList.add('hidden'), 4000); }
-    
-    // User Advanced UI helper
-    function setAmount(val) { document.getElementById('u-amount').value = val; }
-
-    // --- APP BOOT ---
-    setTimeout(() => { if(userProfile) initDashboard(); else show('v-role'); }, 2500);
-
-    // --- AUTH ---
-    function setRole(r) {
-        document.getElementById('verify-title').innerText = r.toUpperCase() + " GRID AUTH";
-        document.getElementById('agent-fields').style.display = r === 'agent' ? 'block' : 'none';
-        document.getElementById('v-verify').dataset.role = r;
-        show('v-verify');
-    }
-
-    function runVerification() {
-        const role = document.getElementById('v-verify').dataset.role;
-        const fname = document.getElementById('v-fname').value.trim();
-        const cnic = document.getElementById('v-cnic').value.trim();
-        const phone = document.getElementById('v-phone').value.trim();
-        const city = document.getElementById('v-city').value.trim();
-        
-        if(fname.length < 3) return showError("Name too short.");
-        if(!/^\d{13}$/.test(cnic)) return showError("Strict: CNIC must be 13 digits.");
-        if(!/^03\d{9}$/.test(phone)) return showError("Strict: Phone must be 11 digits.");
-        if(city.length < 3) return showError("City required.");
-        
-        let data = { role, fname, cnic, phone, city };
-        if(role === 'agent') {
-            const veh = document.getElementById('v-vehicle').value.trim();
-            if(veh.length < 4) return showError("Vehicle Reg required.");
-            data.vehicle = veh;
+    <script>
+        /* UI NAVIGATION LOGIC */
+        function nav(screenId, callback) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
+            document.getElementById(screenId).classList.add('active-screen');
+            if(callback) setTimeout(callback, 100); // Delay for map rendering
         }
 
-        db.ref('users/' + phone).set(data).then(() => {
-            localStorage.setItem('cf_user', JSON.stringify(data));
-            userProfile = data; initDashboard();
-        }).catch(e => showError("Database Access Denied."));
-    }
-
-    function logout() { localStorage.removeItem('cf_user'); window.location.reload(); }
-
-    // --- DASHBOARD & MAP INIT ---
-    function initDashboard() {
-        show('v-dashboard');
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function playDing() { document.getElementById('ding-sound').play().catch(e=>console.log("Audio block by browser")); }
         
-        if(userProfile.role === 'user') {
-            document.getElementById('user-sheet').classList.remove('hidden');
-        } else {
-            document.getElementById('agent-sheet').classList.remove('hidden');
-            document.getElementById('agent-status-toggle').classList.remove('hidden');
-            document.getElementById('agent-status-toggle').classList.add('flex');
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+        function switchRole(role) {
+            toggleSidebar();
+            if(role === 'agent') nav('agent-reg');
+            else nav('user-reg');
         }
 
-        if(navigator.geolocation) {
-            navigator.geolocation.watchPosition(pos => {
-                myLoc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-                if(uMarker) uMarker.setLatLng([myLoc.lat, myLoc.lng]);
-                if(userProfile.role === 'agent' && agentOnline) db.ref('agents/' + userProfile.phone).set({ lat: myLoc.lat, lng: myLoc.lng });
-            }, e => console.log("GPS Off"), {enableHighAccuracy: true});
+        /* MAP LOGIC (Multan Coordinates) */
+        let userMap, agentMap;
+        const multanCoords = [30.1978, 71.4697];
+        
+        const greenIcon = L.divIcon({ className: 'custom-div-icon', html: "<div style='background-color:#00ff88; width:15px; height:15px; border-radius:50%; box-shadow: 0 0 10px #00ff88; border: 2px solid white;'></div>", iconSize: [15, 15]});
+        const redIcon = L.divIcon({ className: 'custom-div-icon', html: "<div style='background-color:#ff4b2b; width:15px; height:15px; border-radius:50%; box-shadow: 0 0 10px #ff4b2b; border: 2px solid white;'></div>", iconSize: [15, 15]});
+
+        function initUserMap() {
+            if(!userMap) {
+                userMap = L.map('user-map', {zoomControl: false}).setView(multanCoords, 14);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '' }).addTo(userMap);
+                L.marker(multanCoords, {icon: greenIcon}).addTo(userMap);
+            } else { userMap.invalidateSize(); }
         }
 
-        // Beast Level Dark Map (CartoDB Dark Matter)
-        setTimeout(() => {
-            if(!map) {
-                map = L.map('map', {zoomControl: false}).setView([myLoc.lat, myLoc.lng], 15);
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(map);
-                
-                let iconClass = userProfile.role === 'user' ? 'marker-user' : 'marker-agent';
-                uMarker = L.marker([myLoc.lat, myLoc.lng], {icon: L.divIcon({className: iconClass, iconSize:[22,22]})}).addTo(map);
-            }
-        }, 500);
-
-        if(userProfile.role === 'user') listenToMyOrder();
-    }
-
-    function autoZoomMap() {
-        if(myLoc && otherLoc && map) {
-            let bounds = L.latLngBounds([myLoc.lat, myLoc.lng], [otherLoc.lat, otherLoc.lng]);
-            map.fitBounds(bounds, { paddingBottomRight: [50, window.innerHeight * 0.5], paddingTopLeft: [50, 80], maxZoom: 17 });
+        function initAgentMap() {
+            if(!agentMap) {
+                agentMap = L.map('agent-map', {zoomControl: false}).setView(multanCoords, 14);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '' }).addTo(agentMap);
+                L.marker([30.1950, 71.4650], {icon: redIcon}).addTo(agentMap); // Agent slightly offset
+            } else { agentMap.invalidateSize(); }
         }
-    }
 
-    // ==========================================
-    // USER LOGIC
-    // ==========================================
-    function broadcastLive() {
-        const amt = document.getElementById('u-amount').value;
-        const fee = document.getElementById('u-fee').value;
-        if(!amt || !fee) return alert("Provide Amount and Fee to Proceed");
+        /* SIMULATION LOGIC: USER FINDING AGENT */
+        function findAgent() {
+            let amount = document.getElementById('req-amount').value;
+            if(!amount) return alert("Please enter amount");
+            
+            document.getElementById('find-agent-btn').innerText = "Broadcasting 3km...";
+            document.getElementById('find-agent-btn').classList.add('animate-pulse');
+            document.getElementById('radar').style.display = 'block';
 
-        document.getElementById('u-input-area').classList.add('hidden');
-        document.getElementById('u-waiting').classList.remove('hidden');
-        document.getElementById('laser').classList.remove('hidden');
-
-        currentOrderId = userProfile.phone; 
-        const otp = Math.floor(1000 + Math.random() * 9000);
-
-        db.ref('orders/' + currentOrderId).set({
-            userPhone: userProfile.phone, userName: userProfile.fname,
-            amount: amt, fee: fee, status: 'pending', lat: myLoc.lat, lng: myLoc.lng,
-            otp: otp, timestamp: Date.now()
-        });
-    }
-
-    function cancelBroadcast() {
-        if(currentOrderId) db.ref('orders/' + currentOrderId).remove();
-        document.getElementById('u-waiting').classList.add('hidden');
-        document.getElementById('u-input-area').classList.remove('hidden');
-        document.getElementById('laser').classList.add('hidden');
-    }
-
-    function listenToMyOrder() {
-        if(!userProfile) return;
-        db.ref('orders/' + userProfile.phone).on('value', snap => {
-            const order = snap.val();
-            if(!order) return;
-
-            if(order.status === 'negotiating') {
+            // Simulate Agent finding user after 3 seconds
+            setTimeout(() => {
+                document.getElementById('radar').style.display = 'none';
                 playDing();
-                document.getElementById('n-fee-display').innerText = order.newFee;
-                document.getElementById('m-nego').style.display = 'flex';
-                document.getElementById('laser').classList.add('hidden');
-            }
-            
-            if(order.status === 'accepted') {
-                playDing();
-                document.getElementById('m-nego').style.display = 'none';
-                document.getElementById('user-sheet').classList.add('hidden');
-                document.getElementById('m-active-deal').classList.remove('hidden');
-                document.getElementById('m-active-deal').classList.add('flex');
-                document.getElementById('u-otp-display').innerText = order.otp;
-                
-                listenToChat();
-                listenToAgentLocation(order.agentPhone);
-            }
-
-            if(order.status === 'completed') {
-                alert("MISSION SUCCESS: FUNDS SECURED!");
-                window.location.reload();
-            }
-        });
-    }
-
-    function acceptNegotiation() { db.ref('orders/' + userProfile.phone).update({ status: 'accepted', fee: document.getElementById('n-fee-display').innerText }); }
-    function rejectNegotiation() { db.ref('orders/' + userProfile.phone).update({ status: 'pending', newFee: null, agentPhone: null }); document.getElementById('m-nego').style.display = 'none'; document.getElementById('laser').classList.remove('hidden'); }
-
-    // ==========================================
-    // AGENT LOGIC (MAZEDAR)
-    // ==========================================
-    function toggleAgentOnline() {
-        agentOnline = !agentOnline;
-        const btn = document.querySelector('#agent-status-toggle button');
-        const txt = document.getElementById('a-status-text');
-        const ping = document.getElementById('a-status-ping');
-        const dot = document.getElementById('a-status-dot');
-        
-        if(agentOnline) {
-            btn.innerText = "DISCONNECT"; btn.classList.replace('bg-rose-600', 'bg-slate-700');
-            txt.innerText = "ONLINE"; txt.classList.replace('text-rose-500', 'text-blue-400');
-            ping.classList.replace('bg-rose-400', 'bg-blue-400');
-            dot.classList.replace('bg-rose-500', 'bg-blue-500');
-            
-            db.ref('orders').on('value', snap => {
-                const list = document.getElementById('live-orders');
-                list.innerHTML = '';
-                let hasNew = false;
-                let count = 0;
-                snap.forEach(child => {
-                    let order = child.val();
-                    if(order.status === 'pending') {
-                        hasNew = true; count++;
-                        list.innerHTML += `
-                            <div class="order-card bg-slate-800/80 p-5 rounded-2xl relative overflow-hidden group">
-                                <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 blur-3xl rounded-full group-hover:bg-blue-500/20 transition"></div>
-                                <div class="flex justify-between items-start mb-4 relative z-10">
-                                    <div>
-                                        <div class="text-[10px] text-gray-400 tracking-widest font-bold mb-1 uppercase"><i class="fas fa-user-circle mr-1"></i> ${order.userName}</div>
-                                        <div class="font-black text-3xl text-white drop-shadow-md">Rs. ${order.amount}</div>
-                                    </div>
-                                    <div class="text-right">
-                                        <div class="text-[10px] text-gray-400 tracking-widest font-bold mb-1 uppercase">FEE</div>
-                                        <div class="text-emerald-400 font-black text-xl bg-emerald-900/30 px-3 py-1 rounded-lg border border-emerald-500/20">Rs. ${order.fee}</div>
-                                    </div>
-                                </div>
-                                <div class="flex gap-3 relative z-10">
-                                    <button onclick="acceptOrder('${child.key}', ${order.fee})" class="w-2/3 bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl font-black tracking-widest shadow-[0_0_15px_rgba(37,99,235,0.4)] transition">ACCEPT</button>
-                                    <button onclick="negotiateOrder('${child.key}', ${order.fee})" class="w-1/3 bg-slate-700 hover:bg-slate-600 text-white py-3 rounded-xl font-bold border border-slate-600 transition"><i class="fas fa-handshake"></i></button>
-                                </div>
-                            </div>
-                        `;
-                    }
-                });
-                document.getElementById('job-count').innerText = count;
-                if(hasNew) playDing();
-                if(list.innerHTML === '') list.innerHTML = '<div class="text-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div><p class="text-gray-500 text-sm font-bold tracking-widest">SCANNING AIRSPACE...</p></div>';
-            });
-        } else {
-            btn.innerText = "CONNECT"; btn.classList.replace('bg-slate-700', 'bg-rose-600');
-            txt.innerText = "OFFLINE"; txt.classList.replace('text-blue-400', 'text-rose-500');
-            ping.classList.replace('bg-blue-400', 'bg-rose-400');
-            dot.classList.replace('bg-blue-500', 'bg-rose-500');
-            db.ref('orders').off();
-            document.getElementById('job-count').innerText = "0";
-            document.getElementById('live-orders').innerHTML = '<div class="flex flex-col items-center justify-center py-10 opacity-50"><i class="fas fa-power-off text-4xl text-gray-600 mb-4"></i><p class="text-gray-400 text-sm font-bold tracking-widest text-center">SYSTEM OFFLINE.</p></div>';
+                openModal('nego-modal');
+            }, 3000);
         }
-    }
 
-    function acceptOrder(oId, fee) { currentOrderId = oId; db.ref('orders/' + oId).update({ status: 'accepted', agentPhone: userProfile.phone }); startAgentDeal(); }
-    
-    function negotiateOrder(oId, oldFee) {
-        let newFee = prompt(`Target Fee is ${oldFee}. Input Counter Offer:`);
-        if(newFee && newFee > oldFee) {
-            currentOrderId = oId;
-            db.ref('orders/' + oId).update({ status: 'negotiating', newFee: newFee, agentPhone: userProfile.phone });
-            alert("Counter offer transmitted. Awaiting target response.");
-            db.ref('orders/' + oId).on('value', snap => { if(snap.val().status === 'accepted') startAgentDeal(); });
+        function resetUserDash() {
+            document.getElementById('find-agent-btn').innerText = "Find Agent";
+            document.getElementById('find-agent-btn').classList.remove('animate-pulse');
         }
-    }
 
-    function startAgentDeal() {
-        playDing();
-        document.getElementById('agent-sheet').classList.add('hidden');
-        document.getElementById('m-active-deal').classList.remove('hidden');
-        document.getElementById('m-active-deal').classList.add('flex');
-        listenToChat();
-        db.ref('orders/' + currentOrderId).once('value', snap => {
-            let uLoc = snap.val(); otherLoc = { lat: uLoc.lat, lng: uLoc.lng };
-            if(!aMarker) aMarker = L.marker([uLoc.lat, uLoc.lng], {icon: L.divIcon({className: 'marker-user', iconSize:[22,22]})}).addTo(map);
-            autoZoomMap();
-        });
-    }
+        function acceptDeal() {
+            closeModal('nego-modal');
+            nav('active-deal');
+            // Auto open OTP input after 3 seconds (simulating agent arrival)
+            setTimeout(() => { openOtp(true); }, 3000);
+        }
 
-    // ==========================================
-    // CHAT & OTP
-    // ==========================================
-    function listenToChat() {
-        db.ref('orders/' + currentOrderId + '/chat').on('child_added', snap => {
-            const msg = snap.val(); const isMe = msg.sender === userProfile.phone;
-            if(!isMe) playDing();
-            const cls = isMe ? 'bg-gradient-to-br from-blue-600 to-indigo-600 text-white self-end rounded-br-sm shadow-[0_5px_15px_rgba(79,70,229,0.3)]' : 'bg-slate-800 border border-slate-700 text-white self-start rounded-bl-sm';
-            document.getElementById('chat-box').innerHTML += `<div class="${cls} p-4 rounded-2xl max-w-[85%] text-sm font-medium tracking-wide">${msg.text}</div>`;
-            document.getElementById('chat-box').scrollTop = document.getElementById('chat-box').scrollHeight;
-        });
-    }
-
-    function sendRealChat() {
-        const input = document.getElementById('chat-msg');
-        if(!input.value.trim()) return;
-        db.ref('orders/' + currentOrderId + '/chat').push({ sender: userProfile.phone, text: input.value });
-        input.value = '';
-    }
-
-    function listenToAgentLocation(agentPhone) {
-        db.ref('agents/' + agentPhone).on('value', snap => {
-            let loc = snap.val();
-            if(loc && loc.lat) {
-                otherLoc = { lat: loc.lat, lng: loc.lng };
-                if(!aMarker) aMarker = L.marker([loc.lat, loc.lng], {icon: L.divIcon({className: 'marker-agent', iconSize:[22,22]})}).addTo(map);
-                else aMarker.setLatLng([loc.lat, loc.lng]);
-                autoZoomMap();
+        /* SIMULATION LOGIC: AGENT SIDE */
+        function toggleAgentStatus() {
+            let isOnline = document.getElementById('agent-online').checked;
+            let statusText = document.getElementById('agent-status-text');
+            if(isOnline) {
+                statusText.innerText = "Online. Scanning for nearby requests...";
+                statusText.classList.add('text-[#00ff88]');
+                // Simulate incoming request after 2 secs
+                setTimeout(() => {
+                    playDing();
+                    openModal('incoming-modal');
+                }, 2000);
+            } else {
+                statusText.innerText = "You are offline. Go online to receive requests.";
+                statusText.classList.remove('text-[#00ff88]');
             }
-        });
-    }
+        }
 
-    function openOTP() {
-        document.getElementById('m-otp').style.display = 'flex';
-        if(userProfile.role === 'user') document.getElementById('otp-user-view').classList.remove('hidden');
-        else document.getElementById('otp-agent-view').classList.remove('hidden');
-    }
+        function agentSendCounter() {
+            closeModal('incoming-modal');
+            alert("Counter offer sent! Waiting for user to accept...");
+            // Simulate user accepting and transitioning to chat
+            setTimeout(() => { nav('active-deal'); }, 1500);
+        }
 
-    function verifyRealOTP() {
-        const input = document.getElementById('a-otp-input').value;
-        db.ref('orders/' + currentOrderId).once('value', snap => {
-            if(snap.val().otp == input) {
-                db.ref('orders/' + currentOrderId).update({ status: 'completed' });
-                alert("PROTOCOL COMPLETE: DEAL SECURED!");
-                window.location.reload();
-            } else alert("ERROR: OTP MISMATCH. RETRY.");
-        });
-    }
-</script>
+        /* OTP & DEAL CLOSING */
+        function openOtp(isAuto = false) {
+            openModal('otp-modal');
+            if(isAuto) {
+                document.getElementById('otp-text').innerText = "Partner has arrived! Enter 4-digit OTP to close deal.";
+            }
+        }
+
+        function finishDeal() {
+            let otp = document.getElementById('otp-input').value;
+            if(otp.length === 4) {
+                alert("MISSION SUCCESS: Deal Completed! Funds transferred.");
+                closeModal('otp-modal');
+                nav('role-select'); // Reset to start
+            } else {
+                alert("Invalid OTP. Must be 4 digits.");
+            }
+        }
+
+        /* START APP (Splash logic) */
+        window.onload = () => {
+            // Force hide all modals explicitly on load
+            document.querySelectorAll('.modal-bg').forEach(m => m.style.display = 'none');
+            
+            setTimeout(() => { document.getElementById('splash-text').classList.remove('opacity-0'); }, 500);
+            setTimeout(() => { document.getElementById('splash-text').innerText = "Find Agents"; }, 1500);
+            setTimeout(() => { document.getElementById('splash-text').innerText = "Get Cash Instantly"; }, 2500);
+            setTimeout(() => { nav('role-select'); }, 3500);
+        };
+    </script>
 </body>
 </html>
