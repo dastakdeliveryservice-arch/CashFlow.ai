@@ -3,321 +3,319 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CashFlow - Cash Exchange App</title>
+    <title>CashFlow - inDrive Style</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <style>
-        /* Custom App Styling */
-        body { background-color: #121212; color: #ffffff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; }
-        .screen { display: none; height: 100vh; width: 100vw; flex-direction: column; }
+        /* inDrive Style Variables */
+        :root { --in-green: #b2ff05; --in-dark: #222222; --in-gray: #f4f4f4; }
+        
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #ffffff; color: #222222; overflow: hidden; margin: 0; }
+        .screen { display: none; height: 100vh; width: 100vw; flex-direction: column; position: relative; }
         .active-screen { display: flex; }
         
-        /* Map Styles */
-        #user-map, #agent-map { flex-grow: 1; z-index: 10; }
-        .leaflet-bottom, .leaflet-control-zoom { display: none; } /* Hide map watermarks/zoom for app feel */
+        /* Full Screen Maps */
+        .map-container { flex-grow: 1; z-index: 10; height: 100%; width: 100%; }
+        .leaflet-bottom, .leaflet-control-zoom { display: none; } /* Hide watermarks */
 
-        /* Input Fields */
-        .input-glass { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; border-radius: 12px; padding: 12px; outline: none; transition: 0.3s; }
-        .input-glass:focus { border-color: #00ff88; box-shadow: 0 0 10px rgba(0, 255, 136, 0.2); }
+        /* inDrive UI Components */
+        .card-bottom { position: absolute; bottom: 0; left: 0; width: 100%; background: white; border-top-left-radius: 24px; border-top-right-radius: 24px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 1000; padding: 24px; transition: transform 0.3s; }
+        .btn-main { background-color: var(--in-green); color: black; font-weight: 800; border-radius: 16px; transition: 0.2s; padding: 16px; width: 100%; font-size: 1.1rem; text-align: center; border: none; cursor: pointer; }
+        .btn-main:active { transform: scale(0.97); }
+        .input-in { background: var(--in-gray); border: none; border-radius: 12px; padding: 16px; font-size: 1rem; font-weight: 600; width: 100%; outline: none; }
+        .input-in:focus { box-shadow: inset 0 0 0 2px var(--in-green); }
 
-        /* Buttons */
-        .btn-green { background: linear-gradient(135deg, #00b09b, #96c93d); color: white; font-weight: bold; border-radius: 12px; transition: transform 0.2s; }
-        .btn-red { background: linear-gradient(135deg, #ff416c, #ff4b2b); color: white; font-weight: bold; border-radius: 12px; transition: transform 0.2s; }
-        .btn-green:active, .btn-red:active { transform: scale(0.95); }
+        /* Real Laser Animation (inDrive style) */
+        .laser-container { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 999; display: none; pointer-events: none; }
+        .sonar-wave { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; border: 3px solid var(--in-green); animation: sonar 2s linear infinite; opacity: 0; }
+        .sonar-wave:nth-child(2) { animation-delay: 0.6s; }
+        .sonar-wave:nth-child(3) { animation-delay: 1.2s; }
+        @keyframes sonar { 0% { width: 20px; height: 20px; opacity: 1; border-width: 4px; } 100% { width: 300px; height: 300px; opacity: 0; border-width: 1px; } }
 
-        /* Laser / Radar Animation */
-        .radar-box { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; display: none; pointer-events: none; }
-        .ring { border: 2px solid #00ff88; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: pulse 2s infinite ease-out; opacity: 0; }
-        .ring:nth-child(2) { animation-delay: 0.5s; }
-        .ring:nth-child(3) { animation-delay: 1s; }
-        @keyframes pulse { 0% { width: 0; height: 0; opacity: 1; } 100% { width: 300px; height: 300px; opacity: 0; } }
-
-        /* Sidebar Menu */
-        .sidebar { position: fixed; top: 0; left: -250px; width: 250px; height: 100vh; background: #1e1e1e; z-index: 2000; transition: 0.3s; padding: 20px; box-shadow: 5px 0 15px rgba(0,0,0,0.5); }
-        .sidebar.open { left: 0; }
-        
-        /* Modals */
-        .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 3000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-        .modal-card { background: #1e1e1e; padding: 20px; border-radius: 16px; width: 90%; max-width: 400px; border: 1px solid rgba(255,255,255,0.1); text-align: center; }
+        /* Floating Back Button */
+        .floating-top { position: absolute; top: 20px; left: 20px; z-index: 1000; background: white; width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.15); cursor: pointer; font-size: 1.2rem; }
     </style>
 </head>
 <body>
 
-    <audio id="ding-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
-
-    <div id="sidebar" class="sidebar flex flex-col">
-        <div class="flex justify-between items-center mb-8">
-            <h2 class="text-xl font-bold text-[#00ff88]">Menu</h2>
-            <i class="fas fa-times text-2xl text-gray-400" onclick="toggleSidebar()"></i>
-        </div>
-        <button onclick="switchRole('agent')" class="p-3 mb-4 bg-gray-800 rounded-lg text-left"><i class="fas fa-exchange-alt mr-2 text-[#ff4b2b]"></i> Switch to Agent Mode</button>
-        <button onclick="switchRole('user')" class="p-3 bg-gray-800 rounded-lg text-left"><i class="fas fa-user mr-2 text-[#00ff88]"></i> Switch to User Mode</button>
-    </div>
-
-    <div id="splash" class="screen active-screen justify-center items-center bg-black">
-        <h1 id="splash-text" class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#00b09b] to-[#96c93d] transition-opacity duration-500 opacity-0">CashFlow</h1>
-    </div>
-
-    <div id="role-select" class="screen p-6 justify-center bg-[#121212]">
-        <h2 class="text-3xl font-bold mb-8 text-center">I want to...</h2>
-        <button onclick="nav('user-reg')" class="btn-green p-4 mb-6 text-xl shadow-lg"><i class="fas fa-money-bill-wave mr-2"></i> Get Cash (User)</button>
-        <button onclick="nav('agent-reg')" class="btn-red p-4 text-xl shadow-lg"><i class="fas fa-motorcycle mr-2"></i> Provide Cash (Agent)</button>
-    </div>
-
-    <div id="user-reg" class="screen p-6 overflow-y-auto">
-        <h2 class="text-2xl font-bold mb-6 text-[#00ff88]">User Verification</h2>
-        <input type="text" placeholder="First Name" class="input-glass mb-4 w-full">
-        <input type="text" placeholder="Last Name" class="input-glass mb-4 w-full">
-        <input type="number" placeholder="CNIC Number" class="input-glass mb-4 w-full">
-        <input type="tel" placeholder="Phone Number" class="input-glass mb-4 w-full">
-        <input type="text" placeholder="City" class="input-glass mb-8 w-full">
-        <button onclick="nav('payment-method')" class="btn-green p-4 w-full mt-auto">Next <i class="fas fa-arrow-right"></i></button>
-    </div>
-
-    <div id="agent-reg" class="screen p-6 overflow-y-auto">
-        <h2 class="text-2xl font-bold mb-6 text-[#ff4b2b]">Agent Verification</h2>
-        <input type="text" placeholder="First Name" class="input-glass mb-4 w-full">
-        <input type="text" placeholder="Last Name" class="input-glass mb-4 w-full">
-        <input type="text" placeholder="Vehicle No." class="input-glass mb-4 w-full">
-        <input type="number" placeholder="CNIC Number" class="input-glass mb-4 w-full">
-        <input type="tel" placeholder="Phone Number" class="input-glass mb-4 w-full">
-        <div class="mb-8">
-            <label class="text-sm text-gray-400 mb-2 block">Upload Profile Pic</label>
-            <input type="file" accept="image/*" class="input-glass w-full text-sm">
-        </div>
-        <button onclick="nav('agent-dash', initAgentMap)" class="btn-red p-4 w-full mt-auto">Verify & Login <i class="fas fa-check"></i></button>
-    </div>
-
-    <div id="payment-method" class="screen p-6 justify-center">
-        <h2 class="text-2xl font-bold mb-8 text-center text-[#00ff88]">How do you want cash?</h2>
-        <button onclick="nav('user-dash', initUserMap)" class="btn-green p-4 mb-6 text-lg"><i class="fas fa-wallet mr-2"></i> Cash at Location</button>
-        <button onclick="nav('user-dash', initUserMap)" class="input-glass p-4 text-lg text-white border-[#00ff88]"><i class="fas fa-mobile-alt mr-2"></i> Online Transfer</button>
-    </div>
-
-    <div id="user-dash" class="screen relative">
-        <div class="absolute top-4 left-4 z-[1000] bg-[#1e1e1e] p-3 rounded-full shadow-lg" onclick="toggleSidebar()">
-            <i class="fas fa-bars text-xl text-white"></i>
-        </div>
+    <div id="start-screen" class="screen active-screen justify-center items-center bg-white p-6">
+        <h1 class="text-4xl font-extrabold mb-2" style="color: var(--in-dark);">CashFlow</h1>
+        <p class="text-gray-500 mb-10 font-medium">Real-Time Cash Exchange</p>
         
-        <div id="user-map"></div>
-
-        <div id="radar" class="radar-box">
-            <div class="ring"></div><div class="ring"></div><div class="ring"></div>
-        </div>
-
-        <div class="bg-[#1e1e1e] p-6 rounded-t-3xl shadow-2xl z-[1000]">
-            <h3 class="text-lg font-bold mb-4 text-center">Request Cash</h3>
-            <div class="flex space-x-4 mb-4">
-                <input type="number" id="req-amount" placeholder="Amount (e.g. 5000)" class="input-glass w-2/3">
-                <input type="number" id="req-comm" placeholder="Comm (120)" class="input-glass w-1/3 border-[#00ff88]">
-            </div>
-            <button id="find-agent-btn" onclick="findAgent()" class="btn-green p-4 w-full text-lg shadow-lg shadow-[#00ff88]/30">Find Agent</button>
+        <div class="w-full space-y-4">
+            <button onclick="loginAs('user')" class="btn-main shadow-lg">Login as User (Need Cash)</button>
+            <button onclick="loginAs('agent')" class="btn-main" style="background-color: var(--in-dark); color: white;">Login as Agent (Give Cash)</button>
         </div>
     </div>
 
-    <div id="agent-dash" class="screen relative">
-        <div class="absolute top-4 left-4 z-[1000] bg-[#1e1e1e] p-3 rounded-full shadow-lg" onclick="toggleSidebar()">
-            <i class="fas fa-bars text-xl text-white"></i>
+    <div id="main-dash" class="screen">
+        <div class="floating-top" onclick="nav('start-screen')"><i class="fas fa-arrow-left"></i></div>
+        
+        <div id="live-map" class="map-container"></div>
+
+        <div id="laser-effect" class="laser-container">
+            <div class="sonar-wave"></div><div class="sonar-wave"></div><div class="sonar-wave"></div>
         </div>
 
-        <div id="agent-map"></div>
+        <div id="user-controls" class="card-bottom hidden">
+            <h2 class="text-2xl font-bold mb-4">Request Cash</h2>
+            <div class="flex space-x-3 mb-4">
+                <input type="number" id="cash-amount" placeholder="Amount (Rs)" class="input-in w-2/3">
+                <input type="number" id="cash-fee" placeholder="Fee (Rs)" class="input-in w-1/3">
+            </div>
+            <button id="request-btn" onclick="sendRealRequest()" class="btn-main shadow-lg">Request a Partner</button>
+        </div>
 
-        <div class="bg-[#1e1e1e] p-6 rounded-t-3xl shadow-2xl z-[1000]">
+        <div id="agent-controls" class="card-bottom hidden">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold">Radar System</h3>
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="agent-online" class="sr-only peer" onchange="toggleAgentStatus()">
-                    <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#ff4b2b]"></div>
-                </label>
+                <h2 class="text-xl font-bold">Online Radar</h2>
+                <div class="w-4 h-4 rounded-full bg-green-500 animate-pulse"></div>
             </div>
-            <p id="agent-status-text" class="text-sm text-gray-400 text-center mb-4">You are offline. Go online to receive requests.</p>
-        </div>
-    </div>
-
-    <div id="active-deal" class="screen bg-[#121212]">
-        <div class="p-4 bg-[#1e1e1e] flex justify-between items-center">
-            <h3 class="font-bold text-[#00ff88]"><i class="fas fa-user-circle mr-2"></i> Partner En-route</h3>
-            <button onclick="openOtp()" class="bg-[#00ff88] text-black px-3 py-1 rounded text-sm font-bold">Close Deal</button>
-        </div>
-        <div class="flex-grow bg-gray-900 p-4 flex flex-col justify-end">
-            <div class="bg-[#1e1e1e] p-3 rounded-lg w-3/4 mb-2">Hello, I am arriving in 2 mins.</div>
-            <div class="bg-[#005c4b] p-3 rounded-lg w-3/4 self-end mb-4 text-white">Okay, I am outside.</div>
-            <div class="flex">
-                <input type="text" placeholder="Message..." class="input-glass flex-grow mr-2 rounded-full">
-                <button class="bg-[#00ff88] text-black w-12 h-12 rounded-full flex justify-center items-center"><i class="fas fa-paper-plane"></i></button>
+            <p class="text-gray-500 mb-4 text-sm">Searching for nearby cash requests...</p>
+            <div id="incoming-requests" class="space-y-3 max-h-40 overflow-y-auto">
+                <p class="text-center text-gray-400 italic text-sm">No active requests yet</p>
             </div>
         </div>
     </div>
 
-    <div id="nego-modal" class="modal-bg flex">
-        <div class="modal-card">
-            <h3 class="text-xl font-bold mb-2">Agent Found!</h3>
-            <p class="text-gray-400 text-sm mb-4">Agent wants to negotiate the commission.</p>
-            <div class="bg-black p-4 rounded-lg mb-6">
-                <p>Requested: <span class="text-gray-400 line-through">120 PKR</span></p>
-                <p class="text-2xl font-bold text-[#00ff88]">New Offer: 150 PKR</p>
-            </div>
-            <div class="flex space-x-2">
-                <button onclick="closeModal('nego-modal'); resetUserDash();" class="flex-1 bg-gray-800 p-3 rounded-lg">Reject</button>
-                <button onclick="acceptDeal()" class="flex-1 btn-green p-3">Accept Deal</button>
-            </div>
+    <div id="deal-screen" class="screen">
+        <div class="p-4 bg-white shadow-md z-[1000] flex justify-between items-center">
+            <h2 class="font-bold text-lg">Partner En-route</h2>
+            <span class="bg-gray-200 px-3 py-1 rounded-full text-sm font-bold" id="distance-display">Calculating...</span>
+        </div>
+        <div id="deal-map" class="map-container"></div>
+        <div class="card-bottom pb-8">
+            <p class="text-gray-500 text-sm mb-2">Deal Info</p>
+            <h3 class="text-2xl font-bold mb-4">Rs <span id="deal-amount">0</span> <span class="text-sm font-normal text-gray-400">+ Fee</span></h3>
+            <button class="btn-main" onclick="alert('OTP implementation goes here!')">Complete Deal</button>
         </div>
     </div>
-
-    <div id="incoming-modal" class="modal-bg flex">
-        <div class="modal-card border-[#ff4b2b]">
-            <h3 class="text-xl font-bold mb-2 text-[#ff4b2b]">New Request!</h3>
-            <p class="text-gray-400 text-sm mb-4">Distance: 1.2 KM</p>
-            <div class="bg-black p-4 rounded-lg mb-6 text-left">
-                <p>Amount: <strong class="text-white">5000 PKR</strong></p>
-                <p>Offered Comm: <strong class="text-white">120 PKR</strong></p>
-            </div>
-            <input type="number" value="150" id="counter-comm" class="input-glass w-full mb-4 text-center" placeholder="Counter Commission">
-            <div class="flex space-x-2">
-                <button onclick="closeModal('incoming-modal')" class="flex-1 bg-gray-800 p-3 rounded-lg">Reject</button>
-                <button onclick="agentSendCounter()" class="flex-1 btn-red p-3">Counter & Accept</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="otp-modal" class="modal-bg flex">
-        <div class="modal-card">
-            <h3 class="text-xl font-bold mb-4">Complete Deal</h3>
-            <p class="text-gray-400 text-sm mb-6" id="otp-text">Enter the 4-digit OTP from the User to release funds.</p>
-            <input type="number" id="otp-input" placeholder="X X X X" class="input-glass w-full text-center text-2xl tracking-widest mb-6">
-            <button onclick="finishDeal()" class="btn-green w-full p-3 text-lg">Verify OTP</button>
-        </div>
-    </div>
-
 
     <script>
-        /* UI NAVIGATION LOGIC */
-        function nav(screenId, callback) {
+        // ==========================================
+        // 🛑 FIREBASE CONFIGURATION (Zaroori Hai!)
+        // 2 Mobiles ko jodne ke liye yahan apne Firebase details daalein.
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            databaseURL: "YOUR_DATABASE_URL",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        
+        // Agar Firebase config proper nahi hai, toh local mode par chalayenge taake error na aaye
+        let db;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+            console.log("Firebase Connected Real-Time!");
+        } catch (error) {
+            console.log("Running without Firebase. 2 Phones connection won't work until config is added.");
+        }
+
+        // ==========================================
+        // VARIABLES & SETUP
+        // ==========================================
+        let currentRole = '';
+        let myId = 'user_' + Math.floor(Math.random() * 10000); // Random ID
+        let myLocation = { lat: 30.1978, lng: 71.4697 }; // Default Multan
+        let map, dealMap, myMarker, partnerMarker;
+        let watchId; // For continuous GPS tracking
+
+        // Icons
+        const userIcon = L.divIcon({ className: 'custom-icon', html: "<div style='background:black; width:16px; height:16px; border-radius:50%; border:3px solid #b2ff05; box-shadow:0 0 10px rgba(0,0,0,0.3);'></div>", iconSize: [16,16] });
+        const agentIcon = L.divIcon({ className: 'custom-icon', html: "<div style='background:#b2ff05; width:16px; height:16px; border-radius:50%; border:3px solid black; box-shadow:0 0 10px rgba(0,0,0,0.3);'></div>", iconSize: [16,16] });
+
+        function nav(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
             document.getElementById(screenId).classList.add('active-screen');
-            if(callback) setTimeout(callback, 100); // Delay for map rendering
         }
 
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-        function playDing() { document.getElementById('ding-sound').play().catch(e=>console.log("Audio block by browser")); }
-        
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
-        function switchRole(role) {
-            toggleSidebar();
-            if(role === 'agent') nav('agent-reg');
-            else nav('user-reg');
+        // ==========================================
+        // REAL-TIME GPS TRACKING
+        // ==========================================
+        function startTrackingLocation() {
+            if ("geolocation" in navigator) {
+                watchId = navigator.geolocation.watchPosition((position) => {
+                    myLocation = { lat: position.coords.latitude, lng: position.coords.longitude };
+                    
+                    if (map) {
+                        if(!myMarker) {
+                            myMarker = L.marker([myLocation.lat, myLocation.lng], {icon: currentRole === 'user' ? userIcon : agentIcon}).addTo(map);
+                            map.setView([myLocation.lat, myLocation.lng], 16);
+                        } else {
+                            myMarker.setLatLng([myLocation.lat, myLocation.lng]);
+                        }
+                    }
+
+                    // Update location to Database for exact tracking
+                    if(db) db.ref('users/' + myId).set({ location: myLocation, role: currentRole });
+
+                }, (error) => {
+                    console.log("GPS Error: ", error.message);
+                }, { enableHighAccuracy: true, maximumAge: 0 }); // High accuracy for "exact location"
+            } else {
+                alert("GPS not supported on this browser.");
+            }
         }
 
-        /* MAP LOGIC (Multan Coordinates) */
-        let userMap, agentMap;
-        const multanCoords = [30.1978, 71.4697];
-        
-        const greenIcon = L.divIcon({ className: 'custom-div-icon', html: "<div style='background-color:#00ff88; width:15px; height:15px; border-radius:50%; box-shadow: 0 0 10px #00ff88; border: 2px solid white;'></div>", iconSize: [15, 15]});
-        const redIcon = L.divIcon({ className: 'custom-div-icon', html: "<div style='background-color:#ff4b2b; width:15px; height:15px; border-radius:50%; box-shadow: 0 0 10px #ff4b2b; border: 2px solid white;'></div>", iconSize: [15, 15]});
-
-        function initUserMap() {
-            if(!userMap) {
-                userMap = L.map('user-map', {zoomControl: false}).setView(multanCoords, 14);
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '' }).addTo(userMap);
-                L.marker(multanCoords, {icon: greenIcon}).addTo(userMap);
-            } else { userMap.invalidateSize(); }
-        }
-
-        function initAgentMap() {
-            if(!agentMap) {
-                agentMap = L.map('agent-map', {zoomControl: false}).setView(multanCoords, 14);
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '' }).addTo(agentMap);
-                L.marker([30.1950, 71.4650], {icon: redIcon}).addTo(agentMap); // Agent slightly offset
-            } else { agentMap.invalidateSize(); }
-        }
-
-        /* SIMULATION LOGIC: USER FINDING AGENT */
-        function findAgent() {
-            let amount = document.getElementById('req-amount').value;
-            if(!amount) return alert("Please enter amount");
+        // ==========================================
+        // LOGIN & MAP INIT
+        // ==========================================
+        function loginAs(role) {
+            currentRole = role;
+            nav('main-dash');
             
-            document.getElementById('find-agent-btn').innerText = "Broadcasting 3km...";
-            document.getElementById('find-agent-btn').classList.add('animate-pulse');
-            document.getElementById('radar').style.display = 'block';
+            // UI Toggles
+            document.getElementById('user-controls').classList.toggle('hidden', role !== 'user');
+            document.getElementById('agent-controls').classList.toggle('hidden', role !== 'agent');
 
-            // Simulate Agent finding user after 3 seconds
+            // Init Map (inDrive style light theme)
             setTimeout(() => {
-                document.getElementById('radar').style.display = 'none';
-                playDing();
-                openModal('nego-modal');
-            }, 3000);
+                if(!map) {
+                    map = L.map('live-map', { zoomControl: false }).setView([myLocation.lat, myLocation.lng], 15);
+                    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(map);
+                }
+                map.invalidateSize();
+                startTrackingLocation();
+
+                // If agent, listen for real requests
+                if(role === 'agent' && db) listenForRequests();
+            }, 300);
         }
 
-        function resetUserDash() {
-            document.getElementById('find-agent-btn').innerText = "Find Agent";
-            document.getElementById('find-agent-btn').classList.remove('animate-pulse');
-        }
+        // ==========================================
+        // USER: SEND REAL REQUEST & LASER
+        // ==========================================
+        function sendRealRequest() {
+            let amt = document.getElementById('cash-amount').value;
+            let fee = document.getElementById('cash-fee').value;
+            if(!amt || !fee) return alert("Enter amount and fee!");
 
-        function acceptDeal() {
-            closeModal('nego-modal');
-            nav('active-deal');
-            // Auto open OTP input after 3 seconds (simulating agent arrival)
-            setTimeout(() => { openOtp(true); }, 3000);
-        }
-
-        /* SIMULATION LOGIC: AGENT SIDE */
-        function toggleAgentStatus() {
-            let isOnline = document.getElementById('agent-online').checked;
-            let statusText = document.getElementById('agent-status-text');
-            if(isOnline) {
-                statusText.innerText = "Online. Scanning for nearby requests...";
-                statusText.classList.add('text-[#00ff88]');
-                // Simulate incoming request after 2 secs
-                setTimeout(() => {
-                    playDing();
-                    openModal('incoming-modal');
-                }, 2000);
-            } else {
-                statusText.innerText = "You are offline. Go online to receive requests.";
-                statusText.classList.remove('text-[#00ff88]');
-            }
-        }
-
-        function agentSendCounter() {
-            closeModal('incoming-modal');
-            alert("Counter offer sent! Waiting for user to accept...");
-            // Simulate user accepting and transitioning to chat
-            setTimeout(() => { nav('active-deal'); }, 1500);
-        }
-
-        /* OTP & DEAL CLOSING */
-        function openOtp(isAuto = false) {
-            openModal('otp-modal');
-            if(isAuto) {
-                document.getElementById('otp-text').innerText = "Partner has arrived! Enter 4-digit OTP to close deal.";
-            }
-        }
-
-        function finishDeal() {
-            let otp = document.getElementById('otp-input').value;
-            if(otp.length === 4) {
-                alert("MISSION SUCCESS: Deal Completed! Funds transferred.");
-                closeModal('otp-modal');
-                nav('role-select'); // Reset to start
-            } else {
-                alert("Invalid OTP. Must be 4 digits.");
-            }
-        }
-
-        /* START APP (Splash logic) */
-        window.onload = () => {
-            // Force hide all modals explicitly on load
-            document.querySelectorAll('.modal-bg').forEach(m => m.style.display = 'none');
+            let btn = document.getElementById('request-btn');
+            btn.innerText = "Scanning Area...";
+            btn.style.backgroundColor = "white";
+            btn.style.border = "2px solid var(--in-green)";
             
-            setTimeout(() => { document.getElementById('splash-text').classList.remove('opacity-0'); }, 500);
-            setTimeout(() => { document.getElementById('splash-text').innerText = "Find Agents"; }, 1500);
-            setTimeout(() => { document.getElementById('splash-text').innerText = "Get Cash Instantly"; }, 2500);
-            setTimeout(() => { nav('role-select'); }, 3500);
-        };
+            // Turn ON inDrive Laser Animation
+            document.getElementById('laser-effect').style.display = 'block';
+
+            let requestData = {
+                userId: myId,
+                amount: amt,
+                fee: fee,
+                location: myLocation,
+                status: 'pending'
+            };
+
+            if(db) {
+                // Send to Firebase
+                db.ref('requests/' + myId).set(requestData);
+                
+                // Listen for Agent Acceptance
+                db.ref('requests/' + myId).on('value', (snap) => {
+                    let req = snap.val();
+                    if(req && req.status === 'accepted') {
+                        document.getElementById('laser-effect').style.display = 'none';
+                        startDealScreen(req);
+                    }
+                });
+            } else {
+                // Fake simulation if no Firebase
+                setTimeout(() => {
+                    document.getElementById('laser-effect').style.display = 'none';
+                    startDealScreen({ amount: amt, agentId: 'dummy_agent' });
+                }, 4000);
+            }
+        }
+
+        // ==========================================
+        // AGENT: RECEIVE REQUESTS
+        // ==========================================
+        function listenForRequests() {
+            db.ref('requests').on('value', (snapshot) => {
+                let reqDiv = document.getElementById('incoming-requests');
+                reqDiv.innerHTML = ''; // Clear list
+                let requests = snapshot.val();
+                let found = false;
+
+                for (let reqId in requests) {
+                    let req = requests[reqId];
+                    if (req.status === 'pending') {
+                        found = true;
+                        // Calculate dummy distance for UI
+                        let uiCard = `
+                            <div class="bg-gray-100 p-4 rounded-xl border-l-4 border-[#b2ff05] flex justify-between items-center">
+                                <div>
+                                    <p class="font-bold text-lg">Rs ${req.amount}</p>
+                                    <p class="text-sm text-gray-500">Fee: Rs ${req.fee}</p>
+                                </div>
+                                <button onclick="acceptRequest('${reqId}')" class="bg-black text-white px-4 py-2 rounded-lg font-bold">Accept</button>
+                            </div>
+                        `;
+                        reqDiv.innerHTML += uiCard;
+                    }
+                }
+                if(!found) reqDiv.innerHTML = '<p class="text-center text-gray-400 italic text-sm">No active requests yet</p>';
+            });
+        }
+
+        function acceptRequest(reqId) {
+            if(db) {
+                // Update database that agent accepted
+                db.ref('requests/' + reqId).update({ status: 'accepted', agentId: myId });
+                // Fetch deal details to start deal screen
+                db.ref('requests/' + reqId).once('value').then(snap => {
+                    startDealScreen(snap.val());
+                });
+            }
+        }
+
+        // ==========================================
+        // EXACT LOCATION DEAL SCREEN
+        // ==========================================
+        function startDealScreen(dealData) {
+            nav('deal-screen');
+            document.getElementById('deal-amount').innerText = dealData.amount;
+
+            setTimeout(() => {
+                if(!dealMap) {
+                    dealMap = L.map('deal-map', { zoomControl: false }).setView([myLocation.lat, myLocation.lng], 16);
+                    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(dealMap);
+                }
+                dealMap.invalidateSize();
+
+                // Plot myself
+                let meMarker = L.marker([myLocation.lat, myLocation.lng], {icon: currentRole === 'user' ? userIcon : agentIcon}).addTo(dealMap);
+                
+                // Track Partner Exactly Real-Time
+                let partnerId = currentRole === 'user' ? dealData.agentId : dealData.userId;
+                if(db && partnerId) {
+                    db.ref('users/' + partnerId + '/location').on('value', (snap) => {
+                        let pLoc = snap.val();
+                        if(pLoc) {
+                            if(!partnerMarker) {
+                                partnerMarker = L.marker([pLoc.lat, pLoc.lng], {icon: currentRole === 'user' ? agentIcon : userIcon}).addTo(dealMap);
+                            } else {
+                                partnerMarker.setLatLng([pLoc.lat, pLoc.lng]);
+                            }
+                            
+                            // Adjust map to show both markers
+                            let group = new L.featureGroup([meMarker, partnerMarker]);
+                            dealMap.fitBounds(group.getBounds(), {padding: [50, 50]});
+                        }
+                    });
+                }
+            }, 300);
+        }
     </script>
 </body>
 </html>
